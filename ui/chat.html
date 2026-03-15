@@ -339,9 +339,9 @@
           <h1 class="welcome-title">The Tribe is ready</h1>
           <p class="welcome-sub">Ask anything — your advisors are listening.</p>
           <div class="welcome-prompts">
-            <button class="welcome-prompt">Should I change careers?</button>
-            <button class="welcome-prompt">How do I improve focus?</button>
-            <button class="welcome-prompt">What is draining my energy?</button>
+            <button class="welcome-prompt onboard-pill" id="btn-guide-chat">How to chat with the tribe</button>
+            <button class="welcome-prompt onboard-pill" id="btn-guide-sessions">Explore tribe sessions</button>
+            <button class="welcome-prompt onboard-pill" id="btn-guide-stories">Discover tribe stories</button>
           </div>
         </div>
       </div>
@@ -815,6 +815,89 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Chat Guide Modal -->
+  <div class="modal-overlay" id="chat-guide-overlay">
+    <div class="modal guide-modal">
+      <div class="modal-header">
+        <h3>Chat Guide</h3>
+        <button class="modal-close" id="chat-guide-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body guide-body">
+        <div class="guide-item">
+          <div class="guide-item-label">Ask a Member</div>
+          <div class="guide-item-desc">Speak directly with one advisor from your Tribe. Each member has their own personality, background, and perspective. Choose someone whose lens fits your question.</div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-item-label">Ask My Tribe</div>
+          <div class="guide-item-desc">Send your question to the entire council at once. Each advisor replies in turn, giving you a multi-perspective response in a single conversation thread.</div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-item-label">Ask BVM</div>
+          <div class="guide-item-desc">BVM stands for Best Version of Me — an advisor built from your own values and goals. Ask BVM when you want to hear what your best self would say.</div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-item-label">Ask Your Guide</div>
+          <div class="guide-item-desc">Your Guide is a personal mentor you define yourself — a Stoic philosopher, your future self, a trusted elder. Configure your Guide's identity in Settings.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sessions Guide Modal -->
+  <div class="modal-overlay" id="sessions-guide-overlay">
+    <div class="modal guide-modal">
+      <div class="modal-header">
+        <h3>Sessions Guide</h3>
+        <button class="modal-close" id="sessions-guide-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body guide-body">
+        <div class="guide-item">
+          <div class="guide-item-label">Debate</div>
+          <div class="guide-item-desc">Pose a question or dilemma and watch your Tribe argue it from all sides. Each advisor defends their position, then a closing summary is generated. Best for decisions where you want to see every angle challenged.</div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-item-label">Voting</div>
+          <div class="guide-item-desc">Give the council a choice and ask them to vote. Each advisor casts their vote and explains their reasoning. The result shows a tally, the winning option, and a guide summary. Best for binary or multi-option decisions.</div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-item-label">Campfire</div>
+          <div class="guide-item-desc">Gather the Tribe for a reflective circle. Share a topic, set the tone — Reflective, Celebratory, or Healing — and each advisor offers wisdom in the spirit of that tone. Best for processing emotions or marking a meaningful moment.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stories Guide Modal -->
+  <div class="modal-overlay" id="stories-guide-overlay">
+    <div class="modal guide-modal">
+      <div class="modal-header">
+        <h3>Stories Guide</h3>
+        <button class="modal-close" id="stories-guide-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body guide-body">
+        <div class="guide-intro">Tribe Stories are short parables that each advisor generates in response to your question. Instead of advice, they offer a story — a metaphor drawn from their world and perspective.</div>
+        <div class="guide-item">
+          <div class="guide-item-label">How they work</div>
+          <div class="guide-item-desc">When you ask a question in <strong>Ask My Tribe</strong> mode with parables enabled, each advisor writes a brief story rooted in their background. The story carries a lesson that applies to your situation indirectly, the way a good parable does.</div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-item-label">Reading stories</div>
+          <div class="guide-item-desc">Open the Stories panel from the navigation menu. You'll find all stories from today's session there, organized by advisor. Each story shows its title, type, and the lesson it carries.</div>
+        </div>
+        <div class="guide-item">
+          <div class="guide-item-label">Archiving</div>
+          <div class="guide-item-desc">Stories are marked as new when generated. Once read, they move to the archive. You can switch between new and archived stories from the Stories panel header.</div>
+        </div>
+      </div>
     </div>
   </div>
 

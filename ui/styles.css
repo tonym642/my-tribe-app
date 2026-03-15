@@ -323,6 +323,48 @@ html, body {
   background: var(--bg);
 }
 
+/* ── Onboarding pills ────────────────────────────────────────────── */
+
+.onboard-pill {
+  text-align: center;
+}
+
+/* ── Guide modals ────────────────────────────────────────────────── */
+
+.guide-modal {
+  max-width: 480px;
+}
+
+.guide-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.guide-intro {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.guide-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.guide-item-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.guide-item-desc {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
 /* ── User message ────────────────────────────────────────────────── */
 
 .msg-user {

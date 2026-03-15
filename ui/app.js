@@ -334,13 +334,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     btn.addEventListener('mouseleave', () => $tooltip.classList.remove('visible'));
   });
 
-  // Starter prompts
-  document.querySelectorAll('.welcome-prompt').forEach(btn => {
-    btn.addEventListener('click', () => {
-      $input.value = btn.textContent;
-      $input.dispatchEvent(new Event('input'));
-      $input.focus();
-    });
+  // Onboarding guide pills
+  document.getElementById('btn-guide-chat').addEventListener('click', () => openGuide('chat-guide-overlay'));
+  document.getElementById('btn-guide-sessions').addEventListener('click', () => openGuide('sessions-guide-overlay'));
+  document.getElementById('btn-guide-stories').addEventListener('click', () => openGuide('stories-guide-overlay'));
+  document.getElementById('chat-guide-close').addEventListener('click', () => closeGuide('chat-guide-overlay'));
+  document.getElementById('sessions-guide-close').addEventListener('click', () => closeGuide('sessions-guide-overlay'));
+  document.getElementById('stories-guide-close').addEventListener('click', () => closeGuide('stories-guide-overlay'));
+  ['chat-guide-overlay','sessions-guide-overlay','stories-guide-overlay'].forEach(id => {
+    document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) closeGuide(id); });
   });
 
   // Conversations — New Chat
@@ -938,12 +940,21 @@ function createLoadingCard(advisorId) {
   return card;
 }
 
+function renderMarkdown(text) {
+  return esc(text)
+    .replace(/^#{1,3} (.+)$/gm, '<strong>$1</strong>')   // # headings → bold
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')     // **bold**
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')                 // *italic*
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
+}
+
 function fillCard(card, text, isError = false) {
   const textEl = card.querySelector('.advisor-text');
   if (isError) {
     textEl.innerHTML = `<span class="advisor-error-text">${esc(text)}</span>`;
   } else {
-    textEl.innerHTML = esc(text).replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+    textEl.innerHTML = renderMarkdown(text);
   }
 }
 
@@ -968,6 +979,14 @@ function esc(str) {
 }
 
 // ── Settings modal ────────────────────────────────────────────────
+
+function openGuide(id) {
+  document.getElementById(id).classList.add('open');
+}
+
+function closeGuide(id) {
+  document.getElementById(id).classList.remove('open');
+}
 
 function openSettings() {
   document.getElementById('guide-name-input').value = state.guideName;
