@@ -1,0 +1,51 @@
+# My Tribe
+
+My Tribe is an AI-powered advisory system designed to help users think through decisions by hearing multiple perspectives.
+
+The system simulates a tribe of advisors, each representing a key pillar of life.
+
+Advisors
+
+Seth — Spiritual Advisor  
+Marcus — Mindset Advisor  
+Emma — Emotional Advisor  
+Hannah — Health Advisor  
+Rachel — Relationships Advisor  
+Frank — Financial Advisor  
+Guide — Custom advisor chosen by the user
+
+How It Works
+
+Users ask questions and can choose different interaction styles:
+
+Ask My Tribe  
+Multiple advisors respond.
+
+Ask Your Guide  
+Only the custom advisor responds.
+
+Ask a Member  
+User selects one or multiple advisors.
+
+Show Parable  
+Advice is delivered through story.
+
+System Structure
+
+system/  
+Contains the central architecture and philosophy of the tribe.
+
+advisors/  
+Contains the profiles and knowledge areas for each advisor.
+
+prompts/  
+Contains system instructions that define how the AI behaves.
+
+ui/  
+Contains the interface files for the application.
+
+Goal
+
+The goal of My Tribe is not to make decisions for the user.
+
+The goal is to help the user think clearly by hearing diverse perspectives from different life pillars.
