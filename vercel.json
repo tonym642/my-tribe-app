@@ -1,8 +1,7 @@
 {
   "routes": [
-    {
-      "src": "/",
-      "dest": "/ui/chat.html"
-    }
+    { "src": "/styles.css", "dest": "/ui/styles.css" },
+    { "src": "/app.js",     "dest": "/ui/app.js"     },
+    { "src": "/",           "dest": "/ui/chat.html"  }
   ]
 }
