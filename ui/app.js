@@ -2,7 +2,7 @@
 // MY TRIBE — app.js
 // ================================================================
 
-const API_URL = 'https://api.anthropic.com/v1/messages';
+const API_URL = '/api/claude';
 const MODEL   = 'claude-sonnet-4-6';
 
 // ── Advisor definitions ──────────────────────────────────────────
@@ -267,8 +267,6 @@ const state = {
   stopped: false,
   currentConvId: null,
   bookContext: null,   // set when continuing from a Book Lesson
-  get apiKey()    { return localStorage.getItem('tribe_api_key') || ''; },
-  set apiKey(v)   { localStorage.setItem('tribe_api_key', v); },
   get guideName() { return localStorage.getItem('tribe_guide_name') || 'a wise mentor and trusted advisor'; },
   set guideName(v){ localStorage.setItem('tribe_guide_name', v); }
 };
@@ -632,17 +630,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Restore saved settings into form
-  document.getElementById('api-key-input').value   = state.apiKey;
   document.getElementById('guide-name-input').value = state.guideName;
 
   // Start initial conversation session
   startNewChat();
   applyModeUI('member');
 
-  // Prompt for API key on first load
-  if (!state.apiKey) {
-    setTimeout(openSettings, 500);
-  }
 });
 
 // ── Input ────────────────────────────────────────────────────────
@@ -785,11 +778,6 @@ async function handleSend() {
   const text = $input.value.trim();
   if (!text || state.isLoading) return;
 
-  if (!state.apiKey) {
-    openSettings();
-    return;
-  }
-
   if (state.mode === 'member' && state.selectedAdvisors.size === 0) {
     showNotice('Select at least one advisor to continue.');
     return;
@@ -892,10 +880,7 @@ async function callAdvisor(advisor, userMessage, tribeContext = '', systemOverri
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': state.apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       model: MODEL,
@@ -985,10 +970,9 @@ function esc(str) {
 // ── Settings modal ────────────────────────────────────────────────
 
 function openSettings() {
-  document.getElementById('api-key-input').value    = state.apiKey;
   document.getElementById('guide-name-input').value = state.guideName;
   document.getElementById('settings-overlay').classList.add('open');
-  setTimeout(() => document.getElementById('api-key-input').focus(), 100);
+  setTimeout(() => document.getElementById('guide-name-input').focus(), 100);
 }
 
 function closeSettings() {
@@ -996,9 +980,7 @@ function closeSettings() {
 }
 
 function saveSettings() {
-  const key  = document.getElementById('api-key-input').value.trim();
   const name = document.getElementById('guide-name-input').value.trim();
-  state.apiKey    = key;
   state.guideName = name || 'a wise mentor and trusted advisor';
   closeSettings();
 }
@@ -1569,7 +1551,6 @@ async function startBookLesson() {
     return;
   }
 
-  if (!state.apiKey) { closeBookLessons(); openSettings(); return; }
 
   blCurrentBook = bookTitle;
 
@@ -1597,9 +1578,7 @@ async function fetchBookLesson(bookTitle, mode) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': state.apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
         model: MODEL,
@@ -2051,10 +2030,7 @@ async function callCampfireAPI(systemPrompt, userPrompt, maxTokens = 300) {
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': state.apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       model: MODEL,
@@ -2070,8 +2046,6 @@ async function callCampfireAPI(systemPrompt, userPrompt, maxTokens = 300) {
 
 async function runCampfire(topic) {
   if (campfireRunning) return;
-  if (!state.apiKey) { showNotice('Add your API key in Settings first.'); return; }
-
   const advisorIds = getCampfireAdvisors();
   if (!advisorIds.length) { showNotice('Please select at least one voice.'); return; }
 
@@ -2413,8 +2387,6 @@ async function runVoting() {
   const advisorIds = getVotingAdvisors();
   if (!advisorIds.length) { showNotice('Please select at least one advisor.'); return; }
 
-  if (!state.apiKey) { showNotice('Add your API key in Settings first.'); return; }
-
   votingRunning = true;
 
   // Switch to results phase
@@ -2438,9 +2410,7 @@ async function runVoting() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': state.apiKey,
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
+          'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
           model: MODEL,
@@ -2507,9 +2477,7 @@ async function runVoting() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': state.apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
         model: MODEL,
@@ -2648,10 +2616,7 @@ async function callDebateAPI(systemPrompt, userPrompt) {
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': state.apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       model: MODEL,
@@ -2670,7 +2635,6 @@ async function callDebateAPI(systemPrompt, userPrompt) {
 
 async function runDebate(topic) {
   if (debateRunning) return;
-  if (!state.apiKey) { showNotice('Add your API key in Settings first.'); return; }
   debateRunning = true;
 
   document.getElementById('debate-input-phase').style.display = 'none';
