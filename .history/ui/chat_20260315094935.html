@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Tribe</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="topbar">
+    <div class="topbar-brand" id="btn-home" role="button" style="cursor:pointer;">
+      <img class="brand-logo" src="../assets/logo-color.png" alt="My Tribe">
+      My Tribe
+    </div>
+    <div class="topbar-nav">
+
+      <!-- Conversations -->
+      <div class="nav-dropdown">
+        <button class="nav-btn">Conversations</button>
+        <div class="nav-menu">
+          <button class="nav-item" id="btn-new-chat">New Chat</button>
+          <button class="nav-item" id="btn-chat-history">Chat History</button>
+        </div>
+      </div>
+
+      <!-- Sessions -->
+      <div class="nav-dropdown">
+        <button class="nav-btn">Sessions</button>
+        <div class="nav-menu">
+          <button class="nav-item" id="btn-debate">Debate</button>
+          <button class="nav-item" id="btn-voting">Voting</button>
+          <button class="nav-item" id="btn-campfire">Campfire</button>
+        </div>
+      </div>
+
+      <!-- Coaching -->
+      <div class="nav-dropdown">
+        <button class="nav-btn">Coaching</button>
+        <div class="nav-menu">
+          <button class="nav-item" id="btn-lessons">Lessons</button>
+          <button class="nav-item" id="btn-daily-alignment">Daily Alignment</button>
+          <button class="nav-item" id="btn-reflections">Reflections</button>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="nav-dropdown">
+        <button class="nav-btn">Settings</button>
+        <div class="nav-menu">
+          <button class="nav-item" id="btn-profile">Profile</button>
+          <button class="nav-item" id="btn-onboarding">Onboarding</button>
+          <button class="nav-item" id="btn-advisors">Advisors</button>
+          <button class="nav-item" id="btn-reflections-settings">Reflections Settings</button>
+          <button class="nav-item" id="btn-introduction">Introduction</button>
+          <div class="nav-item-group">
+            <button class="nav-item has-sub">Appearance</button>
+            <div class="nav-submenu">
+              <button class="nav-item" id="btn-dark-mode">Dark Mode</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin -->
+      <div class="nav-dropdown">
+        <button class="nav-btn">Admin</button>
+        <div class="nav-menu">
+          <button class="nav-item" id="btn-admin-api">Claude API</button>
+        </div>
+      </div>
+
+      <!-- Hamburger (mobile only) -->
+      <button class="nav-hamburger" id="btn-hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- Mobile nav panel -->
+  <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-heading">Conversations</div>
+      <button class="mobile-nav-item" id="m-btn-new-chat">New Chat</button>
+      <button class="mobile-nav-item" id="m-btn-chat-history">Chat History</button>
+    </div>
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-heading">Sessions</div>
+      <button class="mobile-nav-item" id="m-btn-debate">Debate</button>
+      <button class="mobile-nav-item" id="m-btn-voting">Voting</button>
+      <button class="mobile-nav-item" id="m-btn-campfire">Campfire</button>
+    </div>
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-heading">Coaching</div>
+      <button class="mobile-nav-item" id="m-btn-lessons">Lessons</button>
+      <button class="mobile-nav-item" id="m-btn-daily-alignment">Daily Alignment</button>
+      <button class="mobile-nav-item" id="m-btn-reflections">Reflections</button>
+    </div>
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-heading">Settings</div>
+      <button class="mobile-nav-item" id="m-btn-profile">Profile</button>
+      <button class="mobile-nav-item" id="m-btn-onboarding">Onboarding</button>
+      <button class="mobile-nav-item" id="m-btn-advisors">Advisors</button>
+      <button class="mobile-nav-item" id="m-btn-reflections-settings">Reflections Settings</button>
+      <button class="mobile-nav-item" id="m-btn-introduction">Introduction</button>
+      <div class="mobile-nav-sub-heading">Appearance</div>
+      <button class="mobile-nav-item indented" id="m-btn-dark-mode">Dark Mode</button>
+    </div>
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-heading">Admin</div>
+      <button class="mobile-nav-item" id="m-btn-admin-api">Claude API</button>
+    </div>
+  </div>
+
+  <!-- Main Layout -->
+  <div class="layout">
+
+    <!-- Message Stream -->
+    <div class="stream" id="stream">
+      <div class="stream-inner" id="stream-inner">
+        <div class="welcome" id="welcome">
+          <div class="welcome-mark">◎</div>
+          <h1 class="welcome-title">The Tribe is ready</h1>
+          <p class="welcome-sub">Ask anything — your advisors are listening.</p>
+          <div class="welcome-prompts">
+            <button class="welcome-prompt">Should I change careers?</button>
+            <button class="welcome-prompt">How do I improve focus?</button>
+            <button class="welcome-prompt">What is draining my energy?</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Composer (fixed bottom) -->
+    <div class="composer">
+
+      <!-- Action Pills -->
+      <div class="mode-row" id="mode-row">
+        <button class="mode-pill active" data-mode="member">Ask a Member</button>
+        <button class="mode-pill" data-mode="guide">Ask Your Guide</button>
+        <button class="mode-pill" data-mode="bvm" data-tip-title="BVM — Best Version of Me" data-tip-desc="See what the strongest version of you would think and do.">Ask BVM</button>
+        <button class="mode-pill" data-mode="tribe">Ask My Tribe</button>
+        <button class="mode-pill" data-mode="parable">Show Parable</button>
+      </div>
+
+      <!-- Input Row -->
+      <div class="input-row">
+        <textarea
+          class="input-field"
+          id="input-field"
+          placeholder="Ask your tribe something..."
+          rows="1"
+        ></textarea>
+        <button class="send-btn" id="send-btn" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Advisor Selector Row -->
+      <div class="advisor-row" id="advisor-row">
+        <button class="advisor-chip" data-advisor="seth" style="--chip-active:#6D28D9;--chip-glow:rgba(109,40,217,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/seth.png" alt="Seth">
+          <span class="advisor-chip-name">Seth</span>
+        </button>
+        <button class="advisor-chip" data-advisor="marcus" style="--chip-active:#1D4ED8;--chip-glow:rgba(29,78,216,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/marcus.png" alt="Marcus">
+          <span class="advisor-chip-name">Marcus</span>
+        </button>
+        <button class="advisor-chip" data-advisor="emma" style="--chip-active:#BE185D;--chip-glow:rgba(190,24,93,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/emma.png" alt="Emma">
+          <span class="advisor-chip-name">Emma</span>
+        </button>
+        <button class="advisor-chip" data-advisor="hannah" style="--chip-active:#047857;--chip-glow:rgba(4,120,87,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/hannah.png" alt="Hannah">
+          <span class="advisor-chip-name">Hannah</span>
+        </button>
+        <button class="advisor-chip" data-advisor="rachel" style="--chip-active:#B45309;--chip-glow:rgba(180,83,9,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/rachel.png" alt="Rachel">
+          <span class="advisor-chip-name">Rachel</span>
+        </button>
+        <button class="advisor-chip" data-advisor="frank" style="--chip-active:#4338CA;--chip-glow:rgba(67,56,202,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/frank.png" alt="Frank">
+          <span class="advisor-chip-name">Frank</span>
+        </button>
+        <button class="advisor-chip" data-advisor="guide" style="--chip-active:#0F766E;--chip-glow:rgba(15,118,110,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/guide.png" alt="Guide">
+          <span class="advisor-chip-name">Guide</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settings-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Settings</h3>
+        <button class="modal-close" id="settings-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Anthropic API Key</label>
+          <input type="password" class="form-input" id="api-key-input" placeholder="sk-ant-..." autocomplete="off" />
+          <p class="form-hint">Stored locally in your browser. Never shared.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Guide represents...</label>
+          <input type="text" class="form-input" id="guide-name-input" placeholder="e.g. My future self, a Stoic mentor, Dad..." />
+          <p class="form-hint">Define who your personal Guide speaks as.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="settings-save">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat History Panel -->
+  <div class="modal-overlay" id="history-overlay">
+    <div class="modal history-modal">
+      <div class="modal-header">
+        <h3>Chat History</h3>
+        <button class="modal-close" id="history-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="history-list" id="history-list">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

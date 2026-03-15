@@ -1,0 +1,40 @@
+Illustrated portrait avatar, modern flat vector style, bold clean outlines, stylized shading, professional AI assistant app style.
+
+Background:
+Perfect light gray background (#E8E8E8), flat color, no gradients, no shadows.
+
+Framing (VERY IMPORTANT — must match exactly):
+
+• Square canvas
+• Tight headshot crop
+• Face centered horizontally
+• Head fills about 90% of frame width
+• Head height about 85% of frame height
+• Chin very close to bottom edge
+• Top of hair about 8% below top edge
+• Minimal empty space on left and right
+• Shoulders visible but cropped near edges
+• No wide empty padding
+• No zoomed-out composition
+
+Style:
+
+• Flat vector illustration
+• Bold dark outlines
+• Clean shapes
+• Modern app UI avatar style
+• Professional but friendly look
+• High contrast facial features
+• No photo realism
+• No background objects
+
+Lighting:
+
+• Even soft studio lighting
+• Slight stylized shading on face
+• Clear facial definition
+
+Output:
+
+• 2048 × 2048 resolution
+• PNG

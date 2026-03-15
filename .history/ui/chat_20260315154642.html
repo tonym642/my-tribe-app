@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Tribe</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="topbar">
+    <div class="topbar-brand" id="btn-home" role="button" style="cursor:pointer;">
+      <img class="brand-logo" src="../assets/logo-color.png" alt="My Tribe">
+      My Tribe
+    </div>
+    <div class="topbar-nav">
+
+      <!-- Conversations -->
+      <div class="nav-dropdown">
+        <button class="nav-btn">Conversations</button>
+        <div class="nav-menu">
+          <button class="nav-item" id="btn-new-chat">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Chat
+          </button>
+          <button class="nav-item" id="btn-chat-history">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Chat History
+          </button>
+        </div>
+      </div>
+
+      <!-- Sessions -->
+      <div class="nav-dropdown">
+        <button class="nav-btn">Sessions</button>
+        <div class="nav-menu">
+          <button class="nav-item" id="btn-debate">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Debate
+          </button>
+          <button class="nav-item" id="btn-voting">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Voting
+          </button>
+          <button class="nav-item" id="btn-campfire">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+            Campfire
+          </button>
+        </div>
+      </div>
+
+      <!-- Coaching -->
+      <div class="nav-dropdown">
+        <button class="nav-btn">Coaching</button>
+        <div class="nav-menu">
+          <button class="nav-item" id="btn-core-lessons">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            Core Lessons
+          </button>
+          <button class="nav-item" id="btn-book-lessons">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            Book Lessons
+          </button>
+          <button class="nav-item" id="btn-daily-alignment">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Daily Alignment
+          </button>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="nav-dropdown">
+        <button class="nav-btn">Settings</button>
+        <div class="nav-menu">
+          <button class="nav-item" id="btn-profile">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Profile
+          </button>
+          <button class="nav-item" id="btn-onboarding">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Onboarding
+          </button>
+          <button class="nav-item" id="btn-advisors">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Advisors
+          </button>
+          <button class="nav-item" id="btn-reflections-settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/></svg>
+            Reflections Settings
+          </button>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="nav-dropdown">
+        <button class="nav-btn">About</button>
+        <div class="nav-menu">
+          <button class="nav-item" id="btn-about-my-tribe">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            My Tribe
+          </button>
+          <button class="nav-item" id="btn-about-spiritual">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Spiritual Advisor
+          </button>
+          <button class="nav-item" id="btn-about-mindset">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="12" x2="2" y2="12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" y1="16" x2="6.01" y2="16"/><line x1="10" y1="16" x2="10.01" y2="16"/></svg>
+            Mindset Advisor
+          </button>
+          <button class="nav-item" id="btn-about-emotional">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            Emotional Advisor
+          </button>
+          <button class="nav-item" id="btn-about-health">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Health Advisor
+          </button>
+          <button class="nav-item" id="btn-about-relationships">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Relationships Advisor
+          </button>
+          <button class="nav-item" id="btn-about-financial">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Financial Advisor
+          </button>
+        </div>
+      </div>
+
+      <!-- Admin -->
+      <div class="nav-dropdown">
+        <button class="nav-btn">Admin</button>
+        <div class="nav-menu">
+          <button class="nav-item" id="btn-admin-api">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+            Claude API
+          </button>
+        </div>
+      </div>
+
+      <!-- Stories -->
+      <div class="stories-bell-wrap">
+        <button class="stories-bell-btn" id="btn-stories-nav" aria-label="Stories">
+          <svg class="stories-bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="stories-nav-badge" id="stories-nav-badge" style="display:none"></span>
+          <span class="stories-bell-tooltip">Stories</span>
+        </button>
+        <!-- Stories dropdown panel -->
+        <div class="stories-panel" id="stories-panel">
+          <div class="stories-panel-header">
+            <span class="stories-panel-title">Stories</span>
+            <div class="stories-panel-tabs">
+              <button class="stories-tab active" id="stories-tab-new">New</button>
+              <button class="stories-tab" id="stories-tab-archived">Archived</button>
+            </div>
+          </div>
+          <div class="stories-panel-list" id="stories-panel-list">
+            <!-- rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Dark Mode toggle -->
+      <button class="dark-mode-toggle" id="btn-dark-mode" aria-label="Toggle dark mode" title="Dark Mode">
+        <!-- Moon (shown in light mode) -->
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <!-- Sun (shown in dark mode) -->
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      </button>
+
+      <!-- Hamburger (mobile only) -->
+      <button class="nav-hamburger" id="btn-hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- Mobile nav panel -->
+  <div class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-heading">Conversations</div>
+      <button class="mobile-nav-item" id="m-btn-new-chat">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Chat
+      </button>
+      <button class="mobile-nav-item" id="m-btn-chat-history">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Chat History
+      </button>
+    </div>
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-heading">Sessions</div>
+      <button class="mobile-nav-item" id="m-btn-debate">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Debate
+      </button>
+      <button class="mobile-nav-item" id="m-btn-voting">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Voting
+      </button>
+      <button class="mobile-nav-item" id="m-btn-campfire">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+        Campfire
+      </button>
+    </div>
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-heading">Coaching</div>
+      <button class="mobile-nav-item" id="m-btn-core-lessons">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        Core Lessons
+      </button>
+      <button class="mobile-nav-item" id="m-btn-book-lessons">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Book Lessons
+      </button>
+      <button class="mobile-nav-item" id="m-btn-daily-alignment">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Daily Alignment
+      </button>
+    </div>
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-heading">Settings</div>
+      <button class="mobile-nav-item" id="m-btn-profile">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profile
+      </button>
+      <button class="mobile-nav-item" id="m-btn-onboarding">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 16 12 12 16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Onboarding
+      </button>
+      <button class="mobile-nav-item" id="m-btn-advisors">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Advisors
+      </button>
+      <button class="mobile-nav-item" id="m-btn-reflections-settings">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/></svg>
+        Reflections Settings
+      </button>
+    </div>
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-heading">About</div>
+      <button class="mobile-nav-item" id="m-btn-about-my-tribe">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        My Tribe
+      </button>
+      <button class="mobile-nav-item" id="m-btn-about-spiritual">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Spiritual Advisor
+      </button>
+      <button class="mobile-nav-item" id="m-btn-about-mindset">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        Mindset Advisor
+      </button>
+      <button class="mobile-nav-item" id="m-btn-about-emotional">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        Emotional Advisor
+      </button>
+      <button class="mobile-nav-item" id="m-btn-about-health">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Health Advisor
+      </button>
+      <button class="mobile-nav-item" id="m-btn-about-relationships">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Relationships Advisor
+      </button>
+      <button class="mobile-nav-item" id="m-btn-about-financial">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Financial Advisor
+      </button>
+    </div>
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-heading">Admin</div>
+      <button class="mobile-nav-item" id="m-btn-admin-api">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+        Claude API
+      </button>
+    </div>
+    <div class="mobile-nav-section">
+      <button class="mobile-nav-item" id="m-btn-dark-mode">
+        <svg class="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <span class="dark-mode-label">Dark Mode</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Story Viewer (full-screen) -->
+  <div class="story-viewer" id="story-viewer">
+    <div class="story-header">
+      <div class="story-header-avatar" id="story-header-avatar"></div>
+      <div class="story-header-info">
+        <span class="story-header-name" id="story-header-name"></span>
+        <span class="story-header-role" id="story-header-role"></span>
+      </div>
+      <button class="story-close" id="story-close" aria-label="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="story-body">
+      <div class="story-type-tag" id="story-type-tag"></div>
+      <div class="story-title" id="story-title"></div>
+      <div class="story-text" id="story-text"></div>
+      <div class="story-lesson-wrap">
+        <div class="story-lesson-label">Lesson</div>
+        <div class="story-lesson" id="story-lesson"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Layout -->
+  <div class="layout">
+
+    <!-- Message Stream -->
+    <div class="stream" id="stream">
+      <div class="stream-inner" id="stream-inner">
+        <div class="welcome" id="welcome">
+          <div class="welcome-mark">
+            <div class="orb-glow"></div>
+          </div>
+          <h1 class="welcome-title">The Tribe is ready</h1>
+          <p class="welcome-sub">Ask anything — your advisors are listening.</p>
+          <div class="welcome-prompts">
+            <button class="welcome-prompt">Should I change careers?</button>
+            <button class="welcome-prompt">How do I improve focus?</button>
+            <button class="welcome-prompt">What is draining my energy?</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Composer (fixed bottom) -->
+    <div class="composer">
+
+      <!-- Action Pills -->
+      <div class="mode-row" id="mode-row">
+        <div class="mode-row-top">
+          <button class="mode-pill active" data-mode="member">Ask a Member</button>
+          <button class="mode-pill" data-mode="guide">Ask Your Guide</button>
+        </div>
+        <div class="mode-row-bottom">
+          <button class="mode-pill" data-mode="bvm" data-tip-title="BVM — Best Version of Me" data-tip-desc="See what the strongest version of you would think and do.">Ask BVM</button>
+          <button class="mode-pill" data-mode="tribe">Ask My Tribe</button>
+          <button class="mode-pill" data-mode="parable">Show Parable</button>
+        </div>
+      </div>
+
+      <!-- Advisor Selector Row -->
+      <div class="advisor-row" id="advisor-row">
+        <button class="advisor-chip" data-advisor="seth" style="--chip-active:#6D28D9;--chip-glow:rgba(109,40,217,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/seth.png" alt="Seth">
+          <span class="advisor-chip-name">Seth</span>
+        </button>
+        <button class="advisor-chip" data-advisor="marcus" style="--chip-active:#1D4ED8;--chip-glow:rgba(29,78,216,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/marcus.png" alt="Marcus">
+          <span class="advisor-chip-name">Marcus</span>
+        </button>
+        <button class="advisor-chip" data-advisor="emma" style="--chip-active:#BE185D;--chip-glow:rgba(190,24,93,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/emma.png" alt="Emma">
+          <span class="advisor-chip-name">Emma</span>
+        </button>
+        <button class="advisor-chip" data-advisor="hannah" style="--chip-active:#047857;--chip-glow:rgba(4,120,87,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/hannah.png" alt="Hannah">
+          <span class="advisor-chip-name">Hannah</span>
+        </button>
+        <button class="advisor-chip" data-advisor="rachel" style="--chip-active:#B45309;--chip-glow:rgba(180,83,9,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/rachel.png" alt="Rachel">
+          <span class="advisor-chip-name">Rachel</span>
+        </button>
+        <button class="advisor-chip" data-advisor="frank" style="--chip-active:#4338CA;--chip-glow:rgba(67,56,202,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/frank.png" alt="Frank">
+          <span class="advisor-chip-name">Frank</span>
+        </button>
+        <button class="advisor-chip" data-advisor="guide" style="--chip-active:#0F766E;--chip-glow:rgba(15,118,110,0.35)">
+          <img class="advisor-avatar-img" src="../assets/avatars/guide.png" alt="Guide">
+          <span class="advisor-chip-name">Guide</span>
+        </button>
+      </div>
+
+      <!-- Input Row -->
+      <div class="input-row">
+        <textarea
+          class="input-field"
+          id="input-field"
+          placeholder="Ask your tribe something..."
+          rows="1"
+        ></textarea>
+        <button class="send-btn" id="send-btn" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- About Modal -->
+  <div class="modal-overlay" id="about-overlay">
+    <div class="modal about-modal">
+      <div class="modal-header">
+        <h3 id="about-modal-title">About</h3>
+        <button class="modal-close" id="about-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="about-content" class="about-content"></div>
+      </div>
+      <div class="modal-footer about-nav-footer">
+        <button class="about-nav-btn" id="about-prev">← Previous</button>
+        <span class="about-nav-counter" id="about-nav-counter"></span>
+        <button class="about-nav-btn" id="about-next">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settings-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Settings</h3>
+        <button class="modal-close" id="settings-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Anthropic API Key</label>
+          <input type="password" class="form-input" id="api-key-input" placeholder="sk-ant-..." autocomplete="off" />
+          <p class="form-hint">Stored locally in your browser. Never shared.</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Guide represents...</label>
+          <input type="text" class="form-input" id="guide-name-input" placeholder="e.g. My future self, a Stoic mentor, Dad..." />
+          <p class="form-hint">Define who your personal Guide speaks as.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="settings-save">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat History Panel -->
+  <div class="modal-overlay" id="history-overlay">
+    <div class="modal history-modal">
+      <div class="modal-header">
+        <h3>Chat History</h3>
+        <button class="modal-close" id="history-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="history-list" id="history-list">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Book Lessons Modal -->
+  <div class="modal-overlay" id="book-lessons-overlay">
+    <div class="modal book-lessons-modal">
+
+      <div class="modal-header">
+        <h3>Book Lessons</h3>
+        <button class="modal-close" id="book-lessons-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Input phase -->
+      <div id="bl-input-phase" class="bl-phase">
+        <p class="bl-intro">Enter a book title to generate a structured lesson.</p>
+        <input type="text" class="form-input" id="bl-book-input"
+          placeholder="Atomic Habits, Think and Grow Rich, The 7 Habits..." />
+        <div class="bl-mode-row">
+          <button class="bl-mode-btn active" data-mode="quick">Quick</button>
+          <button class="bl-mode-btn" data-mode="deep">Deep Dive</button>
+          <button class="bl-mode-btn" data-mode="interactive">Interactive</button>
+        </div>
+        <div class="modal-footer" style="padding:0;border:none;margin-top:16px">
+          <button class="btn-primary" id="bl-start-btn">Start Lesson</button>
+        </div>
+      </div>
+
+      <!-- Lesson phase -->
+      <div id="bl-lesson-phase" class="bl-phase" style="display:none">
+        <div class="bl-lesson-header">
+          <div id="bl-current-book" class="bl-book-title"></div>
+          <div class="bl-mode-row">
+            <button class="bl-mode-btn" data-mode="quick">Quick</button>
+            <button class="bl-mode-btn" data-mode="deep">Deep Dive</button>
+            <button class="bl-mode-btn" data-mode="interactive">Interactive</button>
+          </div>
+        </div>
+        <div id="bl-lesson-content" class="bl-lesson-content"></div>
+        <div class="bl-tribe-section">
+          <div class="bl-tribe-heading">Continue with your Tribe</div>
+          <div class="bl-tribe-pills">
+            <button class="bl-tribe-pill" data-mode="member">Ask a Member</button>
+            <button class="bl-tribe-pill" data-mode="guide">Ask Your Guide</button>
+            <button class="bl-tribe-pill" data-mode="bvm">Ask BVM</button>
+            <button class="bl-tribe-pill" data-mode="tribe">Ask My Tribe</button>
+            <button class="bl-tribe-pill" data-mode="parable">Show Parable</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Daily Alignment Modal -->
+  <div class="modal-overlay" id="daily-overlay">
+    <div class="modal daily-modal">
+
+      <div class="modal-header">
+        <div class="daily-header-left">
+          <h3>Daily Alignment</h3>
+          <span class="align-saved-badge" id="align-saved-badge"></span>
+        </div>
+        <button class="modal-close" id="daily-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="daily-body">
+
+        <!-- Section 1: Goals -->
+        <div class="align-section">
+          <div class="align-section-title">Focused Goals</div>
+          <p class="align-prompt">What important goals are you focused on today?</p>
+          <div id="align-goals"></div>
+          <div class="align-add-row">
+            <input type="text" class="align-add-input" id="align-goal-input" placeholder="Add a goal..." />
+            <button class="align-add-btn" id="align-goal-add">Add</button>
+          </div>
+        </div>
+
+        <!-- Section 2: Focus -->
+        <div class="align-section">
+          <div class="align-section-title">Focus</div>
+          <p class="align-prompt">Where is your focus right now?</p>
+          <div class="align-options" id="align-focus"></div>
+        </div>
+
+        <!-- Section 3: Emotional State -->
+        <div class="align-section">
+          <div class="align-section-title">Emotional State</div>
+          <p class="align-prompt">How is your emotional state today?</p>
+          <div class="align-options" id="align-emotional"></div>
+        </div>
+
+        <!-- Section 4: Self Image -->
+        <div class="align-section">
+          <div class="align-section-title">Self Image</div>
+          <p class="align-prompt">How do you currently view yourself?</p>
+          <div class="align-options" id="align-selfimage"></div>
+        </div>
+
+        <!-- Daily message (populated from coaching/daily-alignment.md) -->
+        <div class="align-message" id="align-message"></div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-primary" id="align-save-btn">Save Entry</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Campfire Modal -->
+  <div class="modal-overlay" id="campfire-overlay">
+    <div class="modal campfire-modal">
+
+      <div class="modal-header campfire-header">
+        <span class="modal-title">Campfire</span>
+        <button class="modal-close" id="campfire-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Setup phase -->
+      <div id="campfire-setup-phase" class="campfire-phase">
+        <p class="campfire-intro">Bring a question, struggle, or season of life to the fire and hear the wisdom of your Tribe.</p>
+
+        <!-- Topic textarea -->
+        <div class="campfire-field-label">What do you want to bring to the circle?</div>
+        <textarea id="campfire-topic" class="campfire-textarea" rows="4"
+          placeholder="I feel stuck and don't know what to do next...&#10;I am trying to understand why this keeps happening...&#10;I want wisdom on a relationship, habit, or season of life..."></textarea>
+
+        <!-- Tone selector -->
+        <div class="campfire-field-label">Tone</div>
+        <div class="campfire-tone-row">
+          <button class="campfire-tone-btn active" data-tone="reflective">Reflective</button>
+          <button class="campfire-tone-btn" data-tone="encouraging">Encouraging</button>
+          <button class="campfire-tone-btn" data-tone="honest">Honest</button>
+          <button class="campfire-tone-btn" data-tone="deep">Deep</button>
+        </div>
+
+        <!-- Advisor selection -->
+        <div class="campfire-field-label" style="margin-top:16px">Voices</div>
+        <div class="campfire-advisor-toggle-row">
+          <button class="cat-btn active" id="ca-btn-all">Full Tribe</button>
+          <button class="cat-btn" id="ca-btn-select">Choose Voices</button>
+        </div>
+        <div class="campfire-advisor-chips" id="campfire-advisor-chips" style="display:none">
+          <label class="ca-chip"><input type="checkbox" class="campfire-advisor-check" value="seth" checked><span>Seth</span></label>
+          <label class="ca-chip"><input type="checkbox" class="campfire-advisor-check" value="marcus" checked><span>Marcus</span></label>
+          <label class="ca-chip"><input type="checkbox" class="campfire-advisor-check" value="emma" checked><span>Emma</span></label>
+          <label class="ca-chip"><input type="checkbox" class="campfire-advisor-check" value="hannah" checked><span>Hannah</span></label>
+          <label class="ca-chip"><input type="checkbox" class="campfire-advisor-check" value="rachel" checked><span>Rachel</span></label>
+          <label class="ca-chip"><input type="checkbox" class="campfire-advisor-check" value="frank" checked><span>Frank</span></label>
+        </div>
+
+        <button class="campfire-start-btn" id="campfire-start-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+          Light the Fire
+        </button>
+      </div>
+
+      <!-- Session phase -->
+      <div id="campfire-session-phase" class="campfire-phase" style="display:none">
+        <div class="campfire-stream">
+
+          <!-- Topic echo -->
+          <div class="campfire-topic-card" id="campfire-topic-card"></div>
+
+          <!-- Opening atmosphere line -->
+          <div class="campfire-atmosphere" id="campfire-atmosphere" style="display:none">
+            <span id="campfire-atmosphere-text"></span>
+          </div>
+
+          <!-- Reflection entries -->
+          <div id="campfire-entries"></div>
+
+          <!-- Closing card -->
+          <div class="campfire-closing-card" id="campfire-closing" style="display:none">
+            <div class="campfire-closing-header">
+              <div class="campfire-closing-avatar" id="campfire-closing-avatar"></div>
+              <div>
+                <div class="campfire-closing-name">Guide</div>
+                <div class="campfire-closing-label">Closing Reflection</div>
+              </div>
+            </div>
+            <div class="campfire-closing-text" id="campfire-closing-text"></div>
+          </div>
+
+          <!-- Reflection question -->
+          <div class="campfire-question-card" id="campfire-question-card" style="display:none">
+            <div class="campfire-question-label">Take this with you</div>
+            <div class="campfire-question-text" id="campfire-question-text"></div>
+          </div>
+
+          <div class="campfire-footer-row">
+            <button class="campfire-new-btn" id="campfire-new-btn">New Session</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Voting Modal -->
+  <div class="modal-overlay" id="voting-overlay">
+    <div class="modal voting-modal">
+
+      <div class="modal-header">
+        <span class="modal-title">Tribe Voting</span>
+        <button class="modal-close" id="voting-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Setup phase -->
+      <div id="voting-setup-phase" class="voting-phase">
+        <p class="voting-intro">Present a decision to your Tribe and see how the council votes.</p>
+
+        <!-- Vote type selector -->
+        <div class="voting-type-row">
+          <button class="voting-type-btn active" data-vtype="yes-no">Yes / No</button>
+          <button class="voting-type-btn" data-vtype="ab">A / B</button>
+          <button class="voting-type-btn" data-vtype="multiple">Multiple Choice</button>
+        </div>
+
+        <!-- Question -->
+        <div class="voting-field-label">Your question or decision</div>
+        <textarea id="voting-question" class="voting-textarea" placeholder="e.g. Should I change careers this year?" rows="2"></textarea>
+
+        <!-- Options area (dynamic) -->
+        <div id="voting-options-area"></div>
+
+        <!-- Advisor selection -->
+        <div class="voting-field-label" style="margin-top:16px">Council</div>
+        <div class="voting-advisor-toggle-row">
+          <button class="vat-btn active" id="va-btn-all">All Tribe</button>
+          <button class="vat-btn" id="va-btn-select">Choose Advisors</button>
+        </div>
+        <div class="voting-advisor-chips" id="voting-advisor-chips" style="display:none">
+          <label class="va-chip"><input type="checkbox" class="voting-advisor-check" value="seth" checked><span>Seth</span></label>
+          <label class="va-chip"><input type="checkbox" class="voting-advisor-check" value="marcus" checked><span>Marcus</span></label>
+          <label class="va-chip"><input type="checkbox" class="voting-advisor-check" value="emma" checked><span>Emma</span></label>
+          <label class="va-chip"><input type="checkbox" class="voting-advisor-check" value="hannah" checked><span>Hannah</span></label>
+          <label class="va-chip"><input type="checkbox" class="voting-advisor-check" value="rachel" checked><span>Rachel</span></label>
+          <label class="va-chip"><input type="checkbox" class="voting-advisor-check" value="frank" checked><span>Frank</span></label>
+        </div>
+
+        <button class="btn-primary voting-start-btn" id="voting-start-btn">Start Voting</button>
+      </div>
+
+      <!-- Results phase -->
+      <div id="voting-results-phase" class="voting-phase" style="display:none">
+        <div class="voting-results-scroll">
+
+          <div class="voting-question-display" id="voting-question-display"></div>
+
+          <!-- Final result card (shown after all votes) -->
+          <div class="voting-result-card" id="voting-result-card" style="display:none">
+            <div class="vrc-majority-label" id="vrc-label"></div>
+            <div class="vrc-winner" id="vrc-winner"></div>
+            <div class="vrc-count" id="vrc-count"></div>
+          </div>
+
+          <!-- Tally bars -->
+          <div class="voting-tally" id="voting-tally"></div>
+
+          <!-- Advisor vote cards -->
+          <div class="voting-cards-grid" id="voting-cards"></div>
+
+          <!-- Guide summary -->
+          <div class="voting-guide-summary" id="voting-summary" style="display:none">
+            <div class="vgs-header">
+              <div class="vgs-avatar-wrap" id="vgs-avatar-wrap"></div>
+              <div class="vgs-title">Guide Summary</div>
+            </div>
+            <div class="vgs-text" id="voting-summary-text"></div>
+          </div>
+
+          <div class="voting-footer-row">
+            <button class="voting-new-btn" id="voting-new-btn">Start New Vote</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Debate Modal -->
+  <div class="modal-overlay" id="debate-overlay">
+    <div class="modal debate-modal">
+
+      <div class="modal-header">
+        <span class="modal-title">Tribe Debate</span>
+        <button class="modal-close" id="debate-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Input phase -->
+      <div id="debate-input-phase" class="debate-phase">
+        <p class="debate-intro">Enter a topic or question and your Tribe will debate it from their unique perspectives.</p>
+        <textarea id="debate-topic-input" class="debate-topic-input" placeholder="e.g. Should I change careers?" rows="3"></textarea>
+        <div class="debate-start-row">
+          <button class="btn-primary" id="debate-start-btn">Start Debate</button>
+        </div>
+      </div>
+
+      <!-- Thread phase -->
+      <div id="debate-thread-phase" class="debate-phase" style="display:none">
+        <div class="debate-topic-banner" id="debate-topic-banner"></div>
+        <div class="debate-thread" id="debate-thread"></div>
+        <div class="debate-footer-row">
+          <button class="debate-new-btn" id="debate-new-btn">Start New Debate</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Background -->
+  <circle cx="128" cy="128" r="128" fill="#D1FAE5"/>
+  <!-- Body -->
+  <path d="M 44 256 C 44 182 88 168 128 168 C 168 168 212 182 212 256 Z" fill="#059669"/>
+  <!-- Neck -->
+  <rect x="112" y="150" width="32" height="26" rx="4" fill="#FDDCB5"/>
+  <!-- Head -->
+  <circle cx="128" cy="108" r="54" fill="#FDDCB5"/>
+  <!-- Hair — dark, pulled back sporty -->
+  <path d="M76 100 C78 58 178 58 180 100 C178 66 164 54 128 54 C92 54 78 66 76 100Z" fill="#1A1A1A"/>
+  <!-- Bun on top -->
+  <circle cx="128" cy="52" r="16" fill="#1A1A1A"/>
+  <!-- Bun highlight -->
+  <circle cx="124" cy="48" r="5" fill="#333" opacity="0.5"/>
+  <!-- Ponytail holder band -->
+  <ellipse cx="128" cy="66" rx="10" ry="5" fill="#333"/>
+  <!-- Ears -->
+  <ellipse cx="74" cy="112" rx="8" ry="12" fill="#FDDCB5"/>
+  <ellipse cx="182" cy="112" rx="8" ry="12" fill="#FDDCB5"/>
+  <!-- Eyes — bright alert -->
+  <circle cx="112" cy="108" r="5.5" fill="#1A1A1A"/>
+  <circle cx="144" cy="108" r="5.5" fill="#1A1A1A"/>
+  <circle cx="114" cy="106" r="2" fill="white"/>
+  <circle cx="146" cy="106" r="2" fill="white"/>
+  <!-- Smile -->
+  <path d="M116 126 Q128 134 140 126" stroke="#C07060" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>

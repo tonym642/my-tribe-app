@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Background -->
+  <circle cx="128" cy="128" r="128" fill="#DBEAFE"/>
+  <!-- Body -->
+  <path d="M 44 256 C 44 182 88 168 128 168 C 168 168 212 182 212 256 Z" fill="#2563EB"/>
+  <!-- Collar / shirt detail -->
+  <path d="M 108 170 L 128 190 L 148 170 L 142 168 L 128 184 L 114 168 Z" fill="white" opacity="0.6"/>
+  <!-- Neck -->
+  <rect x="112" y="150" width="32" height="26" rx="4" fill="#FDDCB5"/>
+  <!-- Head -->
+  <circle cx="128" cy="108" r="54" fill="#FDDCB5"/>
+  <!-- Hair — short neat strategic thinker -->
+  <path d="M76 100 C78 60 178 60 180 100 C178 68 164 56 128 56 C92 56 78 68 76 100Z" fill="#1A1A2E"/>
+  <!-- Ears -->
+  <ellipse cx="74" cy="112" rx="8" ry="12" fill="#FDDCB5"/>
+  <ellipse cx="182" cy="112" rx="8" ry="12" fill="#FDDCB5"/>
+  <!-- Eyes — focused/sharp -->
+  <circle cx="112" cy="108" r="5.5" fill="#1A1A2E"/>
+  <circle cx="144" cy="108" r="5.5" fill="#1A1A2E"/>
+  <circle cx="114" cy="106" r="2" fill="white"/>
+  <circle cx="146" cy="106" r="2" fill="white"/>
+  <!-- Subtle brow lines -->
+  <path d="M104 96 Q112 92 120 96" stroke="#1A1A2E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M136 96 Q144 92 152 96" stroke="#1A1A2E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>

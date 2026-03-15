@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Background -->
+  <circle cx="128" cy="128" r="128" fill="#FCE7F3"/>
+  <!-- Body -->
+  <path d="M 44 256 C 44 182 88 168 128 168 C 168 168 212 182 212 256 Z" fill="#DB2777"/>
+  <!-- Neck -->
+  <rect x="112" y="150" width="32" height="26" rx="4" fill="#FDDCB5"/>
+  <!-- Head -->
+  <circle cx="128" cy="108" r="54" fill="#FDDCB5"/>
+  <!-- Hair — warm auburn flowing longer -->
+  <path d="M74 104 C76 56 180 56 182 104 C180 70 164 56 128 54 C92 56 76 70 74 104Z" fill="#8B3A3A"/>
+  <!-- Long side hair left -->
+  <path d="M74 104 C68 128 66 160 70 180 L80 172 C76 154 74 130 74 104Z" fill="#8B3A3A"/>
+  <!-- Long side hair right -->
+  <path d="M182 104 C188 128 190 160 186 180 L176 172 C180 154 182 130 182 104Z" fill="#8B3A3A"/>
+  <!-- Hair highlight -->
+  <path d="M110 58 C116 54 128 54 140 56 C132 54 118 54 110 58Z" fill="#C06060" opacity="0.5"/>
+  <!-- Eyes — warm empathetic -->
+  <circle cx="112" cy="108" r="6" fill="#4A2222"/>
+  <circle cx="144" cy="108" r="6" fill="#4A2222"/>
+  <circle cx="114" cy="106" r="2.5" fill="white"/>
+  <circle cx="146" cy="106" r="2.5" fill="white"/>
+  <!-- Gentle smile -->
+  <path d="M116 128 Q128 136 140 128" stroke="#C07060" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>

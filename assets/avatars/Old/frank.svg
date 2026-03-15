@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Background -->
+  <circle cx="128" cy="128" r="128" fill="#E0E7FF"/>
+  <!-- Body — suit jacket -->
+  <path d="M 44 256 C 44 182 88 168 128 168 C 168 168 212 182 212 256 Z" fill="#312E81"/>
+  <!-- Collar left -->
+  <path d="M 108 170 L 128 192 L 118 168 Z" fill="white" opacity="0.7"/>
+  <!-- Collar right -->
+  <path d="M 148 170 L 128 192 L 138 168 Z" fill="white" opacity="0.7"/>
+  <!-- Tie -->
+  <path d="M 124 190 L 128 212 L 132 190 L 128 186 Z" fill="#4F46E5" opacity="0.9"/>
+  <!-- Neck -->
+  <rect x="112" y="150" width="32" height="26" rx="4" fill="#FDDCB5"/>
+  <!-- Head -->
+  <circle cx="128" cy="108" r="54" fill="#FDDCB5"/>
+  <!-- Hair — short professional dark -->
+  <path d="M76 100 C78 60 178 60 180 100 C178 68 164 56 128 56 C92 56 78 68 76 100Z" fill="#1A1A1A"/>
+  <!-- Ears -->
+  <ellipse cx="74" cy="112" rx="8" ry="12" fill="#FDDCB5"/>
+  <ellipse cx="182" cy="112" rx="8" ry="12" fill="#FDDCB5"/>
+  <!-- Eyes — confident direct -->
+  <circle cx="112" cy="108" r="5.5" fill="#1A1A1A"/>
+  <circle cx="144" cy="108" r="5.5" fill="#1A1A1A"/>
+  <circle cx="114" cy="106" r="2" fill="white"/>
+  <circle cx="146" cy="106" r="2" fill="white"/>
+  <!-- Confident slight smile -->
+  <path d="M118 128 Q128 134 138 128" stroke="#B07060" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>

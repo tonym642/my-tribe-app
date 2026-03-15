@@ -1,0 +1,163 @@
+# Daily Alignment
+
+## Purpose
+
+Daily Alignment is a quick daily self-check designed to help users stay aligned with their goals, mindset, and personal standards.
+
+The goal is not deep reflection.
+
+The goal is fast awareness.
+
+Daily Alignment should take less than one minute to complete.
+
+It encourages users to pause and evaluate whether their current direction matches the person they want to become.
+
+---
+
+# Core Idea
+
+Progress happens when actions align with intentions.
+
+Daily Alignment helps the user verify that alignment.
+
+It focuses on three key areas:
+
+Focus  
+Emotional State  
+Self Image
+
+These factors strongly influence behavior and decision making.
+
+---
+
+# Structure
+
+Daily Alignment consists of four short sections.
+
+---
+
+## 1. Focused Goals
+
+Prompt:
+
+What important goals are you focused on today?
+
+The user selects from a list of goals.
+
+Example goals:
+
+- My health
+- Spiritual growth
+- Personal growth
+
+Users should be able to edit or add goals.
+
+This section helps users reconnect with their priorities.
+
+---
+
+## 2. Focus
+
+Prompt:
+
+Where is your focus right now?
+
+Options:
+
+Focused on commitments and priorities
+
+Distracted or making excuses
+
+Thinking about past problems
+
+This question measures present mental direction.
+
+---
+
+## 3. Emotional State
+
+Prompt:
+
+How is your emotional state today?
+
+Options:
+
+Excited
+
+Grateful or at peace
+
+Neutral
+
+Feeling down
+
+Depressed
+
+This helps the user recognize their emotional baseline.
+
+---
+
+## 4. Self Image
+
+Prompt:
+
+How do you currently view yourself?
+
+Options:
+
+Strong and confident
+
+Balanced
+
+Low confidence
+
+Self-image strongly influences behavior.
+
+This question encourages honest self-awareness.
+
+---
+
+# Completion Message
+
+After completing the alignment check the system displays a short reinforcement message.
+
+Example:
+
+When your actions align with your commitments and values, progress becomes inevitable.
+
+The message should be simple and reinforcing.
+
+---
+
+# Frequency
+
+Daily Alignment is intended to be completed once per day.
+
+Users may update their answers later in the same day if their state changes.
+
+---
+
+# Storage
+
+Each entry stores:
+
+date  
+goals selected  
+focus answer  
+emotional state  
+self image  
+
+Entries may later be used to show patterns or progress.
+
+---
+
+# Design Principles
+
+Daily Alignment must remain:
+
+fast  
+simple  
+minimal  
+
+Avoid turning it into a long questionnaire.
+
+The goal is consistent daily awareness.

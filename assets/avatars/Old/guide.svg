@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Background -->
+  <circle cx="128" cy="128" r="128" fill="#CCFBF1"/>
+  <!-- Body -->
+  <path d="M 44 256 C 44 182 88 168 128 168 C 168 168 212 182 212 256 Z" fill="#0D9488"/>
+  <!-- Neck -->
+  <rect x="112" y="150" width="32" height="26" rx="4" fill="#FDDCB5"/>
+  <!-- Head -->
+  <circle cx="128" cy="108" r="54" fill="#FDDCB5"/>
+  <!-- Hair — salt-and-pepper medium wise -->
+  <path d="M74 104 C76 56 180 56 182 104 C180 68 164 54 128 52 C92 54 76 68 74 104Z" fill="#5A5A5A"/>
+  <!-- Grey streaks / highlights -->
+  <path d="M116 56 C118 54 122 54 124 56 C122 54 118 54 116 56Z" fill="#CCCCCC" opacity="0.8" stroke="#CCCCCC" stroke-width="3"/>
+  <path d="M132 56 C134 54 138 54 140 56 C138 54 134 54 132 56Z" fill="#CCCCCC" opacity="0.8" stroke="#CCCCCC" stroke-width="3"/>
+  <!-- Side hair left -->
+  <path d="M74 104 C70 124 72 146 76 158 L84 150 C80 136 74 120 74 104Z" fill="#5A5A5A"/>
+  <!-- Side hair right -->
+  <path d="M182 104 C186 124 184 146 180 158 L172 150 C176 136 182 120 182 104Z" fill="#5A5A5A"/>
+  <!-- Ears -->
+  <ellipse cx="74" cy="112" rx="8" ry="12" fill="#FDDCB5"/>
+  <ellipse cx="182" cy="112" rx="8" ry="12" fill="#FDDCB5"/>
+  <!-- Eyes — wise calm -->
+  <circle cx="112" cy="108" r="5.5" fill="#2D4A4A"/>
+  <circle cx="144" cy="108" r="5.5" fill="#2D4A4A"/>
+  <circle cx="114" cy="106" r="2" fill="white"/>
+  <circle cx="146" cy="106" r="2" fill="white"/>
+  <!-- Calm wise smile -->
+  <path d="M116 128 Q128 136 140 128" stroke="#8A7060" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>

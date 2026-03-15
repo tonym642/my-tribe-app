@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Background -->
+  <circle cx="128" cy="128" r="128" fill="#EDE9FE"/>
+  <!-- Body -->
+  <path d="M 44 256 C 44 182 88 168 128 168 C 168 168 212 182 212 256 Z" fill="#7C3AED"/>
+  <!-- Neck -->
+  <rect x="112" y="150" width="32" height="26" rx="4" fill="#FDDCB5"/>
+  <!-- Head -->
+  <circle cx="128" cy="108" r="54" fill="#FDDCB5"/>
+  <!-- Hair — calm medium length -->
+  <path d="M74 104 C76 58 180 58 182 104 C180 72 164 58 128 58 C92 58 76 72 74 104Z" fill="#2D1B0E"/>
+  <!-- Side hair left -->
+  <path d="M74 104 C70 122 74 142 78 152 L86 144 C82 132 76 118 74 104Z" fill="#2D1B0E"/>
+  <!-- Side hair right -->
+  <path d="M182 104 C186 122 182 142 178 152 L170 144 C174 132 180 118 182 104Z" fill="#2D1B0E"/>
+  <!-- Subtle beard -->
+  <path d="M94 134 Q128 156 162 134 Q150 152 128 156 Q106 152 94 134Z" fill="#2D1B0E" opacity="0.28"/>
+  <!-- Eyes -->
+  <circle cx="112" cy="108" r="5.5" fill="#2D1B0E"/>
+  <circle cx="144" cy="108" r="5.5" fill="#2D1B0E"/>
+  <!-- Eye glint -->
+  <circle cx="114" cy="106" r="2" fill="white"/>
+  <circle cx="146" cy="106" r="2" fill="white"/>
+</svg>
