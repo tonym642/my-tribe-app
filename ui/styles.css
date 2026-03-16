@@ -480,6 +480,16 @@ body.dark-mode .advisor-title {
   line-height: 1.65;
 }
 
+.advisor-text.streaming::after {
+  content: '▋';
+  display: inline-block;
+  font-size: 0.8em;
+  vertical-align: middle;
+  animation: blink-cursor 0.7s step-start infinite;
+  color: var(--text-3);
+  margin-left: 1px;
+}
+
 .advisor-text p {
   margin-bottom: 10px;
   line-height: 1.6;
@@ -539,6 +549,12 @@ body.dark-mode .advisor-title {
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
 }
 
 /* ── Mention autocomplete ────────────────────────────────────────── */

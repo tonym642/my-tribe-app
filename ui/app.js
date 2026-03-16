@@ -268,6 +268,7 @@ const state = {
   currentConvId: null,
   bookContext: null,   // set when continuing from a Book Lesson
   lastSpeakers: [],    // tracks who last responded for mention routing
+  streamController: null
   get guideName() { return localStorage.getItem('tribe_guide_name') || 'a wise mentor and trusted advisor'; },
   set guideName(v){ localStorage.setItem('tribe_guide_name', v); }
 };
@@ -854,6 +855,10 @@ function setStopMode() {
 
 function handleStop() {
   state.stopped = true;
+  if (state.streamController) {
+    state.streamController.abort();
+    state.streamController = null;
+  }
 }
 
 async function handleSend() {
@@ -902,21 +907,19 @@ async function handleSend() {
   }
   scrollBottom();
 
-  // Call each advisor sequentially
+  // Call each advisor sequentially (streaming into their card)
   // tribeContext accumulates prior responses so later advisors can reference them
   let tribeContext = '';
   let lastResponderId = null;
   for (const id of advisorIds) {
     if (state.stopped) { fillCard(cards[id], 'Stopped.', true); continue; }
     try {
-      const response = await callAdvisor(ADVISORS[id], aiText, tribeContext);
-      fillCard(cards[id], response);
+      const response = await callAdvisor(ADVISORS[id], aiText, tribeContext, cards[id]);
       addMsgToConv({ type: 'advisor', advisor_id: id, content: response });
       tribeContext += `\n\n${ADVISORS[id].name}:\n${response}`;
       lastResponderId = id;
     } catch (err) {
-      const msg = formatError(err);
-      fillCard(cards[id], msg, true);
+      if (err.name !== 'AbortError') fillCard(cards[id], formatError(err), true);
     }
     scrollBottom();
   }
@@ -940,11 +943,10 @@ async function handleSend() {
       `Your role is to synthesize the tribe discussion.\n\nResponse format:\n• Title (one short line)\n• One short paragraph summarizing the key insight\n• Up to 3 short bullet takeaways\n\nConstraints:\n- Keep the entire response under 120 words.\n- Do not repeat the advisors.\n- Do not restate the entire discussion.\n- Focus only on the most important takeaway for the user.`;
 
     try {
-      const synthesis = await callAdvisor(ADVISORS['guide'], synthesisMessage, '', synthesisSystem);
-      fillCard(synthesisCard, synthesis);
+      const synthesis = await callAdvisor(ADVISORS['guide'], synthesisMessage, '', synthesisCard, synthesisSystem);
       addMsgToConv({ type: 'synthesis', content: synthesis });
     } catch (err) {
-      fillCard(synthesisCard, formatError(err), true);
+      if (err.name !== 'AbortError') fillCard(synthesisCard, formatError(err), true);
     }
     scrollBottom();
   }
@@ -957,7 +959,7 @@ async function handleSend() {
 
 // ── API ───────────────────────────────────────────────────────────
 
-async function callAdvisor(advisor, userMessage, tribeContext = '', systemOverride = null) {
+async function callAdvisor(advisor, userMessage, tribeContext = '', streamCard = null, systemOverride = null) {
   // systemOverride is used for the synthesis card — bypass knowledge loading in that case
   const system = systemOverride || buildSystemPrompt(advisor);
 
@@ -972,17 +974,20 @@ async function callAdvisor(advisor, userMessage, tribeContext = '', systemOverri
     prompt += `\n\nEarlier advisor responses:${tribeContext}`;
   }
 
+  const controller = new AbortController();
+  state.streamController = controller;
+
   const res = await fetch(API_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: MODEL,
       max_tokens: 450,
+      stream: true,
       system,
       messages: [{ role: 'user', content: prompt }]
-    })
+    }),
+    signal: controller.signal
   });
 
   if (!res.ok) {
@@ -990,8 +995,55 @@ async function callAdvisor(advisor, userMessage, tribeContext = '', systemOverri
     throw new Error(err.error?.message || `HTTP ${res.status}`);
   }
 
-  const data = await res.json();
-  return data.content[0].text;
+  const textEl = streamCard?.querySelector('.advisor-text');
+  const reader  = res.body.getReader();
+  const decoder = new TextDecoder();
+  let fullText   = '';
+  let firstChunk = true;
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      for (const line of decoder.decode(value, { stream: true }).split('\n')) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (!data || data === '[DONE]') continue;
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
+            fullText += parsed.delta.text;
+            if (textEl) {
+              if (firstChunk) {
+                // Replace thinking dots with streaming text
+                textEl.innerHTML = '';
+                textEl.classList.add('streaming');
+                firstChunk = false;
+              }
+              textEl.textContent = fullText;
+              scrollBottom();
+            }
+          }
+        } catch (e) { /* skip malformed SSE lines */ }
+      }
+
+      if (state.stopped) break;
+    }
+  } catch (e) {
+    if (e.name !== 'AbortError') throw e;
+  } finally {
+    state.streamController = null;
+  }
+
+  // Final render: strip advisor header + apply markdown
+  if (textEl) {
+    textEl.classList.remove('streaming');
+    const clean = stripAdvisorHeader(fullText, streamCard?.dataset.advisorId);
+    textEl.innerHTML = renderMarkdown(clean);
+  }
+
+  return fullText;
 }
 
 function formatError(err) {
