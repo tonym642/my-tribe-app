@@ -479,7 +479,7 @@ body.dark-mode .advisor-text {
 }
 
 body.dark-mode .msg-user-thread .advisor-text {
-  color: #F0F0F0;
+  color: #60A5FA;
 }
 
 .advisor-text {
@@ -495,9 +495,9 @@ body.dark-mode .msg-user-thread .advisor-text {
   font-weight: 700;
 }
 
-/* User message text — primary/dark */
+/* User message text — blue */
 .msg-user-thread .advisor-text {
-  color: #1A1A1A;
+  color: #2563EB;
 }
 
 .advisor-text.streaming::after {
