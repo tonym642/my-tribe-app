@@ -280,7 +280,7 @@ let $stream, $inner, $input, $sendBtn, $welcome;
 document.addEventListener('DOMContentLoaded', async () => {
   await loadKnowledge();
   $stream  = document.getElementById('stream');
-  $inner   = document.getElementById('stream-inner');
+  $inner   = document.getElementById('messages-container');
   $input   = document.getElementById('input-field');
   $sendBtn = document.getElementById('send-btn');
   $welcome = document.getElementById('welcome');

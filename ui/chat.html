@@ -332,68 +332,71 @@
     <!-- Message Stream -->
     <div class="stream" id="stream">
       <div class="stream-inner" id="stream-inner">
-        <div class="welcome" id="welcome">
-          <div class="welcome-mark">
-            <div class="orb-glow"></div>
-          </div>
-          <h1 class="welcome-title">The Tribe is ready</h1>
-          <p class="welcome-sub">Ask anything — your advisors are listening.</p>
-          <div class="welcome-prompts">
-            <button class="welcome-prompt onboard-pill" id="btn-guide-chat">How to chat with the tribe</button>
-            <button class="welcome-prompt onboard-pill" id="btn-guide-sessions">Explore tribe sessions</button>
-            <button class="welcome-prompt onboard-pill" id="btn-guide-stories">Discover tribe stories</button>
+        <div id="messages-container">
+          <div class="welcome" id="welcome">
+            <div class="welcome-mark">
+              <div class="orb-glow"></div>
+            </div>
+            <h1 class="welcome-title">The Tribe is ready</h1>
+            <p class="welcome-sub">Ask anything — your advisors are listening.</p>
+            <div class="welcome-prompts">
+              <button class="welcome-prompt onboard-pill" id="btn-guide-chat">How to chat with the tribe</button>
+              <button class="welcome-prompt onboard-pill" id="btn-guide-sessions">Explore tribe sessions</button>
+              <button class="welcome-prompt onboard-pill" id="btn-guide-stories">Discover tribe stories</button>
+            </div>
           </div>
         </div>
+
+        <!-- Action Pills -->
+        <div class="mode-row" id="mode-row">
+          <div class="mode-row-top">
+            <button class="mode-pill active" data-mode="member">Ask a Member</button>
+            <button class="mode-pill" data-mode="guide">Ask Your Guide</button>
+          </div>
+          <div class="mode-row-bottom">
+            <button class="mode-pill" data-mode="bvm" data-tip-title="BVM — Best Version of Me" data-tip-desc="See what the strongest version of you would think and do.">Ask BVM</button>
+            <button class="mode-pill" data-mode="tribe">Ask My Tribe</button>
+            <button class="mode-pill" data-mode="parable">Show Parable</button>
+          </div>
+        </div>
+
+        <!-- Advisor Selector Row -->
+        <div class="advisor-row" id="advisor-row">
+          <button class="advisor-chip" data-advisor="seth" style="--chip-active:#6D28D9;--chip-glow:rgba(109,40,217,0.35)">
+            <img class="advisor-avatar-img" src="../assets/avatars/seth.png" alt="Seth">
+            <span class="advisor-chip-name">Seth</span>
+          </button>
+          <button class="advisor-chip" data-advisor="marcus" style="--chip-active:#1D4ED8;--chip-glow:rgba(29,78,216,0.35)">
+            <img class="advisor-avatar-img" src="../assets/avatars/marcus.png" alt="Marcus">
+            <span class="advisor-chip-name">Marcus</span>
+          </button>
+          <button class="advisor-chip" data-advisor="emma" style="--chip-active:#BE185D;--chip-glow:rgba(190,24,93,0.35)">
+            <img class="advisor-avatar-img" src="../assets/avatars/emma.png" alt="Emma">
+            <span class="advisor-chip-name">Emma</span>
+          </button>
+          <button class="advisor-chip" data-advisor="hannah" style="--chip-active:#047857;--chip-glow:rgba(4,120,87,0.35)">
+            <img class="advisor-avatar-img" src="../assets/avatars/hannah.png" alt="Hannah">
+            <span class="advisor-chip-name">Hannah</span>
+          </button>
+          <button class="advisor-chip" data-advisor="rachel" style="--chip-active:#B45309;--chip-glow:rgba(180,83,9,0.35)">
+            <img class="advisor-avatar-img" src="../assets/avatars/rachel.png" alt="Rachel">
+            <span class="advisor-chip-name">Rachel</span>
+          </button>
+          <button class="advisor-chip" data-advisor="frank" style="--chip-active:#4338CA;--chip-glow:rgba(67,56,202,0.35)">
+            <img class="advisor-avatar-img" src="../assets/avatars/frank.png" alt="Frank">
+            <span class="advisor-chip-name">Frank</span>
+          </button>
+          <button class="advisor-chip" data-advisor="guide" style="--chip-active:#0F766E;--chip-glow:rgba(15,118,110,0.35)">
+            <img class="advisor-avatar-img" src="../assets/avatars/guide.png" alt="Guide">
+            <span class="advisor-chip-name">Guide</span>
+          </button>
+        </div>
+
       </div>
     </div>
 
     <!-- Composer (fixed bottom) -->
     <div class="composer">
-
-      <!-- Action Pills -->
-      <div class="mode-row" id="mode-row">
-        <div class="mode-row-top">
-          <button class="mode-pill active" data-mode="member">Ask a Member</button>
-          <button class="mode-pill" data-mode="guide">Ask Your Guide</button>
-        </div>
-        <div class="mode-row-bottom">
-          <button class="mode-pill" data-mode="bvm" data-tip-title="BVM — Best Version of Me" data-tip-desc="See what the strongest version of you would think and do.">Ask BVM</button>
-          <button class="mode-pill" data-mode="tribe">Ask My Tribe</button>
-          <button class="mode-pill" data-mode="parable">Show Parable</button>
-        </div>
-      </div>
-
-      <!-- Advisor Selector Row -->
-      <div class="advisor-row" id="advisor-row">
-        <button class="advisor-chip" data-advisor="seth" style="--chip-active:#6D28D9;--chip-glow:rgba(109,40,217,0.35)">
-          <img class="advisor-avatar-img" src="../assets/avatars/seth.png" alt="Seth">
-          <span class="advisor-chip-name">Seth</span>
-        </button>
-        <button class="advisor-chip" data-advisor="marcus" style="--chip-active:#1D4ED8;--chip-glow:rgba(29,78,216,0.35)">
-          <img class="advisor-avatar-img" src="../assets/avatars/marcus.png" alt="Marcus">
-          <span class="advisor-chip-name">Marcus</span>
-        </button>
-        <button class="advisor-chip" data-advisor="emma" style="--chip-active:#BE185D;--chip-glow:rgba(190,24,93,0.35)">
-          <img class="advisor-avatar-img" src="../assets/avatars/emma.png" alt="Emma">
-          <span class="advisor-chip-name">Emma</span>
-        </button>
-        <button class="advisor-chip" data-advisor="hannah" style="--chip-active:#047857;--chip-glow:rgba(4,120,87,0.35)">
-          <img class="advisor-avatar-img" src="../assets/avatars/hannah.png" alt="Hannah">
-          <span class="advisor-chip-name">Hannah</span>
-        </button>
-        <button class="advisor-chip" data-advisor="rachel" style="--chip-active:#B45309;--chip-glow:rgba(180,83,9,0.35)">
-          <img class="advisor-avatar-img" src="../assets/avatars/rachel.png" alt="Rachel">
-          <span class="advisor-chip-name">Rachel</span>
-        </button>
-        <button class="advisor-chip" data-advisor="frank" style="--chip-active:#4338CA;--chip-glow:rgba(67,56,202,0.35)">
-          <img class="advisor-avatar-img" src="../assets/avatars/frank.png" alt="Frank">
-          <span class="advisor-chip-name">Frank</span>
-        </button>
-        <button class="advisor-chip" data-advisor="guide" style="--chip-active:#0F766E;--chip-glow:rgba(15,118,110,0.35)">
-          <img class="advisor-avatar-img" src="../assets/avatars/guide.png" alt="Guide">
-          <span class="advisor-chip-name">Guide</span>
-        </button>
-      </div>
 
       <!-- Input Row -->
       <div class="input-row">
