@@ -2887,7 +2887,7 @@ async function continueDebate(message) {
   for (const advisorId of respondents) {
     const advisor = ADVISORS[advisorId];
     const card = appendDebateMessage(
-      { advisorId, advisor: advisor.name, role: advisor.title, replyTo: null, isSummary: false },
+      { advisorId, advisor: advisor.name, role: advisor.title, replyTo: 'You', isSummary: false },
       true
     );
     try {
