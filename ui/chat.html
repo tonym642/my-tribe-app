@@ -717,101 +717,168 @@
     </div>
   </div>
 
-  <!-- Campfire Modal -->
-  <div class="modal-overlay" id="campfire-overlay">
-    <div class="modal campfire-modal">
+  <!-- ── Campfire Page (full-page, replaces main layout when open) ── -->
+  <div id="campfire-page" style="display:none">
 
-      <div class="modal-header campfire-header">
-        <span class="modal-title">Campfire</span>
-        <button class="modal-close" id="campfire-close">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+    <!-- SETUP FLOW -->
+    <div class="campfire-setup" id="campfire-setup">
+      <div class="campfire-setup-topbar">
+        <button class="campfire-exit-btn" id="campfire-exit-btn">← Back</button>
+        <div class="campfire-setup-brand">Campfire</div>
+        <div style="width:80px"></div>
       </div>
 
-      <!-- Setup phase -->
-      <div id="campfire-setup-phase" class="campfire-phase">
-        <p class="campfire-intro">Bring a question, struggle, or season of life to the fire and hear the wisdom of your Tribe.</p>
+      <div class="campfire-setup-body">
 
-        <!-- Topic textarea -->
-        <div class="campfire-field-label">What do you want to bring to the circle?</div>
-        <textarea id="campfire-topic" class="campfire-textarea" rows="4"
-          placeholder="I feel stuck and don't know what to do next...&#10;I am trying to understand why this keeps happening...&#10;I want wisdom on a relationship, habit, or season of life..."></textarea>
+        <!-- Step 1: Storyteller -->
+        <div class="campfire-step-panel" id="cf-step-1">
+          <div class="campfire-step-heading">Who is telling the story?</div>
 
-        <!-- Tone selector -->
-        <div class="campfire-field-label">Tone</div>
-        <div class="campfire-tone-row">
-          <button class="campfire-tone-btn active" data-tone="reflective">Reflective</button>
-          <button class="campfire-tone-btn" data-tone="encouraging">Encouraging</button>
-          <button class="campfire-tone-btn" data-tone="honest">Honest</button>
-          <button class="campfire-tone-btn" data-tone="deep">Deep</button>
+          <div class="cf-storyteller-row">
+            <button class="cf-storyteller-card" data-storyteller="advisor">
+              <div class="cf-sc-icon">👥</div>
+              <div class="cf-sc-label">Advisor</div>
+              <div class="cf-sc-sub">One of your 7 advisors</div>
+            </button>
+            <button class="cf-storyteller-card" data-storyteller="you">
+              <div class="cf-sc-icon">🙋</div>
+              <div class="cf-sc-label">You</div>
+              <div class="cf-sc-sub">Share your own story</div>
+            </button>
+            <button class="cf-storyteller-card" data-storyteller="random">
+              <div class="cf-sc-icon">🎲</div>
+              <div class="cf-sc-label">Random</div>
+              <div class="cf-sc-sub">Surprise me</div>
+            </button>
+          </div>
+
+          <!-- Advisor avatar picker (visible when Advisor is selected) -->
+          <div class="campfire-advisor-picker" id="campfire-advisor-picker" style="display:none">
+            <div class="cf-picker-label">Choose your storyteller</div>
+            <div class="cf-advisor-avatars" id="cf-advisor-avatars"></div>
+          </div>
+
+          <div class="cf-step-footer">
+            <button class="cf-next-btn" id="cf-step1-next" disabled>Next →</button>
+          </div>
         </div>
 
-        <!-- Advisor selection -->
-        <div class="campfire-field-label" style="margin-top:16px">Voices</div>
-        <div class="campfire-advisor-toggle-row">
-          <button class="cat-btn active" id="ca-btn-all">Full Tribe</button>
-          <button class="cat-btn" id="ca-btn-select">Choose Voices</button>
-        </div>
-        <div class="campfire-advisor-chips" id="campfire-advisor-chips" style="display:none">
-          <label class="ca-chip"><input type="checkbox" class="campfire-advisor-check" value="seth" checked><span>Seth</span></label>
-          <label class="ca-chip"><input type="checkbox" class="campfire-advisor-check" value="marcus" checked><span>Marcus</span></label>
-          <label class="ca-chip"><input type="checkbox" class="campfire-advisor-check" value="emma" checked><span>Emma</span></label>
-          <label class="ca-chip"><input type="checkbox" class="campfire-advisor-check" value="hannah" checked><span>Hannah</span></label>
-          <label class="ca-chip"><input type="checkbox" class="campfire-advisor-check" value="rachel" checked><span>Rachel</span></label>
-          <label class="ca-chip"><input type="checkbox" class="campfire-advisor-check" value="frank" checked><span>Frank</span></label>
+        <!-- Step 2: Pillar -->
+        <div class="campfire-step-panel" id="cf-step-2" style="display:none">
+          <div class="campfire-step-heading">What is the story about?</div>
+
+          <div class="cf-pillar-grid">
+            <button class="cf-pillar-btn" data-pillar="Spirituality">🕊 Spirituality</button>
+            <button class="cf-pillar-btn" data-pillar="Mindset">🧠 Mindset</button>
+            <button class="cf-pillar-btn" data-pillar="Emotions">💛 Emotions</button>
+            <button class="cf-pillar-btn" data-pillar="Health">🌿 Health</button>
+            <button class="cf-pillar-btn" data-pillar="Relationships">🤝 Relationships</button>
+            <button class="cf-pillar-btn" data-pillar="Finances">💼 Finances</button>
+          </div>
+
+          <div class="campfire-structure-guide">
+            <div class="cf-guide-title">Story Structure Guide</div>
+            <ol class="cf-guide-list">
+              <li>What happened</li>
+              <li>The struggle</li>
+              <li>The turning point</li>
+              <li>The lesson</li>
+            </ol>
+          </div>
+
+          <div class="cf-step-footer">
+            <button class="cf-back-btn" id="cf-step2-back">← Back</button>
+            <button class="cf-next-btn" id="cf-step2-next" disabled>Next →</button>
+          </div>
         </div>
 
-        <button class="campfire-start-btn" id="campfire-start-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
-          Light the Fire
-        </button>
+        <!-- Step 3: Format -->
+        <div class="campfire-step-panel" id="cf-step-3" style="display:none">
+          <div class="campfire-step-heading">Choose a session format</div>
+
+          <div class="cf-format-row">
+            <button class="cf-format-card" data-format="fireside">
+              <div class="cf-fc-name">Fireside</div>
+              <div class="cf-fc-time">~ 5 minutes</div>
+              <div class="cf-fc-desc">One focused story + light discussion</div>
+            </button>
+            <button class="cf-format-card" data-format="campfire">
+              <div class="cf-fc-name">Campfire</div>
+              <div class="cf-fc-time">~ 10 minutes</div>
+              <div class="cf-fc-desc">Full story + discussion + reflections</div>
+            </button>
+            <button class="cf-format-card" data-format="bonfire">
+              <div class="cf-fc-name">Bonfire</div>
+              <div class="cf-fc-time">~ 15 minutes</div>
+              <div class="cf-fc-desc">Deeper story + richer discussion + fuller closing</div>
+            </button>
+          </div>
+
+          <p class="campfire-format-note">Session times are approximate. Conversations close naturally.</p>
+
+          <div class="cf-step-footer">
+            <button class="cf-back-btn" id="cf-step3-back">← Back</button>
+            <button class="campfire-start-btn" id="campfire-start-btn" disabled>Light the Fire</button>
+          </div>
+        </div>
+
+      </div><!-- .campfire-setup-body -->
+    </div><!-- .campfire-setup -->
+
+    <!-- SESSION VIEW -->
+    <div class="campfire-session" id="campfire-session" style="display:none">
+
+      <!-- Top bar -->
+      <div class="campfire-session-topbar">
+        <div class="cf-session-storyteller">
+          <div class="cf-session-avatar" id="cf-session-avatar"></div>
+          <div class="cf-session-meta">
+            <div class="cf-session-title" id="cf-session-title">Loading story…</div>
+            <div class="cf-session-byline" id="cf-session-byline"></div>
+          </div>
+        </div>
+        <div class="cf-session-actions">
+          <button class="cf-save-story-btn" id="cf-save-story-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            Save Story
+          </button>
+          <button class="cf-new-session-btn" id="cf-new-session-btn">New Session</button>
+          <button class="cf-exit-session-btn" id="cf-exit-session-btn">✕</button>
+        </div>
       </div>
 
-      <!-- Session phase -->
-      <div id="campfire-session-phase" class="campfire-phase" style="display:none">
-        <div class="campfire-stream">
+      <!-- Two-column body: story (left) + discussion (right) -->
+      <div class="campfire-session-body">
 
-          <!-- Topic echo -->
-          <div class="campfire-topic-card" id="campfire-topic-card"></div>
+        <!-- Left: Story area -->
+        <div class="campfire-story-col">
+          <div class="campfire-story-content" id="campfire-story-content"></div>
 
-          <!-- Opening atmosphere line -->
-          <div class="campfire-atmosphere" id="campfire-atmosphere" style="display:none">
-            <span id="campfire-atmosphere-text"></span>
+          <!-- User story input (only shown when storyteller = You) -->
+          <div class="campfire-user-story-input" id="campfire-user-story-input" style="display:none">
+            <div class="cf-user-story-label">Share your story with the circle</div>
+            <textarea id="campfire-user-story-text" class="campfire-user-story-textarea" rows="6"
+              placeholder="Use the Story Structure Guide:&#10;&#10;1. What happened&#10;2. The struggle&#10;3. The turning point&#10;4. The lesson"></textarea>
+            <button class="campfire-share-story-btn" id="campfire-share-story-btn">Share to the Circle</button>
           </div>
-
-          <!-- Reflection entries -->
-          <div id="campfire-entries"></div>
-
-          <!-- Closing card -->
-          <div class="campfire-closing-card" id="campfire-closing" style="display:none">
-            <div class="campfire-closing-header">
-              <div class="campfire-closing-avatar" id="campfire-closing-avatar"></div>
-              <div>
-                <div class="campfire-closing-name">Guide</div>
-                <div class="campfire-closing-label">Closing Reflection</div>
-              </div>
-            </div>
-            <div class="campfire-closing-text" id="campfire-closing-text"></div>
-          </div>
-
-          <!-- Reflection question -->
-          <div class="campfire-question-card" id="campfire-question-card" style="display:none">
-            <div class="campfire-question-label">Take this with you</div>
-            <div class="campfire-question-text" id="campfire-question-text"></div>
-          </div>
-
-          <div class="campfire-footer-row">
-            <button class="campfire-new-btn" id="campfire-new-btn">New Session</button>
-          </div>
-
         </div>
-      </div>
 
-    </div>
-  </div>
+        <!-- Right: Discussion area -->
+        <div class="campfire-discussion-col">
+          <div class="campfire-discussion-header">Around the Fire</div>
+          <div class="campfire-discussion-feed" id="campfire-discussion-feed"></div>
+          <div class="campfire-comment-composer">
+            <textarea class="campfire-comment-input" id="campfire-comment-input" rows="2" placeholder="Add your reflection…"></textarea>
+            <button class="campfire-comment-send" id="campfire-comment-send">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+
+      </div><!-- .campfire-session-body -->
+    </div><!-- .campfire-session -->
+
+  </div><!-- #campfire-page -->
 
   <!-- Voting Modal -->
   <div class="modal-overlay" id="voting-overlay">

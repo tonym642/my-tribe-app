@@ -447,44 +447,78 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-campfire').addEventListener('click', openCampfire);
   document.getElementById('m-btn-campfire').addEventListener('click', () => { closeMobileNav(); openCampfire(); });
 
-  // Campfire — modal controls
-  document.getElementById('campfire-close').addEventListener('click', closeCampfire);
-  document.getElementById('campfire-overlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeCampfire();
-  });
-  document.getElementById('campfire-start-btn').addEventListener('click', () => {
-    const topic = document.getElementById('campfire-topic').value.trim();
-    if (!topic) { showNotice('Please share what you want to bring to the circle.'); return; }
-    runCampfire(topic);
-  });
+  // Campfire — exit buttons
+  document.getElementById('campfire-exit-btn').addEventListener('click', closeCampfire);
+  document.getElementById('cf-exit-session-btn').addEventListener('click', closeCampfire);
 
-  // Campfire — tone buttons
-  document.querySelectorAll('.campfire-tone-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      campfireTone = btn.dataset.tone;
-      document.querySelectorAll('.campfire-tone-btn').forEach(b => b.classList.toggle('active', b === btn));
+  // Campfire — storyteller selection
+  document.querySelectorAll('.cf-storyteller-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.cf-storyteller-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      cfStoryteller = card.dataset.storyteller;
+      const picker = document.getElementById('campfire-advisor-picker');
+      if (cfStoryteller === 'advisor') {
+        picker.style.display = '';
+        renderCfAdvisorPicker();
+      } else {
+        picker.style.display = 'none';
+        cfAdvisorId = null;
+      }
+      updateCfStep1Next();
     });
   });
 
-  // Campfire — advisor toggle
-  document.getElementById('ca-btn-all').addEventListener('click', () => {
-    campfireAdvisorMode = 'all';
-    document.getElementById('ca-btn-all').classList.add('active');
-    document.getElementById('ca-btn-select').classList.remove('active');
-    document.getElementById('campfire-advisor-chips').style.display = 'none';
-  });
-  document.getElementById('ca-btn-select').addEventListener('click', () => {
-    campfireAdvisorMode = 'select';
-    document.getElementById('ca-btn-select').classList.add('active');
-    document.getElementById('ca-btn-all').classList.remove('active');
-    document.getElementById('campfire-advisor-chips').style.display = 'flex';
+  // Campfire — step navigation
+  document.getElementById('cf-step1-next').addEventListener('click', () => cfGoToStep(2));
+  document.getElementById('cf-step2-back').addEventListener('click', () => cfGoToStep(1));
+  document.getElementById('cf-step2-next').addEventListener('click', () => cfGoToStep(3));
+  document.getElementById('cf-step3-back').addEventListener('click', () => cfGoToStep(2));
+
+  // Campfire — pillar selection
+  document.querySelectorAll('.cf-pillar-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cf-pillar-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      cfPillar = btn.dataset.pillar;
+      document.getElementById('cf-step2-next').disabled = false;
+    });
   });
 
+  // Campfire — format selection
+  document.querySelectorAll('.cf-format-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.cf-format-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      cfFormat = card.dataset.format;
+      document.getElementById('campfire-start-btn').disabled = false;
+    });
+  });
+
+  // Campfire — start session
+  document.getElementById('campfire-start-btn').addEventListener('click', startCampfireSession);
+
   // Campfire — new session
-  document.getElementById('campfire-new-btn').addEventListener('click', () => {
-    document.getElementById('campfire-session-phase').style.display = 'none';
-    document.getElementById('campfire-setup-phase').style.display = '';
-    setTimeout(() => document.getElementById('campfire-topic').focus(), 50);
+  document.getElementById('cf-new-session-btn').addEventListener('click', () => {
+    resetCampfireSetup();
+    document.getElementById('campfire-session').style.display = 'none';
+    document.getElementById('campfire-setup').style.display = '';
+  });
+
+  // Campfire — save story
+  document.getElementById('cf-save-story-btn').addEventListener('click', saveCampfireStory);
+
+  // Campfire — user story submission
+  document.getElementById('campfire-share-story-btn').addEventListener('click', () => {
+    const text = document.getElementById('campfire-user-story-text').value.trim();
+    if (!text) { showNotice('Please share your story first.'); return; }
+    submitUserStory(text);
+  });
+
+  // Campfire — comment send
+  document.getElementById('campfire-comment-send').addEventListener('click', sendCampfireComment);
+  document.getElementById('campfire-comment-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendCampfireComment(); }
   });
 
   // Dark Mode — desktop + mobile toggle
@@ -2181,174 +2215,109 @@ function addAlignGoal() {
   renderAlignGoals();
 }
 
-// ── Campfire Mode ────────────────────────────────────────────────
+// ── Campfire (Storytelling Experience) ───────────────────────────
 
-let campfireTone        = 'reflective';
-let campfireAdvisorMode = 'all';
-let campfireRunning     = false;
+let cfRunning     = false;
+let cfStep        = 1;
+let cfStoryteller = null;  // 'advisor' | 'you' | 'random'
+let cfAdvisorId   = null;  // selected advisor id (when storyteller='advisor')
+let cfPillar      = null;  // 'Spirituality' | 'Mindset' | 'Emotions' | 'Health' | 'Relationships' | 'Finances'
+let cfFormat      = null;  // 'fireside' | 'campfire' | 'bonfire'
+let cfStoryText   = '';
+let cfStoryTitle  = '';
 
-const CAMPFIRE_ALL_ADVISORS = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'frank'];
+const CF_ALL_ADVISORS = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'frank', 'guide'];
 
-const CAMPFIRE_TONE_DESC = {
-  reflective:  'balanced, calm, and contemplative',
-  encouraging: 'warm, uplifting, and supportive',
-  honest:      'direct, truth-centered, and gently confronting',
-  deep:        'philosophical, inward, and meaning-focused'
+const CF_FORMATS = {
+  fireside: { label: 'Fireside', discussantCount: 2 },
+  campfire:  { label: 'Campfire', discussantCount: 3 },
+  bonfire:   { label: 'Bonfire',  discussantCount: 5 }
 };
 
-// Each advisor's natural campfire entry type
-const CAMPFIRE_ENTRY_TYPES = {
-  seth:    'reflection',
-  marcus:  'reflection',
-  emma:    'question',
-  hannah:  'reflection',
-  rachel:  'metaphor',
-  frank:   'reflection',
-  guide:   'closing',
-  bvm:     'closing'
+const CF_PILLAR_EMOJI = {
+  Spirituality: '🕊', Mindset: '🧠', Emotions: '💛',
+  Health: '🌿', Relationships: '🤝', Finances: '💼'
 };
 
-// One advisor per session gets a parable — prefer seth, then guide/emma
-const CAMPFIRE_PARABLE_ADVISOR = 'seth';
-
-const CAMPFIRE_TYPE_LABELS = {
-  reflection: 'Reflection',
-  question:   'Question',
-  parable:    'Parable',
-  metaphor:   'Metaphor',
-  closing:    'Closing'
-};
-
-// Opening lines by tone
-const CAMPFIRE_OPENINGS = {
-  reflective:  'The fire is quiet tonight. Your Tribe listens.',
-  encouraging: 'You brought something real to the circle. You are not alone in this.',
-  honest:      'Some questions deserve more than comfort. They deserve truth.',
-  deep:        'Some things cannot be rushed. They must be sat with, slowly.'
+const CF_MOD_OPENINGS = {
+  fireside: "Welcome to the fire. Tonight we gather briefly — one story, honestly told. Let's begin.",
+  campfire: "Welcome to the campfire. We have time tonight to sit with a story, let it breathe, and carry something home.",
+  bonfire:  "The fire is burning bright tonight. We've gathered for a longer, deeper sit. Settle in — there's something worth hearing."
 };
 
 function openCampfire() {
-  campfireRunning     = false;
-  campfireTone        = 'reflective';
-  campfireAdvisorMode = 'all';
-  document.querySelectorAll('.campfire-tone-btn').forEach(b =>
-    b.classList.toggle('active', b.dataset.tone === 'reflective'));
-  document.getElementById('ca-btn-all').classList.add('active');
-  document.getElementById('ca-btn-select').classList.remove('active');
-  document.getElementById('campfire-advisor-chips').style.display = 'none';
-  document.querySelectorAll('.campfire-advisor-check').forEach(c => c.checked = true);
-  document.getElementById('campfire-topic').value = '';
-  document.getElementById('campfire-setup-phase').style.display = '';
-  document.getElementById('campfire-session-phase').style.display = 'none';
-  document.getElementById('campfire-overlay').classList.add('open');
-  setTimeout(() => document.getElementById('campfire-topic').focus(), 100);
+  resetCampfireSetup();
+  document.getElementById('campfire-setup').style.display = '';
+  document.getElementById('campfire-session').style.display = 'none';
+  document.getElementById('main-layout').style.display = 'none';
+  document.getElementById('campfire-page').style.display = 'flex';
 }
 
 function closeCampfire() {
-  document.getElementById('campfire-overlay').classList.remove('open');
+  document.getElementById('campfire-page').style.display = 'none';
+  document.getElementById('main-layout').style.display = '';
+  cfRunning = false;
 }
 
-function getCampfireAdvisors() {
-  if (campfireAdvisorMode === 'all') return CAMPFIRE_ALL_ADVISORS;
-  return Array.from(document.querySelectorAll('.campfire-advisor-check:checked')).map(c => c.value);
+function resetCampfireSetup() {
+  cfStep = 1; cfStoryteller = null; cfAdvisorId = null;
+  cfPillar = null; cfFormat = null; cfStoryText = ''; cfStoryTitle = '';
+  cfGoToStep(1);
+  document.querySelectorAll('.cf-storyteller-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.cf-pillar-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.cf-format-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('campfire-advisor-picker').style.display = 'none';
+  document.getElementById('cf-step1-next').disabled = true;
+  document.getElementById('cf-step2-next').disabled = true;
+  document.getElementById('campfire-start-btn').disabled = true;
 }
 
-function buildCampfireEntryPrompt(advisor, topic, tone, entryType, priorTexts) {
-  const toneDesc = CAMPFIRE_TONE_DESC[tone] || 'calm and reflective';
-  const typeInstr = {
-    reflection: 'Share a calm, meaningful reflection from your perspective.',
-    question:   'Offer one thoughtful question that gently invites deeper self-awareness.',
-    metaphor:   'Respond through a metaphor or symbolic image that illuminates the situation.',
-    parable:    'Share a brief parable, short story, or symbolic image that holds wisdom for this moment.'
-  }[entryType] || 'Share a calm reflection.';
-
-  const prior = priorTexts.length
-    ? `\n\nOther voices have already shared:\n${priorTexts.join('\n')}\nDo not repeat their themes. Bring your unique perspective.`
-    : '';
-
-  return `You are ${advisor.name}, the ${advisor.title}, speaking in a Campfire circle — a slow, reflective council session.
-
-The person has brought this to the circle: "${topic}"
-
-The tone of this session is: ${toneDesc}.
-
-${typeInstr}
-
-Stay completely in character as ${advisor.name}. Speak from the soul of your pillar — ${advisor.title}.
-Be human, grounded, and meaningful. Avoid generic motivational language. Avoid bullet points or headers.
-Keep your response to 70–130 words. Let it breathe.${prior}`;
+function cfGoToStep(n) {
+  cfStep = n;
+  for (let i = 1; i <= 3; i++) {
+    const el = document.getElementById(`cf-step-${i}`);
+    if (el) el.style.display = i === n ? '' : 'none';
+  }
 }
 
-function buildCampfireClosingPrompt(topic, tone, allTexts) {
-  const toneDesc = CAMPFIRE_TONE_DESC[tone] || 'calm and reflective';
-  const thread = allTexts.join('\n\n');
-  return `You are the Guide, closing a Campfire council session.
-
-The person brought this to the circle: "${topic}"
-The session tone was: ${toneDesc}.
-
-What was shared:
-${thread}
-
-Close the session with wisdom that:
-1. Names one core truth that emerged from the circle
-2. Offers one practical or emotional reflection the person can carry forward
-3. Ends with one question or invitation — something to sit with
-
-Keep it to 90–130 words. Speak as the Guide — warm, wise, slightly poetic. No bullet points. Flowing prose.`;
+function renderCfAdvisorPicker() {
+  const container = document.getElementById('cf-advisor-avatars');
+  container.innerHTML = '';
+  CF_ALL_ADVISORS.forEach(id => {
+    const advisor = ADVISORS[id];
+    if (!advisor) return;
+    const src = ADVISOR_AVATAR[id];
+    const btn = document.createElement('button');
+    btn.className = 'cf-advisor-avatar-btn';
+    btn.dataset.advisorId = id;
+    const imgHtml = src
+      ? `<img src="${src}" alt="${advisor.name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
+      : '';
+    const initHtml = `<div class="cf-av-initial" style="background:${advisor.color};${src ? 'display:none' : ''}">${advisor.initial}</div>`;
+    btn.innerHTML = `<div class="cf-av-wrap">${imgHtml}${initHtml}</div><div class="cf-av-name">${advisor.name}</div>`;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cf-advisor-avatar-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      cfAdvisorId = id;
+      updateCfStep1Next();
+    });
+    container.appendChild(btn);
+  });
 }
 
-function buildCampfireQuestionPrompt(topic, closingText) {
-  return `Based on this Campfire session topic: "${topic}"
-
-And this closing reflection: "${closingText}"
-
-Generate exactly one powerful reflection question the person can carry with them.
-The question should be introspective, open-ended, and quietly challenging.
-Return only the question — nothing else. No preamble. No explanation.`;
+function updateCfStep1Next() {
+  const btn = document.getElementById('cf-step1-next');
+  btn.disabled = cfStoryteller === 'advisor' ? !cfAdvisorId : !cfStoryteller;
 }
 
-function appendCampfireEntry(advisorId, entryType, isLoading) {
-  const advisor   = ADVISORS[advisorId];
-  const avatarSrc = ADVISOR_AVATAR[advisorId];
-  const color     = advisor ? advisor.color : '#6B7280';
+// ── Campfire API helper ──────────────────────────────────────────
 
-  const avatarHtml = avatarSrc
-    ? `<img src="${avatarSrc}" alt="${advisor.name}" class="campfire-entry-avatar-img">`
-    : `<div class="campfire-entry-avatar-initial" style="background:${color}">${advisor.initial}</div>`;
-
-  const typeLabel = CAMPFIRE_TYPE_LABELS[entryType] || 'Reflection';
-
-  const entry = document.createElement('div');
-  entry.className = 'campfire-entry';
-  entry.id        = `centry-${advisorId}`;
-  entry.innerHTML = `
-    <div class="campfire-entry-header">
-      <div class="campfire-entry-avatar">${avatarHtml}</div>
-      <div class="campfire-entry-meta">
-        <div class="campfire-entry-name">${advisor.name}</div>
-        <div class="campfire-entry-role">${advisor.title}</div>
-      </div>
-      <div class="campfire-entry-type-badge">${typeLabel}</div>
-    </div>
-    <div class="campfire-entry-text${isLoading ? ' campfire-loading' : ''}" id="ctext-${advisorId}">
-      ${isLoading ? '<span class="campfire-thinking">Listening…</span>' : ''}
-    </div>`;
-
-  document.getElementById('campfire-entries').appendChild(entry);
-  document.querySelector('.campfire-stream').scrollTop = 9999;
-  return entry;
-}
-
-async function callCampfireAPI(systemPrompt, userPrompt, maxTokens = 300) {
+async function callCfAPI(systemPrompt, userPrompt, maxTokens = 350) {
   const res = await fetch(API_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: MODEL,
-      max_tokens: maxTokens,
+      model: MODEL, max_tokens: maxTokens,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }]
     })
@@ -2358,98 +2327,332 @@ async function callCampfireAPI(systemPrompt, userPrompt, maxTokens = 300) {
   return data.content[0].text.trim();
 }
 
-async function runCampfire(topic) {
-  if (campfireRunning) return;
-  const advisorIds = getCampfireAdvisors();
-  if (!advisorIds.length) { showNotice('Please select at least one voice.'); return; }
+// ── DOM helpers ──────────────────────────────────────────────────
 
-  campfireRunning = true;
+function cfEscape(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
 
-  // Switch to session phase
-  document.getElementById('campfire-setup-phase').style.display = 'none';
-  document.getElementById('campfire-session-phase').style.display = '';
-  document.getElementById('campfire-entries').innerHTML = '';
-  document.getElementById('campfire-closing').style.display = 'none';
-  document.getElementById('campfire-question-card').style.display = 'none';
-  document.getElementById('campfire-atmosphere').style.display = 'none';
+function appendStorySection(label, text, isLoading = false) {
+  const col = document.getElementById('campfire-story-content');
+  const el = document.createElement('div');
+  el.className = 'cf-story-section' + (isLoading ? ' cf-loading' : '');
+  el.innerHTML = label
+    ? `<div class="cf-story-section-label">${cfEscape(label)}</div>
+       <div class="cf-story-section-text">${isLoading ? '<span class="campfire-thinking">Gathering thoughts…</span>' : cfEscape(text)}</div>`
+    : `<div class="cf-story-section-text">${isLoading ? '<span class="campfire-thinking">Gathering thoughts…</span>' : cfEscape(text)}</div>`;
+  col.appendChild(el);
+  col.scrollTop = col.scrollHeight;
+  return el;
+}
 
-  // Topic card
-  document.getElementById('campfire-topic-card').textContent = topic;
+function appendModeratorMessage(text, type = '') {
+  const col = document.getElementById('campfire-story-content');
+  const el = document.createElement('div');
+  el.className = `cf-moderator-msg${type ? ' cf-mod-' + type : ''}`;
+  el.innerHTML = `<div class="cf-mod-label">Moderator</div><div class="cf-mod-text">${cfEscape(text)}</div>`;
+  col.appendChild(el);
+  col.scrollTop = col.scrollHeight;
+  return el;
+}
 
-  // Opening atmosphere line
+function appendDiscussionComment(who, role, avatarId, text, isLoading = false) {
+  const feed = document.getElementById('campfire-discussion-feed');
+  const advisor = avatarId ? ADVISORS[avatarId] : null;
+  const src = avatarId ? ADVISOR_AVATAR[avatarId] : null;
+  const color = advisor ? advisor.color : '#6B7280';
+  const initial = advisor ? advisor.initial : (who[0] || 'Y');
+  const avatarHtml = src
+    ? `<img src="${src}" alt="${who}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+       <div class="cf-disc-initial" style="background:${color};display:none">${initial}</div>`
+    : `<div class="cf-disc-initial" style="background:${color}">${initial}</div>`;
+  const uid = `cfdc-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const el = document.createElement('div');
+  el.className = 'cf-disc-comment' + (isLoading ? ' cf-loading' : '');
+  el.innerHTML = `
+    <div class="cf-disc-avatar">${avatarHtml}</div>
+    <div class="cf-disc-body">
+      <div class="cf-disc-header">
+        <span class="cf-disc-name">${cfEscape(who)}</span>
+        <span class="cf-disc-role">${cfEscape(role)}</span>
+      </div>
+      <div class="cf-disc-text" id="${uid}">${isLoading ? '<span class="campfire-thinking">Listening…</span>' : cfEscape(text)}</div>
+    </div>`;
+  feed.appendChild(el);
+  feed.scrollTop = feed.scrollHeight;
+  return el;
+}
+
+function appendUserComment(text) {
+  const feed = document.getElementById('campfire-discussion-feed');
+  const el = document.createElement('div');
+  el.className = 'cf-disc-comment cf-disc-user';
+  el.innerHTML = `
+    <div class="cf-disc-avatar"><div class="cf-disc-initial" style="background:#4F46E5">Y</div></div>
+    <div class="cf-disc-body">
+      <div class="cf-disc-header"><span class="cf-disc-name">You</span></div>
+      <div class="cf-disc-text">${cfEscape(text)}</div>
+    </div>`;
+  feed.appendChild(el);
+  feed.scrollTop = feed.scrollHeight;
+}
+
+// ── Prompt builders ──────────────────────────────────────────────
+
+function buildCfStoryPrompt(advisor, pillar, format) {
+  const instr = {
+    fireside: 'Tell a focused personal story. 3–4 paragraphs total.',
+    campfire:  'Tell a full personal story with texture and depth. 4–6 paragraphs.',
+    bonfire:   'Tell a rich, detailed personal story. 6–8 paragraphs. Explore each stage fully.'
+  }[format] || 'Tell a personal story. 4–5 paragraphs.';
+  return `You are ${advisor.name}, the ${advisor.title}, telling a story around the campfire tonight.
+Pillar: ${pillar}
+
+You are NOT restricted to your specialty — tell any authentic human story related to ${pillar}.
+Write in first-person, honest and personal. Follow this structure loosely as flowing narrative (no headers needed):
+1. What happened  2. The struggle  3. The turning point  4. The lesson
+
+${instr}
+
+Return ONLY valid JSON — no extra text:
+{"title":"A short evocative title (5–10 words)","sections":[{"label":"What Happened","text":"..."},{"label":"The Struggle","text":"..."},{"label":"The Turning Point","text":"..."},{"label":"The Lesson","text":"..."}]}`;
+}
+
+function buildCfDiscussionPrompt(advisor, pillar, storytellerName, storySummary, priorComments) {
+  const prior = priorComments.length
+    ? `\n\nOthers have commented:\n${priorComments.join('\n')}\nDo not repeat their points.`
+    : '';
+  return `You are ${advisor.name}, the ${advisor.title}, reacting to a campfire story just told by ${storytellerName}.
+Pillar: ${pillar}. Story: "${storySummary}"
+React genuinely from your perspective — share what moved you, ask a question, offer insight, or affirm something true.
+2–3 sentences. Conversational. No headers. Stay in character.${prior}`;
+}
+
+function buildCfModeratorClosingPrompt(pillar, storytellerName, storyTitle, storySummary, discussionSummary) {
+  return `You are the Moderator closing a Campfire storytelling session.
+Story: "${storyTitle}" about ${pillar} told by ${storytellerName}.
+Summary: "${storySummary}"
+Discussion: "${discussionSummary}"
+Close naturally as the fire dies down — calm, warm, quietly wise.
+- Acknowledge what was shared (1 sentence)
+- One short reflective observation (1 sentence)
+- A natural, warm closing line (not "Session ended")
+2–3 sentences total.`;
+}
+
+function buildCfUserCommentResponsePrompt(advisor, pillar, userComment, storyTitle, storySummary) {
+  return `You are ${advisor.name}, the ${advisor.title}, in a campfire discussion.
+Story: "${storyTitle}" (about ${pillar}). Summary: "${storySummary}"
+The user just said: "${userComment}"
+Respond naturally — warm, in character, like someone around a fire. 2–3 sentences. No headers.`;
+}
+
+// ── Session flow ─────────────────────────────────────────────────
+
+async function startCampfireSession() {
+  if (cfRunning) return;
+  cfRunning = true;
+
+  // Resolve storyteller
+  let storytellerAdvisorId = cfAdvisorId;
+  if (cfStoryteller === 'random') {
+    storytellerAdvisorId = CF_ALL_ADVISORS[Math.floor(Math.random() * CF_ALL_ADVISORS.length)];
+  }
+
+  document.getElementById('campfire-setup').style.display = 'none';
+  document.getElementById('campfire-session').style.display = 'flex';
+  document.getElementById('campfire-story-content').innerHTML = '';
+  document.getElementById('campfire-discussion-feed').innerHTML = '';
+  document.getElementById('campfire-user-story-input').style.display = 'none';
+
+  const storytellerAdvisor = storytellerAdvisorId ? ADVISORS[storytellerAdvisorId] : null;
+  const formatLabel = CF_FORMATS[cfFormat]?.label || 'Campfire';
+  const pillarEmoji = CF_PILLAR_EMOJI[cfPillar] || '';
+  const byline = storytellerAdvisor
+    ? `${storytellerAdvisor.name} · ${formatLabel} · ${cfPillar}`
+    : `You · ${formatLabel} · ${cfPillar}`;
+
+  // Topbar avatar
+  const avatarEl = document.getElementById('cf-session-avatar');
+  if (storytellerAdvisor) {
+    const src = ADVISOR_AVATAR[storytellerAdvisorId];
+    avatarEl.innerHTML = src
+      ? `<img src="${src}" alt="${storytellerAdvisor.name}"
+           onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+         <div class="cf-session-avatar-initial" style="background:${storytellerAdvisor.color};display:none">${storytellerAdvisor.initial}</div>`
+      : `<div class="cf-session-avatar-initial" style="background:${storytellerAdvisor.color}">${storytellerAdvisor.initial}</div>`;
+  } else {
+    avatarEl.innerHTML = `<div class="cf-session-avatar-initial" style="background:#4F46E5">Y</div>`;
+  }
+  document.getElementById('cf-session-byline').textContent = byline;
+
+  // Moderator opening
   await new Promise(r => setTimeout(r, 300));
-  const atmEl = document.getElementById('campfire-atmosphere');
-  document.getElementById('campfire-atmosphere-text').textContent = CAMPFIRE_OPENINGS[campfireTone];
-  atmEl.style.display = '';
+  appendModeratorMessage(CF_MOD_OPENINGS[cfFormat] || CF_MOD_OPENINGS.campfire, 'opening');
 
-  const priorTexts = [];
-
-  // ── Advisor reflections ───────────────────────────────────────────
-  for (const advisorId of advisorIds) {
-    // Assign entry type — one advisor gets parable type
-    let entryType = CAMPFIRE_ENTRY_TYPES[advisorId] || 'reflection';
-    if (advisorId === CAMPFIRE_PARABLE_ADVISOR && advisorIds.length >= 3) {
-      entryType = 'parable';
-    }
-
-    appendCampfireEntry(advisorId, entryType, true);
-
-    try {
-      const advisor = ADVISORS[advisorId];
-      const system  = buildCampfireEntryPrompt(advisor, topic, campfireTone, entryType, priorTexts);
-      const text    = await callCampfireAPI(system, `Share your ${entryType} on: ${topic}`);
-
-      priorTexts.push(`${advisor.name}: "${text}"`);
-
-      const textEl = document.getElementById(`ctext-${advisorId}`);
-      textEl.classList.remove('campfire-loading');
-      textEl.textContent = text;
-    } catch (e) {
-      const textEl = document.getElementById(`ctext-${advisorId}`);
-      textEl.classList.remove('campfire-loading');
-      textEl.textContent = 'Unable to share.';
-    }
-    document.querySelector('.campfire-stream').scrollTop = 9999;
+  if (cfStoryteller === 'you') {
+    cfStoryTitle = `Your Story · ${cfPillar}`;
+    document.getElementById('cf-session-title').textContent = cfStoryTitle;
+    await new Promise(r => setTimeout(r, 400));
+    appendModeratorMessage(`${pillarEmoji} Tonight's pillar is ${cfPillar}. The floor is yours.`);
+    document.getElementById('campfire-user-story-input').style.display = '';
+    cfRunning = false;
+  } else {
+    await runAdvisorStory(storytellerAdvisorId, storytellerAdvisor);
   }
+}
 
-  // ── Closing from Guide ────────────────────────────────────────────
-  const closingEl = document.getElementById('campfire-closing');
-  closingEl.style.display = '';
-
-  // Set guide avatar in closing card
-  const closingAvatarEl = document.getElementById('campfire-closing-avatar');
-  const guideAvatar = ADVISOR_AVATAR['guide'];
-  closingAvatarEl.innerHTML = guideAvatar
-    ? `<img src="${guideAvatar}" alt="Guide" style="width:40px;height:40px;border-radius:50%;object-fit:cover;"
-        onerror="this.parentElement.innerHTML='<div class=campfire-closing-avatar-initial>G</div>'">`
-    : `<div class="campfire-closing-avatar-initial">G</div>`;
-
-  document.getElementById('campfire-closing-text').innerHTML =
-    '<span class="campfire-thinking">Reflecting…</span>';
-  document.querySelector('.campfire-stream').scrollTop = 9999;
-
-  let closingText = '';
+async function runAdvisorStory(advisorId, advisor) {
+  const placeholder = appendStorySection('', '', true);
+  let storyData;
   try {
-    const system  = buildCampfireClosingPrompt(topic, campfireTone, priorTexts);
-    closingText   = await callCampfireAPI(system, 'Close the campfire session.', 350);
-    document.getElementById('campfire-closing-text').textContent = closingText;
-  } catch (e) {
-    document.getElementById('campfire-closing-text').textContent = 'Unable to close the session.';
+    const system = buildCfStoryPrompt(advisor, cfPillar, cfFormat);
+    const raw = await callCfAPI(system, `Tell a ${cfPillar} story for a ${CF_FORMATS[cfFormat]?.label || 'Campfire'} session.`, 900);
+    const m = raw.match(/\{[\s\S]*\}/);
+    storyData = m ? JSON.parse(m[0]) : null;
+  } catch (e) { storyData = null; }
+
+  placeholder.remove();
+
+  if (!storyData) {
+    appendStorySection('', 'The story could not be generated. Please try again.');
+    cfRunning = false;
+    return;
   }
 
-  // ── Reflection question ───────────────────────────────────────────
-  if (closingText) {
+  cfStoryTitle = storyData.title || `${advisor.name}'s Story`;
+  cfStoryText = (storyData.sections || []).map(s => `${s.label}: ${s.text}`).join('\n\n');
+  document.getElementById('cf-session-title').textContent = cfStoryTitle;
+
+  for (const s of (storyData.sections || [])) {
+    appendStorySection(s.label, s.text);
+    await new Promise(r => setTimeout(r, 120));
+  }
+
+  await runCfDiscussion(advisorId, advisor, storyData);
+}
+
+async function runCfDiscussion(storytellerAdvisorId, storytellerAdvisor, storyData) {
+  const count = CF_FORMATS[cfFormat]?.discussantCount ?? 3;
+  const eligible = CF_ALL_ADVISORS.filter(id => id !== storytellerAdvisorId);
+  const discussants = eligible.sort(() => Math.random() - 0.5).slice(0, Math.min(count, eligible.length));
+  const storySummary = (storyData.sections || []).map(s => s.text).join(' ').slice(0, 400);
+  const priorComments = [];
+
+  await new Promise(r => setTimeout(r, 500));
+
+  for (const advisorId of discussants) {
+    const advisor = ADVISORS[advisorId];
+    if (!advisor) continue;
+    const commentEl = appendDiscussionComment(advisor.name, advisor.title, advisorId, '', true);
+    const textEl = commentEl.querySelector('.cf-disc-text');
     try {
-      const system   = buildCampfireQuestionPrompt(topic, closingText);
-      const question = await callCampfireAPI(system, 'Generate the reflection question.', 80);
-      const qCard    = document.getElementById('campfire-question-card');
-      document.getElementById('campfire-question-text').textContent = question;
-      qCard.style.display = '';
-    } catch (e) { /* skip silently */ }
+      const system = buildCfDiscussionPrompt(advisor, cfPillar, storytellerAdvisor.name, storySummary, priorComments);
+      const text = await callCfAPI(system, `React to ${storytellerAdvisor.name}'s story about ${cfPillar}.`, 200);
+      textEl.innerHTML = cfEscape(text);
+      commentEl.classList.remove('cf-loading');
+      priorComments.push(`${advisor.name}: "${text}"`);
+    } catch (e) {
+      textEl.textContent = 'Unable to respond.';
+      commentEl.classList.remove('cf-loading');
+    }
   }
 
-  document.querySelector('.campfire-stream').scrollTop = 9999;
-  campfireRunning = false;
+  await runCfModeratorClose(storytellerAdvisor, storyData, priorComments);
+}
+
+async function runCfModeratorClose(storytellerAdvisor, storyData, discussionComments) {
+  await new Promise(r => setTimeout(r, 800));
+  const storySummary = (storyData.sections || []).map(s => s.text).join(' ').slice(0, 300);
+  const discussionSummary = discussionComments.slice(0, 3).join(' ').slice(0, 300);
+  try {
+    const system = buildCfModeratorClosingPrompt(cfPillar, storytellerAdvisor.name, cfStoryTitle, storySummary, discussionSummary);
+    const text = await callCfAPI(system, 'Close the campfire session.', 150);
+    appendModeratorMessage(text, 'closing');
+  } catch (e) {
+    appendModeratorMessage('The fire burns low. Thank you for gathering tonight. Until next time around the fire.', 'closing');
+  }
+  cfRunning = false;
+}
+
+async function submitUserStory(storyText) {
+  document.getElementById('campfire-user-story-input').style.display = 'none';
+  cfStoryText = storyText;
+  cfRunning = true;
+
+  const col = document.getElementById('campfire-story-content');
+  const el = document.createElement('div');
+  el.className = 'cf-user-story-block';
+  el.textContent = storyText;
+  col.appendChild(el);
+
+  const storySummary = storyText.slice(0, 400);
+  const count = CF_FORMATS[cfFormat]?.discussantCount ?? 3;
+  const discussants = [...CF_ALL_ADVISORS].sort(() => Math.random() - 0.5).slice(0, Math.min(count, CF_ALL_ADVISORS.length));
+  const priorComments = [];
+
+  await new Promise(r => setTimeout(r, 400));
+
+  for (const advisorId of discussants) {
+    const advisor = ADVISORS[advisorId];
+    if (!advisor) continue;
+    const commentEl = appendDiscussionComment(advisor.name, advisor.title, advisorId, '', true);
+    const textEl = commentEl.querySelector('.cf-disc-text');
+    try {
+      const system = buildCfDiscussionPrompt(advisor, cfPillar, 'You', storySummary, priorComments);
+      const text = await callCfAPI(system, `React to the user's story about ${cfPillar}.`, 200);
+      textEl.innerHTML = cfEscape(text);
+      commentEl.classList.remove('cf-loading');
+      priorComments.push(`${advisor.name}: "${text}"`);
+    } catch (e) {
+      textEl.textContent = 'Unable to respond.';
+      commentEl.classList.remove('cf-loading');
+    }
+  }
+
+  const fakeAdvisor = { name: 'You', title: 'Storyteller' };
+  const fakeData = { title: cfStoryTitle, sections: [{ text: storyText }] };
+  await runCfModeratorClose(fakeAdvisor, fakeData, priorComments);
+}
+
+async function sendCampfireComment() {
+  const input = document.getElementById('campfire-comment-input');
+  const text = input.value.trim();
+  if (!text || cfRunning) return;
+  input.value = '';
+  appendUserComment(text);
+  const responderId = CF_ALL_ADVISORS[Math.floor(Math.random() * CF_ALL_ADVISORS.length)];
+  const responder = ADVISORS[responderId];
+  if (!responder) return;
+  cfRunning = true;
+  const commentEl = appendDiscussionComment(responder.name, responder.title, responderId, '', true);
+  const textEl = commentEl.querySelector('.cf-disc-text');
+  try {
+    const system = buildCfUserCommentResponsePrompt(responder, cfPillar, text, cfStoryTitle, cfStoryText.slice(0, 300));
+    const responseText = await callCfAPI(system, `User said: "${text}"`, 200);
+    textEl.innerHTML = cfEscape(responseText);
+    commentEl.classList.remove('cf-loading');
+  } catch (e) {
+    textEl.textContent = 'Unable to respond.';
+    commentEl.classList.remove('cf-loading');
+  }
+  cfRunning = false;
+}
+
+function saveCampfireStory() {
+  if (!cfStoryTitle && !cfStoryText) { showNotice('No story to save yet.'); return; }
+  const library = JSON.parse(localStorage.getItem('tribe_story_library') || '[]');
+  library.unshift({
+    id: Date.now().toString(),
+    title: cfStoryTitle,
+    text: cfStoryText,
+    pillar: cfPillar,
+    format: cfFormat,
+    storyteller: cfStoryteller === 'you' ? 'You' : (ADVISORS[cfAdvisorId]?.name || 'Advisor'),
+    savedAt: new Date().toISOString()
+  });
+  localStorage.setItem('tribe_story_library', JSON.stringify(library));
+  showNotice('Story saved to your library.');
 }
 
 // ── Voting Mode ───────────────────────────────────────────────────

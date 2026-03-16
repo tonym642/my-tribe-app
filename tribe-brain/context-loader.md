@@ -81,14 +81,15 @@ prompts/
 
 Load these files when the corresponding interaction mode is activated.
 
-master-system-prompt.md  
-member-mode.md  
-guide-mode.md  
-bvm-mode.md  
-tribe-mode.md  
-debate-mode.md  
-vote-mode.md  
-parable-mode.md  
+master-system-prompt.md
+member-mode.md
+guide-mode.md
+bvm-mode.md
+tribe-mode.md
+debate-mode.md
+vote-mode.md
+parable-mode.md
+campfire-mode.md
 
 These prompts define how the system behaves during different interaction modes.
 
@@ -180,9 +181,12 @@ Voting
 → Load: prompts/vote-mode.md  
 → Advisors present positions then vote
 
-Campfire  
-→ Load: prompts/parable-mode.md  
-→ Storytelling or reflective wisdom format
+Campfire
+→ Load: prompts/campfire-mode.md
+→ Storytelling experience: one storyteller, one pillar, moderator-led session
+→ Story structure: What happened → The struggle → The turning point → The lesson
+→ Session formats: Fireside (~5m), Campfire (~10m), Bonfire (~15m)
+→ Advisors discuss in right panel; Moderator opens and closes naturally
 
 
 ---
