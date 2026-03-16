@@ -2749,9 +2749,62 @@ function resetDebate() {
 }
 
 function submitDebate() {
-  const topic = document.getElementById('debate-input').value.trim();
-  if (!topic || debateRunning) return;
-  runDebate(topic);
+  const message = document.getElementById('debate-input').value.trim();
+  if (!message || debateRunning) return;
+  const thread = document.getElementById('debate-thread');
+  if (thread.children.length > 0) {
+    continueDebate(message);
+  } else {
+    runDebate(message);
+  }
+}
+
+async function continueDebate(message) {
+  if (debateRunning) return;
+  debateRunning = true;
+
+  const $di = document.getElementById('debate-input');
+  $di.value = '';
+  $di.style.height = 'auto';
+  document.getElementById('debate-send-btn').disabled = true;
+
+  // Append user's follow-up to thread
+  document.getElementById('debate-thread').appendChild(createUserBubble(message));
+  debateScrollBottom();
+
+  // Determine which advisors respond based on @mentions
+  const mentions = extractMentions(message);
+  const cleanMsg = removeMentions(message);
+  let respondents;
+  if (mentions.length > 0 && !mentions.includes('all')) {
+    respondents = DEBATE_COUNCIL.filter(id =>
+      mentions.includes(ADVISORS[id].name.toLowerCase())
+    );
+    if (respondents.length === 0) respondents = DEBATE_COUNCIL;
+  } else {
+    respondents = DEBATE_COUNCIL;
+  }
+
+  for (const advisorId of respondents) {
+    const advisor = ADVISORS[advisorId];
+    const card = appendDebateMessage(
+      { advisorId, advisor: advisor.name, role: advisor.title, replyTo: null, isSummary: false },
+      true
+    );
+    try {
+      const prompt = `You are ${advisor.name}, the ${advisor.title}. The user has joined the debate with a follow-up comment: "${cleanMsg}". Respond directly to their point from your perspective as the ${advisor.title}. Keep your response to 60–100 words. Natural speech, no headers or bullet points. Stay in character.`;
+      const text = await callDebateAPI(prompt, `Respond to: ${cleanMsg}`);
+      const textEl = card.querySelector('.debate-text');
+      textEl.classList.remove('debate-loading');
+      textEl.textContent = text;
+    } catch (e) {
+      card.querySelector('.debate-text').textContent = 'Unable to respond.';
+    }
+    debateScrollBottom();
+  }
+
+  debateRunning = false;
+  document.getElementById('debate-send-btn').disabled = false;
 }
 
 function buildDebateInitPrompt(advisor, topic, priorMessages) {
