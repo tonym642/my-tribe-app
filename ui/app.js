@@ -409,29 +409,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-debate').addEventListener('click', openDebate);
   document.getElementById('m-btn-debate').addEventListener('click', () => { closeMobileNav(); openDebate(); });
 
-  // Debate — modal controls
-  document.getElementById('debate-close').addEventListener('click', closeDebate);
-  document.getElementById('debate-overlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeDebate();
+  // Debate — page controls
+  document.getElementById('debate-back-btn').addEventListener('click', closeDebate);
+  document.getElementById('debate-new-btn').addEventListener('click', resetDebate);
+
+  const $debateInput   = document.getElementById('debate-input');
+  const $debateSendBtn = document.getElementById('debate-send-btn');
+
+  $debateInput.addEventListener('input', () => {
+    $debateSendBtn.disabled = !$debateInput.value.trim() || debateRunning;
+    $debateInput.style.height = 'auto';
+    $debateInput.style.height = $debateInput.scrollHeight + 'px';
   });
-  document.getElementById('debate-start-btn').addEventListener('click', () => {
-    const topic = document.getElementById('debate-topic-input').value.trim();
-    if (!topic) { showNotice('Please enter a topic first.'); return; }
-    runDebate(topic);
-  });
-  document.getElementById('debate-topic-input').addEventListener('keydown', e => {
+  $debateInput.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      const topic = document.getElementById('debate-topic-input').value.trim();
-      if (topic) runDebate(topic);
+      submitDebate();
     }
   });
-  document.getElementById('debate-new-btn').addEventListener('click', () => {
-    document.getElementById('debate-thread-phase').style.display = 'none';
-    document.getElementById('debate-input-phase').style.display = '';
-    document.getElementById('debate-topic-input').value = '';
-    setTimeout(() => document.getElementById('debate-topic-input').focus(), 50);
-  });
+  $debateSendBtn.addEventListener('click', submitDebate);
 
   // Campfire — nav buttons (desktop + mobile)
   document.getElementById('btn-campfire').addEventListener('click', openCampfire);
@@ -2715,17 +2711,33 @@ const DEBATE_REPLIES = [
 ];
 
 function openDebate() {
-  debateRunning = false;
-  document.getElementById('debate-input-phase').style.display = '';
-  document.getElementById('debate-thread-phase').style.display = 'none';
-  document.getElementById('debate-topic-input').value = '';
-  document.getElementById('debate-thread').innerHTML = '';
-  document.getElementById('debate-overlay').classList.add('open');
-  setTimeout(() => document.getElementById('debate-topic-input').focus(), 100);
+  document.getElementById('debate-page').style.display = 'flex';
+  document.getElementById('main-layout').style.display = 'none';
+  resetDebate();
+  setTimeout(() => document.getElementById('debate-input').focus(), 100);
 }
 
 function closeDebate() {
-  document.getElementById('debate-overlay').classList.remove('open');
+  document.getElementById('debate-page').style.display = 'none';
+  document.getElementById('main-layout').style.display = '';
+}
+
+function resetDebate() {
+  debateRunning = false;
+  document.getElementById('debate-thread').innerHTML = '';
+  document.getElementById('debate-empty').style.display = '';
+  document.getElementById('debate-new-btn').style.visibility = 'hidden';
+  document.getElementById('debate-input').value = '';
+  document.getElementById('debate-input').placeholder = 'Start debate...';
+  document.getElementById('debate-input').style.height = 'auto';
+  document.getElementById('debate-send-btn').disabled = true;
+  document.getElementById('debate-page-stream').scrollTop = 0;
+}
+
+function submitDebate() {
+  const topic = document.getElementById('debate-input').value.trim();
+  if (!topic || debateRunning) return;
+  runDebate(topic);
 }
 
 function buildDebateInitPrompt(advisor, topic, priorMessages) {
@@ -2813,8 +2825,13 @@ function appendDebateMessage(msg, isLoading) {
     </div>`;
 
   thread.appendChild(wrap);
-  thread.scrollTop = thread.scrollHeight;
+  debateScrollBottom();
   return wrap;
+}
+
+function debateScrollBottom() {
+  const s = document.getElementById('debate-page-stream');
+  if (s) s.scrollTop = s.scrollHeight;
 }
 
 async function callDebateAPI(systemPrompt, userPrompt) {
@@ -2842,10 +2859,16 @@ async function runDebate(topic) {
   if (debateRunning) return;
   debateRunning = true;
 
-  document.getElementById('debate-input-phase').style.display = 'none';
-  document.getElementById('debate-thread-phase').style.display = '';
-  document.getElementById('debate-topic-banner').textContent = `"${topic}"`;
+  // Hide empty state, show user's question as first thread message
+  document.getElementById('debate-empty').style.display = 'none';
+  document.getElementById('debate-input').value = '';
+  document.getElementById('debate-input').placeholder = 'Continue the debate...';
+  document.getElementById('debate-input').style.height = 'auto';
+  document.getElementById('debate-send-btn').disabled = true;
   document.getElementById('debate-thread').innerHTML = '';
+  document.getElementById('debate-thread').appendChild(createUserBubble(topic));
+  document.getElementById('debate-new-btn').style.visibility = 'visible';
+  debateScrollBottom();
 
   const messages = [];
 
@@ -2867,7 +2890,7 @@ async function runDebate(topic) {
     } catch (e) {
       card.querySelector('.debate-text').textContent = 'Unable to respond.';
     }
-    document.getElementById('debate-thread').scrollTop = 9999;
+    debateScrollBottom();
   }
 
   // ── Round 2: Cross-advisor replies ─────────────────────────────
@@ -2890,7 +2913,7 @@ async function runDebate(topic) {
     } catch (e) {
       card.querySelector('.debate-text').textContent = 'Unable to respond.';
     }
-    document.getElementById('debate-thread').scrollTop = 9999;
+    debateScrollBottom();
   }
 
   // ── Summary: Guide ─────────────────────────────────────────────
@@ -2908,9 +2931,10 @@ async function runDebate(topic) {
   } catch (e) {
     summaryCard.querySelector('.debate-text').textContent = 'Unable to generate summary.';
   }
-  document.getElementById('debate-thread').scrollTop = 9999;
+  debateScrollBottom();
 
   debateRunning = false;
+  document.getElementById('debate-send-btn').disabled = false;
 }
 
 // ── Dark Mode ─────────────────────────────────────────────────────

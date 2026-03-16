@@ -2994,92 +2994,145 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 
 /* ── Debate Mode ──────────────────────────────────────────────────── */
 
-.debate-modal {
-  max-width: 640px;
-  width: 100%;
-  max-height: 88vh;
-  display: flex;
+/* ── Debate Full-Page Layout ────────────────────────────────────── */
+
+#debate-page {
   flex-direction: column;
-}
-
-.debate-phase {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-  padding: 20px 22px 22px;
-}
-
-/* Input phase */
-.debate-intro {
-  font-size: 14px;
-  color: var(--text-2);
-  margin: 0 0 18px;
-  line-height: 1.6;
-}
-
-.debate-topic-input {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  font-family: var(--font);
-  font-size: 15px;
-  color: var(--text-1);
-  background: var(--surface);
-  resize: none;
-  outline: none;
-  transition: border-color 0.15s;
-  box-sizing: border-box;
-}
-
-.debate-topic-input:focus {
-  border-color: #9CA3AF;
-}
-
-.debate-start-row {
-  margin-top: 16px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* Thread phase */
-.debate-topic-banner {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-1);
+  height: 100vh;
+  padding-top: var(--topbar-h);
   background: var(--bg);
-  border-radius: 10px;
-  padding: 12px 16px;
-  margin-bottom: 18px;
-  border-left: 3px solid #3b9eff;
-  line-height: 1.5;
+}
+
+.debate-page-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
   flex-shrink: 0;
 }
 
-.debate-thread {
-  flex: 1;
-  overflow-y: auto;
+.debate-page-header-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 10px 24px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 12px;
-  padding-right: 4px;
 }
 
-.debate-thread::-webkit-scrollbar { width: 4px; }
-.debate-thread::-webkit-scrollbar-track { background: transparent; }
-.debate-thread::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
+.debate-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--r-sm);
+  flex-shrink: 0;
+  transition: color 0.1s;
+}
 
-/* Individual message */
+.debate-back-btn:hover { color: var(--text-1); }
+
+.debate-page-title-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.debate-page-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.debate-page-subtitle {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.debate-page-stream {
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.debate-page-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Empty state */
+.debate-empty {
+  text-align: center;
+  padding: 60px 24px 40px;
+}
+
+.debate-empty-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 10px;
+}
+
+.debate-empty-desc {
+  font-size: 15px;
+  color: var(--text-2);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.debate-empty-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.debate-empty-list li {
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+.debate-empty-list li::before {
+  content: '• ';
+}
+
+/* Thread */
+.debate-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Input composer */
+.debate-page-composer {
+  background: var(--bg);
+  padding: 12px 24px 40px;
+  flex-shrink: 0;
+}
+
+/* Individual message — thread style (no card borders) */
 .debate-msg {
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
   animation: debate-fade-in 0.3s ease;
+}
+
+.debate-msg:first-child {
+  border-top: none;
 }
 
 @keyframes debate-fade-in {
@@ -3090,10 +3143,9 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 /* Reply — indented */
 .debate-reply {
   margin-left: 28px;
-  background: var(--bg);
-  border-color: transparent;
+  border-top-color: transparent;
+  padding-left: 12px;
   border-left: 2px solid var(--border);
-  border-radius: 0 12px 12px 0;
 }
 
 /* Summary card */
@@ -3175,22 +3227,16 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   50%       { opacity: 1; }
 }
 
-/* Footer */
-.debate-footer-row {
-  margin-top: 16px;
-  display: flex;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
+/* New Debate button in header */
 .debate-new-btn {
-  padding: 8px 22px;
+  padding: 6px 14px;
   border-radius: 20px;
   border: 1px solid var(--border);
   background: var(--surface);
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-2);
   cursor: pointer;
+  flex-shrink: 0;
   transition: border-color 0.15s, color 0.15s;
 }
 
@@ -3287,7 +3333,6 @@ body.dark-mode .mobile-nav-heading { color: #8b95a8; }
 /* Input fields */
 body.dark-mode .input-field,
 body.dark-mode .voting-textarea,
-body.dark-mode .debate-topic-input,
 body.dark-mode .campfire-textarea,
 body.dark-mode .voting-option-input,
 body.dark-mode .voting-textarea,
@@ -3296,7 +3341,6 @@ body.dark-mode .bl-book-input { background: #22263a; color: #f0f2f5; border-colo
 
 body.dark-mode .input-field:focus,
 body.dark-mode .voting-textarea:focus,
-body.dark-mode .debate-topic-input:focus,
 body.dark-mode .campfire-textarea:focus,
 body.dark-mode .voting-option-input:focus { border-color: #555e72; background: #22263a; }
 
@@ -3385,8 +3429,7 @@ body.dark-mode .debate-new-btn:hover,
 body.dark-mode .voting-new-btn:hover { border-color: #555e72; color: var(--text-1); }
 body.dark-mode .campfire-new-btn:hover { background: #D97706; color: white; border-color: #D97706; }
 
-/* Debate topic banner / voting question display */
-body.dark-mode .debate-topic-banner,
+/* Voting question display */
 body.dark-mode .voting-question-display { background: #22263a; border-left-color: #3b9eff; color: var(--text-1); }
 
 /* Stories panel */

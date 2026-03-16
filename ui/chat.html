@@ -327,8 +327,62 @@
     </div>
   </div>
 
+  <!-- Debate Page (full-page, replaces main layout when open) -->
+  <div id="debate-page" style="display:none">
+
+    <!-- Sub-header -->
+    <div class="debate-page-header">
+      <div class="debate-page-header-inner">
+        <button class="debate-back-btn" id="debate-back-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          Sessions
+        </button>
+        <div class="debate-page-title-group">
+          <span class="debate-page-title">Tribe Debate</span>
+          <span class="debate-page-subtitle">Ask one question and let your advisors debate it from different perspectives.</span>
+        </div>
+        <button class="debate-new-btn" id="debate-new-btn" style="visibility:hidden">New Debate</button>
+      </div>
+    </div>
+
+    <!-- Scrollable thread stream -->
+    <div class="debate-page-stream" id="debate-page-stream">
+      <div class="debate-page-inner">
+
+        <!-- Empty state -->
+        <div class="debate-empty" id="debate-empty">
+          <h3 class="debate-empty-title">Tribe Debate</h3>
+          <p class="debate-empty-desc">Ask one question and let your advisors debate it from their unique perspectives.</p>
+          <ul class="debate-empty-list">
+            <li>Advisors may agree or disagree with each other</li>
+            <li>Each advisor responds from their own pillar perspective</li>
+            <li>You can jump in anytime to guide the discussion</li>
+          </ul>
+        </div>
+
+        <!-- Thread messages -->
+        <div id="debate-thread"></div>
+
+      </div>
+    </div>
+
+    <!-- Input bar -->
+    <div class="debate-page-composer">
+      <div class="input-row">
+        <textarea class="input-field" id="debate-input" placeholder="Start debate..." rows="1"></textarea>
+        <button class="send-btn" id="debate-send-btn" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
   <!-- Main Layout -->
-  <div class="layout">
+  <div class="layout" id="main-layout">
 
     <!-- Message Stream -->
     <div class="stream" id="stream">
@@ -796,40 +850,6 @@
   </div>
 
   <!-- Debate Modal -->
-  <div class="modal-overlay" id="debate-overlay">
-    <div class="modal debate-modal">
-
-      <div class="modal-header">
-        <span class="modal-title">Tribe Debate</span>
-        <button class="modal-close" id="debate-close">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Input phase -->
-      <div id="debate-input-phase" class="debate-phase">
-        <p class="debate-intro">Enter a topic or question and your Tribe will debate it from their unique perspectives.</p>
-        <textarea id="debate-topic-input" class="debate-topic-input" placeholder="e.g. Should I change careers?" rows="3"></textarea>
-        <div class="debate-start-row">
-          <button class="btn-primary" id="debate-start-btn">Start Debate</button>
-        </div>
-      </div>
-
-      <!-- Thread phase -->
-      <div id="debate-thread-phase" class="debate-phase" style="display:none">
-        <div class="debate-topic-banner" id="debate-topic-banner"></div>
-        <div class="debate-thread" id="debate-thread"></div>
-        <div class="debate-footer-row">
-          <button class="debate-new-btn" id="debate-new-btn">Start New Debate</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
   <!-- Chat Guide Modal -->
   <div class="modal-overlay" id="chat-guide-overlay">
     <div class="modal guide-modal">
