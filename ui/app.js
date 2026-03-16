@@ -268,7 +268,7 @@ const state = {
   currentConvId: null,
   bookContext: null,   // set when continuing from a Book Lesson
   lastSpeakers: [],    // tracks who last responded for mention routing
-  streamController: null
+  streamController: null,
   get guideName() { return localStorage.getItem('tribe_guide_name') || 'a wise mentor and trusted advisor'; },
   set guideName(v){ localStorage.setItem('tribe_guide_name', v); }
 };
