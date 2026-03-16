@@ -916,19 +916,9 @@ function formatError(err) {
 
 // ── DOM helpers ───────────────────────────────────────────────────
 
-function stripMarkdown(text) {
-  return text
-    .replace(/^---+\s*$/gm, '')           // horizontal rules
-    .replace(/^#{1,6}\s+/gm, '')           // headings
-    .replace(/\*(.+?)\*/g, '$1')           // *italic* (single star, not double)
-    .replace(/__(.+?)__/g, '$1')           // __bold__
-    .replace(/_(.+?)_/g, '$1')             // _italic_
-    .replace(/`(.+?)`/g, '$1')             // `code`
-    .replace(/^\s*[-*+]\s+/gm, '')         // bullet markers
-    .replace(/^\s*\d+\.\s+/gm, '')         // numbered list markers
-    .replace(/^\s*>\s*/gm, '')             // blockquotes
-    .replace(/\n{3,}/g, '\n\n')            // collapse excess blank lines
-    .trim();
+function renderMarkdown(text) {
+  marked.use({ breaks: true, gfm: true });
+  return marked.parse(text);
 }
 
 function createUserBubble(text) {
@@ -983,11 +973,8 @@ function fillCard(card, text, isError = false) {
   if (isError) {
     textEl.innerHTML = `<span class="advisor-error-text">${esc(text)}</span>`;
   } else {
-    const clean = stripAdvisorHeader(stripMarkdown(text), card.dataset.advisorId);
-    textEl.innerHTML = esc(clean)
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\n\n/g, '<br><br>')
-      .replace(/\n/g, '<br>');
+    const clean = stripAdvisorHeader(text, card.dataset.advisorId);
+    textEl.innerHTML = renderMarkdown(clean);
   }
 }
 

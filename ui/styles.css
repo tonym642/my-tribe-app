@@ -466,13 +466,50 @@ html, body {
 
 .advisor-title {
   font-size: 12px;
-  color: var(--text-3);
+  color: #555;
+  font-weight: 500;
+}
+
+body.dark-mode .advisor-title {
+  color: #9CA3AF;
 }
 
 .advisor-text {
   font-size: 15px;
   color: var(--text-1);
   line-height: 1.65;
+}
+
+.advisor-text p {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.advisor-text p:last-child {
+  margin-bottom: 0;
+}
+
+.advisor-text ul,
+.advisor-text ol {
+  margin-left: 18px;
+  margin-bottom: 10px;
+}
+
+.advisor-text li {
+  margin-bottom: 4px;
+  line-height: 1.6;
+}
+
+.advisor-text strong {
+  font-weight: 600;
+}
+
+.advisor-text h1,
+.advisor-text h2,
+.advisor-text h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
 }
 
 /* Typing animation */
