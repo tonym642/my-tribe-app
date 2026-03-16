@@ -1492,6 +1492,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 .story-library-filters {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 6px;
   padding: 12px 20px;
   border-bottom: 1px solid var(--border);
