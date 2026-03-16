@@ -898,6 +898,7 @@ async function handleSend() {
   setStopMode();
 
   // Hide welcome and controls on first message
+  hideAdvisorWarning();
   if ($welcome) {
     $welcome.style.display = 'none';
   }
