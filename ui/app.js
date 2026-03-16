@@ -2916,23 +2916,6 @@ async function runDebate(topic) {
     debateScrollBottom();
   }
 
-  // ── Summary: Guide ─────────────────────────────────────────────
-  const guide = ADVISORS['guide'];
-  const summaryCard = appendDebateMessage(
-    { advisorId: 'guide', advisor: 'Guide', role: 'Your Personal Guide', replyTo: null, isSummary: true },
-    true
-  );
-  try {
-    const system = buildDebateSummaryPrompt(topic, messages);
-    const text   = await callDebateAPI(system, 'Summarize this debate.');
-    const textEl = summaryCard.querySelector('.debate-text');
-    textEl.classList.remove('debate-loading');
-    textEl.textContent = text;
-  } catch (e) {
-    summaryCard.querySelector('.debate-text').textContent = 'Unable to generate summary.';
-  }
-  debateScrollBottom();
-
   debateRunning = false;
   document.getElementById('debate-send-btn').disabled = false;
 }
