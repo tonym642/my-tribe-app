@@ -792,10 +792,12 @@ async function handleSend() {
   state.stopped = false;
   setStopMode();
 
-  // Hide welcome on first message
+  // Hide welcome and controls on first message
   if ($welcome) {
     $welcome.style.display = 'none';
   }
+  document.getElementById('mode-row').style.display = 'none';
+  document.getElementById('advisor-row').style.display = 'none';
 
   // Render user bubble
   $inner.appendChild(createUserBubble(text));
@@ -914,10 +916,33 @@ function formatError(err) {
 
 // ── DOM helpers ───────────────────────────────────────────────────
 
+function stripMarkdown(text) {
+  return text
+    .replace(/^---+\s*$/gm, '')          // horizontal rules
+    .replace(/^#{1,6}\s+/gm, '')          // headings
+    .replace(/\*\*(.+?)\*\*/g, '$1')      // **bold**
+    .replace(/\*(.+?)\*/g, '$1')          // *italic*
+    .replace(/__(.+?)__/g, '$1')          // __bold__
+    .replace(/_(.+?)_/g, '$1')            // _italic_
+    .replace(/`(.+?)`/g, '$1')            // `code`
+    .replace(/^\s*[-*+]\s+/gm, '')        // bullet markers
+    .replace(/^\s*\d+\.\s+/gm, '')        // numbered list markers
+    .replace(/^\s*>\s*/gm, '')            // blockquotes
+    .replace(/\n{3,}/g, '\n\n')           // collapse excess blank lines
+    .trim();
+}
+
 function createUserBubble(text) {
   const div = document.createElement('div');
-  div.className = 'msg-user';
-  div.innerHTML = `<div class="msg-user-bubble">${esc(text)}</div>`;
+  div.className = 'advisor-card msg-user-thread';
+  div.innerHTML = `
+    <div class="advisor-thread-avatar user-avatar-circle">You</div>
+    <div class="advisor-meta">
+      <div class="advisor-header">
+        <span class="advisor-name">You</span>
+      </div>
+      <div class="advisor-text">${esc(text)}</div>
+    </div>`;
   return div;
 }
 
@@ -947,7 +972,8 @@ function fillCard(card, text, isError = false) {
   if (isError) {
     textEl.innerHTML = `<span class="advisor-error-text">${esc(text)}</span>`;
   } else {
-    textEl.innerHTML = esc(text).replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+    const clean = stripMarkdown(text);
+    textEl.innerHTML = esc(clean).replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
   }
 }
 
@@ -1042,6 +1068,8 @@ function startNewChat() {
   $inner.innerHTML = '';
   $inner.appendChild($welcome);
   $welcome.style.display = '';
+  document.getElementById('mode-row').style.display = '';
+  document.getElementById('advisor-row').style.display = '';
   $input.value = '';
   $input.style.height = 'auto';
   $sendBtn.disabled = true;
@@ -1117,6 +1145,8 @@ function loadConversation(id) {
   state.currentConvId = id;
   $inner.innerHTML = '';
   $welcome.style.display = 'none';
+  document.getElementById('mode-row').style.display = 'none';
+  document.getElementById('advisor-row').style.display = 'none';
 
   for (const msg of conv.messages) {
     if (msg.type === 'user') {
