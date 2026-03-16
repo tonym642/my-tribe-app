@@ -390,25 +390,25 @@ html, body {
   white-space: pre-wrap;
 }
 
-/* ── Advisor card ────────────────────────────────────────────────── */
+/* ── Advisor thread message (Slack-style) ────────────────────────── */
 
 .advisor-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--advisor-color, #9CA3AF);
-  border-radius: var(--r);
-  padding: 16px 18px;
   display: flex;
-  gap: 13px;
-  box-shadow: var(--shadow-sm);
+  gap: 12px;
+  padding: 6px 0;
   animation: fadeUp 0.2s ease-out;
 }
 
+.advisor-thread-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 .synthesis-card {
-  background: #F8F7F4;
-  border-color: #E2DDD6;
-  border-left-color: var(--advisor-color, #9CA3AF);
-  border-left-width: 4px;
+  padding-top: 10px;
 }
 
 .synthesis-card .advisor-name {
@@ -440,7 +440,7 @@ html, body {
   display: flex;
   align-items: baseline;
   gap: 7px;
-  margin-bottom: 7px;
+  margin-bottom: 4px;
 }
 
 .advisor-name {
@@ -458,7 +458,6 @@ html, body {
   font-size: 15px;
   color: var(--text-1);
   line-height: 1.65;
-  white-space: pre-wrap;
 }
 
 /* Typing animation */
@@ -3258,7 +3257,6 @@ body.dark-mode .story-panel-item:hover { background: #22263a; }
 body.dark-mode .stories-tab.active { border-bottom-color: var(--text-1); color: var(--text-1); }
 
 /* Chat cards */
-body.dark-mode .synthesis-card { background: #1a1d27; border-color: #2a2d3a; }
 body.dark-mode .msg-advisor-bubble { background: #1a1d27; border-color: #2a2d3a; }
 
 /* Stop button */

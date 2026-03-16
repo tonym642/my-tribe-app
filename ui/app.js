@@ -926,8 +926,10 @@ function createLoadingCard(advisorId) {
   const card = document.createElement('div');
   card.className = 'advisor-card';
   card.style.setProperty('--advisor-color', a.color);
+  const avatarSrc = `../assets/avatars/${advisorId}.png`;
   card.innerHTML = `
-    <div class="advisor-avatar" style="background:${a.color}">${a.initial}</div>
+    <img class="advisor-thread-avatar" src="${avatarSrc}" alt="${a.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="advisor-avatar" style="background:${a.color};display:none">${a.initial}</div>
     <div class="advisor-meta">
       <div class="advisor-header">
         <span class="advisor-name">${a.name}</span>
@@ -940,21 +942,12 @@ function createLoadingCard(advisorId) {
   return card;
 }
 
-function renderMarkdown(text) {
-  return esc(text)
-    .replace(/^#{1,3} (.+)$/gm, '<strong>$1</strong>')   // # headings → bold
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')     // **bold**
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')                 // *italic*
-    .replace(/\n\n/g, '<br><br>')
-    .replace(/\n/g, '<br>');
-}
-
 function fillCard(card, text, isError = false) {
   const textEl = card.querySelector('.advisor-text');
   if (isError) {
     textEl.innerHTML = `<span class="advisor-error-text">${esc(text)}</span>`;
   } else {
-    textEl.innerHTML = renderMarkdown(text);
+    textEl.innerHTML = esc(text).replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
   }
 }
 
