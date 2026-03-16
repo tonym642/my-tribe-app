@@ -262,7 +262,7 @@ function buildSystemPrompt(advisor) {
 
 const state = {
   mode: 'member',
-  selectedAdvisors: new Set(TRIBE),
+  selectedAdvisors: new Set(),
   isLoading: false,
   stopped: false,
   currentConvId: null,
@@ -755,9 +755,9 @@ function applyModeUI(mode, prev) {
     });
 
   } else if (mode === 'member') {
-    // Default to first tribe member on entry; keep current selection if already in member mode
+    // No default selection — user must choose explicitly
     if (!prev || prev !== 'member') {
-      state.selectedAdvisors = new Set([TRIBE[0]]);
+      state.selectedAdvisors = new Set();
     }
     chips.forEach(chip => {
       chip.classList.remove('dim');
@@ -778,6 +778,7 @@ function applyModeUI(mode, prev) {
 
 function toggleAdvisor(id) {
   if (state.mode === 'tribe' || state.mode === 'guide' || state.mode === 'bvm') return;
+  hideAdvisorWarning();
 
   if (state.mode === 'parable') {
     // Single-select
@@ -806,6 +807,16 @@ function syncChipHighlights() {
   document.querySelectorAll('.advisor-chip').forEach(chip => {
     chip.classList.toggle('active', state.selectedAdvisors.has(chip.dataset.advisor));
   });
+}
+
+function showAdvisorWarning() {
+  const el = document.getElementById('advisor-warning');
+  if (el) el.style.display = '';
+}
+
+function hideAdvisorWarning() {
+  const el = document.getElementById('advisor-warning');
+  if (el) el.style.display = 'none';
 }
 
 // ── Mention routing ───────────────────────────────────────────────
@@ -866,7 +877,7 @@ async function handleSend() {
   if (!rawText || state.isLoading) return;
 
   if (state.mode === 'member' && state.selectedAdvisors.size === 0) {
-    showNotice('Select at least one advisor to continue.');
+    showAdvisorWarning();
     return;
   }
 
@@ -1215,6 +1226,11 @@ function startNewChat() {
   document.getElementById('mode-row').style.display = '';
   document.getElementById('advisor-row').style.display = '';
   state.lastSpeakers = [];
+  if (state.mode === 'member') {
+    state.selectedAdvisors = new Set();
+    syncChipHighlights();
+  }
+  hideAdvisorWarning();
   $input.value = '';
   $input.style.height = 'auto';
   $sendBtn.disabled = true;

@@ -557,6 +557,25 @@ body.dark-mode .advisor-title {
 }
 }
 
+/* ── Advisor selection warning ───────────────────────────────────── */
+
+#advisor-warning {
+  font-size: 13px;
+  color: #92400E;
+  background: #FEF3C7;
+  border: 1px solid #FDE68A;
+  border-radius: var(--r-sm);
+  padding: 8px 14px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+body.dark-mode #advisor-warning {
+  color: #FCD34D;
+  background: #1c1608;
+  border-color: #78350F;
+}
+
 /* ── Mention autocomplete ────────────────────────────────────────── */
 
 #mention-dropdown {
