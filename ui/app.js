@@ -557,16 +557,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     openStoryLibrary();
   });
 
-  // Stories — "Tell Me Another" in panel
-  document.getElementById('stories-panel-another-btn').addEventListener('click', e => {
-    e.stopPropagation();
-    handleTellMeAnother();
-  });
-
-  // Stories — viewer: close, save, nav zones, "Tell Me Another", keyboard
+  // Stories — viewer: close, save, keyboard
   document.getElementById('story-close').addEventListener('click', closeStoryViewer);
   document.getElementById('story-save-btn').addEventListener('click', saveStoryToLibrary);
-  document.getElementById('story-another-btn').addEventListener('click', handleTellMeAnother);
   document.addEventListener('keydown', e => {
     if (!document.getElementById('story-viewer').classList.contains('open')) return;
     if (e.key === 'Escape') closeStoryViewer();
