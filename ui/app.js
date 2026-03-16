@@ -566,14 +566,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Stories — viewer: close, save, nav zones, "Tell Me Another", keyboard
   document.getElementById('story-close').addEventListener('click', closeStoryViewer);
   document.getElementById('story-save-btn').addEventListener('click', saveStoryToLibrary);
-  document.getElementById('story-nav-prev').addEventListener('click', prevSlide);
-  document.getElementById('story-nav-next').addEventListener('click', nextSlide);
   document.getElementById('story-another-btn').addEventListener('click', handleTellMeAnother);
   document.addEventListener('keydown', e => {
     if (!document.getElementById('story-viewer').classList.contains('open')) return;
-    if (e.key === 'Escape')       closeStoryViewer();
-    if (e.key === 'ArrowRight')   nextSlide();
-    if (e.key === 'ArrowLeft')    prevSlide();
+    if (e.key === 'Escape') closeStoryViewer();
   });
 
   // Stories — library modal
@@ -1386,18 +1382,17 @@ const ADVISOR_AVATAR = {
   emma:   '../assets/avatars/emma.png',
   frank:  '../assets/avatars/frank.png',
   rachel: '../assets/avatars/rachel.png',
-  guide:  '../assets/avatars/guide.svg',
-  marcus: null,
-  hannah: null
+  guide:  '../assets/avatars/guide.png',
+  marcus: '../assets/avatars/marcus.png',
+  hannah: '../assets/avatars/hannah.png'
 };
 
 const STORY_NARRATOR_IDS = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'frank', 'guide'];
 const STORY_CATEGORIES   = ['Leaders', 'Entrepreneurs', 'Athletes', 'Scientists', 'Philosophers', 'Spiritual Figures', 'Unknown Heroes'];
 
-// Current story being viewed + slide index
-let currentStory      = null;
-let currentSlideIndex = 0;
-let storyGenerating   = false;
+// Current story being viewed
+let currentStory    = null;
+let storyGenerating = false;
 
 // ── Storage ──
 
@@ -1582,88 +1577,70 @@ function updateStoriesBadge() {
 
 function openStoryViewer(story) {
   if (!story || !story.slides || !story.slides.length) return;
-  currentStory      = story;
-  currentSlideIndex = 0;
+  currentStory = story;
   document.getElementById('story-viewer').classList.add('open');
+  document.getElementById('story-reader').scrollTop = 0;
   document.body.style.overflow = 'hidden';
-  renderStorySlide();
+  renderStoryPage();
 }
 
 function closeStoryViewer() {
   document.getElementById('story-viewer').classList.remove('open');
   document.body.style.overflow = '';
-  currentStory      = null;
-  currentSlideIndex = 0;
+  currentStory = null;
   markDailyStoryRead();
   updateStoriesBadge();
 }
 
-function renderStorySlide() {
+function renderStoryPage() {
   if (!currentStory) return;
-  const slides  = currentStory.slides;
-  const slide   = slides[currentSlideIndex];
   const advisor = ADVISORS[currentStory.narrator] || {};
-  const total   = slides.length;
 
-  // Progress bars
-  const $prog = document.getElementById('story-progress');
-  $prog.innerHTML = slides.map((_, i) =>
-    `<div class="story-prog-bar${i <= currentSlideIndex ? ' active' : ''}"></div>`
-  ).join('');
-
-  // Header avatar
-  const avatarWrap = document.getElementById('story-header-avatar');
-  avatarWrap.innerHTML = '';
+  // Narrator avatar
+  const $avatar = document.getElementById('story-narrator-avatar');
+  $avatar.innerHTML = '';
   const avatarSrc = ADVISOR_AVATAR[currentStory.narrator];
   if (avatarSrc) {
     const img = document.createElement('img');
-    img.src = avatarSrc;
-    img.alt = advisor.name || '';
-    avatarWrap.appendChild(img);
+    img.src   = avatarSrc;
+    img.alt   = advisor.name || '';
+    img.onerror = () => {
+      img.remove();
+      const init = document.createElement('div');
+      init.className   = 'story-narrator-initial';
+      init.style.background = advisor.color || '#555';
+      init.textContent = advisor.initial || '?';
+      $avatar.appendChild(init);
+    };
+    $avatar.appendChild(img);
   } else {
     const init = document.createElement('div');
-    init.className = 'story-header-initial';
-    init.style.background = advisor.color || '#888';
+    init.className   = 'story-narrator-initial';
+    init.style.background = advisor.color || '#555';
     init.textContent = advisor.initial || '?';
-    avatarWrap.appendChild(init);
+    $avatar.appendChild(init);
   }
-  document.getElementById('story-header-name').textContent = advisor.name || currentStory.narrator;
-  document.getElementById('story-header-role').textContent = advisor.title || '';
+
+  document.getElementById('story-narrator-name').textContent = advisor.name || currentStory.narrator;
+  document.getElementById('story-narrator-role').textContent = advisor.title || '';
+  document.getElementById('story-category-tag').textContent  = currentStory.category || '';
+  document.getElementById('story-main-title').textContent    = currentStory.title || '';
 
   // Save button state
-  const $save = document.getElementById('story-save-btn');
   const lib = getStoryLibrary();
-  const alreadySaved = lib.some(s => s.title === currentStory.title && s.narrator === currentStory.narrator);
-  $save.classList.toggle('saved', alreadySaved);
-  $save.title = alreadySaved ? 'Saved to library' : 'Save to library';
+  const saved = lib.some(s => s.title === currentStory.title && s.narrator === currentStory.narrator);
+  const $save = document.getElementById('story-save-btn');
+  $save.classList.toggle('saved', saved);
 
-  // Slide body
-  const isFirst = currentSlideIndex === 0;
-  const isLast  = currentSlideIndex === total - 1;
-
-  document.getElementById('story-slide-label').textContent    = slide.label || '';
-  document.getElementById('story-slide-category').textContent = isFirst ? (currentStory.category || '') : '';
-  document.getElementById('story-title').textContent          = isFirst ? (currentStory.title || '') : '';
-  document.getElementById('story-slide-text').textContent     = slide.text || '';
-
-  // Show "Tell Me Another Story" only on last slide
-  document.getElementById('story-another-btn').style.display = isLast ? 'inline-flex' : 'none';
-}
-
-function prevSlide() {
-  if (!currentStory || currentSlideIndex <= 0) return;
-  currentSlideIndex--;
-  renderStorySlide();
-}
-
-function nextSlide() {
-  if (!currentStory) return;
-  if (currentSlideIndex < currentStory.slides.length - 1) {
-    currentSlideIndex++;
-    renderStorySlide();
-  } else {
-    closeStoryViewer();
-  }
+  // Render all slides as stacked sections
+  const $sections = document.getElementById('story-sections');
+  $sections.innerHTML = currentStory.slides.map(slide => {
+    const isLesson = slide.label === 'The Lesson';
+    return `<div class="story-section${isLesson ? ' story-section-lesson' : ''}">
+      <div class="story-section-label">${esc(slide.label || '')}</div>
+      <p class="story-section-text">${esc(slide.text || '')}</p>
+    </div>`;
+  }).join('');
 }
 
 function saveStoryToLibrary() {
@@ -1673,7 +1650,7 @@ function saveStoryToLibrary() {
   if (alreadySaved) { showNotice('Already saved.'); return; }
   lib.unshift({ ...currentStory, saved_at: Date.now() });
   saveStoryLibraryData(lib);
-  renderStorySlide(); // refresh save button state
+  renderStoryPage(); // refresh save button state
   showNotice('Story saved to library.');
 }
 

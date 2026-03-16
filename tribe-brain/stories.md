@@ -10,7 +10,7 @@ Each story is about a real person — famous or unknown — and is told through 
 
 ## Story Format
 
-Stories are structured as **6 slides** presented in a tap-through viewer:
+Stories are rendered as a **single full-page reading experience** (not slides or tap-through). All sections appear stacked vertically on one scrollable page:
 
 1. **Opening** — Advisor's hook (their distinctive voice and tone)
 2. **Context** — Who the subject was, their background

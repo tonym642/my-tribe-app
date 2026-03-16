@@ -69,20 +69,30 @@ Unknown Heroes often create the strongest emotional impact.
 
 ---
 
-## Story Structure (Slide Format)
+## Story Structure (Full-Page Reading Experience)
 
-Every story is presented as **4–6 slides** in a tap-through interface.
+Every story is rendered as a **single scrollable page** with stacked sections.
 
-### Slide sequence:
+Stories do NOT use a slide-by-slide or tap-through format. The full story is visible on one page, like an editorial article.
+
+### Section sequence:
 
 1. **Opening** — Advisor introduces the person in their distinctive voice (hook)
 2. **Context** — Who this person was and their background
 3. **The Struggle** — The challenge or obstacle they faced
 4. **The Decision** — The defining choice or action they took
 5. **The Outcome** — What happened as a result
-6. **The Lesson** — Clear, direct takeaway for the reader
+6. **The Lesson** — Clear, direct takeaway for the reader (styled as a pull quote)
 
-Each slide should be **2–3 sentences**. Total reading time: approximately 2–3 minutes.
+Each section should be **2–3 sentences**. Total reading time: approximately 2–3 minutes.
+
+### Page layout:
+
+- Narrator avatar, name, and role appear at the top
+- Category tag and story title follow
+- All 6 sections stack vertically below
+- "Tell Me Another Story" button at the bottom
+- "Save" button in the top bar
 
 ---
 

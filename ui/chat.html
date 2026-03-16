@@ -304,49 +304,52 @@
     </div>
   </div>
 
-  <!-- Story Viewer (full-screen slide-based) -->
+  <!-- Story Viewer (full-page reading experience) -->
   <div class="story-viewer" id="story-viewer">
 
-    <!-- Slide progress bars -->
-    <div class="story-progress" id="story-progress"></div>
-
-    <!-- Header: narrator + actions -->
-    <div class="story-header">
-      <div class="story-header-left">
-        <div class="story-header-avatar" id="story-header-avatar"></div>
-        <div class="story-header-info">
-          <span class="story-header-name" id="story-header-name"></span>
-          <span class="story-header-role" id="story-header-role"></span>
-        </div>
-      </div>
-      <div class="story-header-right">
-        <button class="story-save-btn" id="story-save-btn" title="Save to library">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-        </button>
-        <button class="story-close" id="story-close" aria-label="Close">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <!-- Slide content -->
-    <div class="story-body" id="story-body">
-      <div class="story-slide-label" id="story-slide-label"></div>
-      <div class="story-slide-category" id="story-slide-category"></div>
-      <div class="story-title" id="story-title"></div>
-      <div class="story-slide-text" id="story-slide-text"></div>
-      <button class="story-another-btn" id="story-another-btn" style="display:none">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-        Tell Me Another Story
+    <!-- Top bar: back + actions -->
+    <div class="story-topbar">
+      <button class="story-back-btn" id="story-close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Life Stories
+      </button>
+      <button class="story-save-btn" id="story-save-btn" title="Save to library">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        Save
       </button>
     </div>
 
-    <!-- Tap navigation zones -->
-    <div class="story-nav-prev" id="story-nav-prev"></div>
-    <div class="story-nav-next" id="story-nav-next"></div>
+    <!-- Scrollable reading area -->
+    <div class="story-reader" id="story-reader">
+      <div class="story-reader-inner">
+
+        <!-- Narrator block -->
+        <div class="story-narrator-block">
+          <div class="story-narrator-avatar" id="story-narrator-avatar"></div>
+          <div class="story-narrator-info">
+            <div class="story-narrator-name" id="story-narrator-name"></div>
+            <div class="story-narrator-role" id="story-narrator-role"></div>
+          </div>
+          <div class="story-life-label">Life Stories</div>
+        </div>
+
+        <!-- Category + Title -->
+        <div class="story-category-tag" id="story-category-tag"></div>
+        <h1 class="story-main-title" id="story-main-title"></h1>
+
+        <!-- All story sections rendered here -->
+        <div class="story-sections" id="story-sections"></div>
+
+        <!-- Bottom actions -->
+        <div class="story-reader-actions">
+          <button class="story-another-btn" id="story-another-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+            Tell Me Another Story
+          </button>
+        </div>
+
+      </div>
+    </div>
 
   </div>
 
