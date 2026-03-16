@@ -394,10 +394,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Navigation — coming soon items (desktop + mobile)
   const comingSoon = [
     'btn-core-lessons',
-    'btn-profile', 'btn-onboarding', 'btn-advisors',
+    'btn-onboarding', 'btn-advisors',
     'btn-reflections-settings',
     'm-btn-core-lessons',
-    'm-btn-profile', 'm-btn-onboarding', 'm-btn-advisors',
+    'm-btn-onboarding', 'm-btn-advisors',
     'm-btn-reflections-settings'
   ];
   comingSoon.forEach(id => {
@@ -659,6 +659,42 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Book Lessons — tribe pills
   document.querySelectorAll('.bl-tribe-pill').forEach(btn => {
     btn.addEventListener('click', () => continueWithTribe(btn.dataset.mode));
+  });
+
+  // Profile page (desktop + mobile)
+  document.getElementById('btn-profile').addEventListener('click', openProfile);
+  document.getElementById('m-btn-profile').addEventListener('click', () => { closeMobileNav(); openProfile(); });
+  document.getElementById('profile-back-btn').addEventListener('click', closeProfile);
+  document.getElementById('profile-save-btn').addEventListener('click', saveProfileData);
+  document.getElementById('profile-save-top').addEventListener('click', saveProfileData);
+
+  // Profile — photo upload
+  document.getElementById('profile-photo-input').addEventListener('change', e => {
+    handleProfilePhotoUpload(e.target.files[0]);
+  });
+
+  // Profile — add custom interest
+  document.getElementById('pf-add-interest-btn').addEventListener('click', () => {
+    const val = document.getElementById('pf-custom-interest').value.trim();
+    if (!val) return;
+    profileInterests.add(val);
+    document.getElementById('pf-custom-interest').value = '';
+    renderInterestChips();
+  });
+  document.getElementById('pf-custom-interest').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('pf-add-interest-btn').click(); }
+  });
+
+  // Profile — add focus area
+  document.getElementById('pf-add-focus-btn').addEventListener('click', () => {
+    const val = document.getElementById('pf-custom-focus').value.trim();
+    if (!val) return;
+    if (!profileFocusAreas.includes(val)) profileFocusAreas.push(val);
+    document.getElementById('pf-custom-focus').value = '';
+    renderFocusChips();
+  });
+  document.getElementById('pf-custom-focus').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('pf-add-focus-btn').click(); }
   });
 
   // Admin — Claude API opens settings modal (desktop + mobile)
@@ -1210,6 +1246,138 @@ function openGuide(id) {
 
 function closeGuide(id) {
   document.getElementById(id).classList.remove('open');
+}
+
+// ── Profile Page ─────────────────────────────────────────────────
+
+const PROFILE_KEY = 'tribe_user_profile';
+const PRESET_INTERESTS = [
+  'Business', 'Relationships', 'Health', 'Fitness', 'Finances',
+  'Faith', 'Productivity', 'Personal Growth', 'Family', 'Leadership',
+  'Emotions', 'Mindset'
+];
+
+let profileInterests = new Set();
+let profileFocusAreas = [];
+
+function getProfile() {
+  try { return JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+
+function openProfile() {
+  loadProfileData();
+  document.getElementById('main-layout').style.display = 'none';
+  document.getElementById('profile-page').style.display = 'flex';
+}
+
+function closeProfile() {
+  document.getElementById('profile-page').style.display = 'none';
+  document.getElementById('main-layout').style.display = '';
+}
+
+function loadProfileData() {
+  const p = getProfile();
+  document.getElementById('pf-display-name').value    = p.displayName || '';
+  document.getElementById('pf-age').value             = p.age || '';
+  document.getElementById('pf-location').value        = p.location || '';
+  document.getElementById('pf-gender').value          = p.gender || '';
+  document.getElementById('pf-life-role').value       = p.lifeRole || '';
+  document.getElementById('pf-preferred-address').value = p.preferredAddress || '';
+  document.getElementById('pf-language').value        = p.language || 'english';
+  document.getElementById('pf-advisor-tone').value    = p.advisorTone || 'balanced';
+  document.getElementById('pf-response-depth').value  = p.responseDepth || 'medium';
+  document.getElementById('pf-goals').value           = p.goals || '';
+  document.getElementById('pf-challenges').value      = p.challenges || '';
+
+  const img = document.getElementById('profile-photo-img');
+  const initial = document.getElementById('profile-photo-initial');
+  if (p.photo) {
+    img.src = p.photo;
+    img.style.display = '';
+    initial.style.display = 'none';
+  } else {
+    img.style.display = 'none';
+    initial.style.display = '';
+    initial.textContent = (p.displayName || '?')[0].toUpperCase();
+  }
+
+  profileInterests = new Set(p.interests || []);
+  profileFocusAreas = p.focusAreas || [];
+  renderInterestChips();
+  renderFocusChips();
+}
+
+function saveProfileData() {
+  const img = document.getElementById('profile-photo-img');
+  const p = {
+    displayName:      document.getElementById('pf-display-name').value.trim(),
+    age:              document.getElementById('pf-age').value,
+    location:         document.getElementById('pf-location').value.trim(),
+    gender:           document.getElementById('pf-gender').value,
+    lifeRole:         document.getElementById('pf-life-role').value.trim(),
+    interests:        Array.from(profileInterests),
+    focusAreas:       [...profileFocusAreas],
+    preferredAddress: document.getElementById('pf-preferred-address').value.trim(),
+    language:         document.getElementById('pf-language').value,
+    advisorTone:      document.getElementById('pf-advisor-tone').value,
+    responseDepth:    document.getElementById('pf-response-depth').value,
+    goals:            document.getElementById('pf-goals').value.trim(),
+    challenges:       document.getElementById('pf-challenges').value.trim(),
+    photo:            img.style.display !== 'none' ? img.src : ''
+  };
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+  showNotice('Profile saved.');
+}
+
+function renderInterestChips() {
+  const container = document.getElementById('pf-interests-chips');
+  container.innerHTML = '';
+  PRESET_INTERESTS.forEach(name => {
+    const btn = document.createElement('button');
+    btn.className = 'profile-chip' + (profileInterests.has(name) ? ' active' : '');
+    btn.textContent = name;
+    btn.addEventListener('click', () => {
+      if (profileInterests.has(name)) { profileInterests.delete(name); btn.classList.remove('active'); }
+      else { profileInterests.add(name); btn.classList.add('active'); }
+    });
+    container.appendChild(btn);
+  });
+  // Custom interests not in preset list
+  [...profileInterests].filter(i => !PRESET_INTERESTS.includes(i)).forEach(name => {
+    container.appendChild(makeRemovableChip(name, () => { profileInterests.delete(name); renderInterestChips(); }));
+  });
+}
+
+function renderFocusChips() {
+  const container = document.getElementById('pf-focus-chips');
+  container.innerHTML = '';
+  profileFocusAreas.forEach(area => {
+    container.appendChild(makeRemovableChip(area, () => {
+      profileFocusAreas = profileFocusAreas.filter(a => a !== area);
+      renderFocusChips();
+    }));
+  });
+}
+
+function makeRemovableChip(text, onRemove) {
+  const chip = document.createElement('div');
+  chip.className = 'profile-chip active';
+  chip.innerHTML = `<span>${text}</span><button class="profile-chip-remove" aria-label="Remove">×</button>`;
+  chip.querySelector('.profile-chip-remove').addEventListener('click', e => { e.stopPropagation(); onRemove(); });
+  return chip;
+}
+
+function handleProfilePhotoUpload(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('profile-photo-img');
+    img.src = e.target.result;
+    img.style.display = '';
+    document.getElementById('profile-photo-initial').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
 }
 
 function openSettings() {

@@ -1056,6 +1056,156 @@
     </div>
   </div>
 
+  <!-- ── Profile Page (full-page) ────────────────────────────────── -->
+  <div id="profile-page" style="display:none">
+
+    <div class="profile-topbar">
+      <button class="profile-back-btn" id="profile-back-btn">← Back</button>
+      <div class="profile-topbar-title">Profile</div>
+      <button class="btn-primary profile-save-top-btn" id="profile-save-top">Save</button>
+    </div>
+
+    <div class="profile-body">
+      <div class="profile-inner">
+
+        <!-- Section 1: Profile Card -->
+        <section class="profile-section">
+          <div class="profile-section-title">Profile</div>
+
+          <div class="profile-photo-row">
+            <div class="profile-photo-wrap">
+              <div class="profile-photo-preview" id="profile-photo-preview">
+                <img id="profile-photo-img" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:50%;">
+                <div class="profile-photo-initial" id="profile-photo-initial">?</div>
+              </div>
+              <label class="profile-photo-upload-btn" for="profile-photo-input">Change Photo</label>
+              <input type="file" id="profile-photo-input" accept="image/*" style="display:none">
+            </div>
+
+            <div class="profile-basic-fields">
+              <div class="profile-field">
+                <label class="profile-label">Name advisors call you</label>
+                <input type="text" class="profile-input" id="pf-display-name" placeholder="Tony">
+              </div>
+              <div class="profile-field-row">
+                <div class="profile-field">
+                  <label class="profile-label">Age</label>
+                  <input type="number" class="profile-input" id="pf-age" placeholder="35" min="1" max="120">
+                </div>
+                <div class="profile-field">
+                  <label class="profile-label">Location</label>
+                  <input type="text" class="profile-input" id="pf-location" placeholder="Las Vegas, Nevada">
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: About Me -->
+        <section class="profile-section">
+          <div class="profile-section-title">About Me</div>
+          <div class="profile-field-row">
+            <div class="profile-field">
+              <label class="profile-label">Gender</label>
+              <select class="profile-select" id="pf-gender">
+                <option value="">Select…</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="prefer-not">Prefer not to say</option>
+              </select>
+            </div>
+            <div class="profile-field">
+              <label class="profile-label">Life Role</label>
+              <input type="text" class="profile-input" id="pf-life-role" placeholder="Entrepreneur, Parent, Athlete…">
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: Interests & Focus -->
+        <section class="profile-section">
+          <div class="profile-section-title">Interests &amp; Focus</div>
+
+          <div class="profile-field">
+            <label class="profile-label">Main Interests</label>
+            <div class="profile-chips" id="pf-interests-chips"></div>
+            <div class="profile-add-tag-row">
+              <input type="text" class="profile-input profile-tag-input" id="pf-custom-interest" placeholder="Add custom interest…">
+              <button class="profile-add-tag-btn" id="pf-add-interest-btn">+ Add</button>
+            </div>
+          </div>
+
+          <div class="profile-field">
+            <label class="profile-label">Current Focus Areas</label>
+            <div class="profile-chips" id="pf-focus-chips"></div>
+            <div class="profile-add-tag-row">
+              <input type="text" class="profile-input profile-tag-input" id="pf-custom-focus" placeholder="Growing my business, Getting in shape…">
+              <button class="profile-add-tag-btn" id="pf-add-focus-btn">+ Add</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Tribe Preferences -->
+        <section class="profile-section">
+          <div class="profile-section-title">Tribe Preferences</div>
+
+          <div class="profile-field-row">
+            <div class="profile-field">
+              <label class="profile-label">Preferred Address <span class="profile-label-hint">(optional)</span></label>
+              <input type="text" class="profile-input" id="pf-preferred-address" placeholder="Tony, Coach, Mr. Medina…">
+            </div>
+            <div class="profile-field">
+              <label class="profile-label">Language</label>
+              <select class="profile-select" id="pf-language">
+                <option value="english">English</option>
+                <option value="spanish">Spanish</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="profile-field-row">
+            <div class="profile-field">
+              <label class="profile-label">Advisor Tone</label>
+              <select class="profile-select" id="pf-advisor-tone">
+                <option value="direct">Direct</option>
+                <option value="balanced">Balanced</option>
+                <option value="encouraging">Encouraging</option>
+              </select>
+            </div>
+            <div class="profile-field">
+              <label class="profile-label">Response Depth</label>
+              <select class="profile-select" id="pf-response-depth">
+                <option value="short">Short</option>
+                <option value="medium">Medium</option>
+                <option value="deep">Deep</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 5: Goals -->
+        <section class="profile-section">
+          <div class="profile-section-title">Goals</div>
+          <div class="profile-field">
+            <label class="profile-label">Big Goals</label>
+            <textarea class="profile-textarea" id="pf-goals" rows="4"
+              placeholder="Build a successful business&#10;Improve health&#10;Become more disciplined"></textarea>
+          </div>
+          <div class="profile-field">
+            <label class="profile-label">Current Challenges</label>
+            <textarea class="profile-textarea" id="pf-challenges" rows="4"
+              placeholder="Time management&#10;Consistency&#10;Focus"></textarea>
+          </div>
+        </section>
+
+        <div class="profile-save-row">
+          <button class="btn-primary profile-save-btn" id="profile-save-btn">Save Profile</button>
+        </div>
+
+      </div><!-- .profile-inner -->
+    </div><!-- .profile-body -->
+  </div><!-- #profile-page -->
+
   <script src="./app.js"></script>
 </body>
 </html>

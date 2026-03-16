@@ -113,6 +113,28 @@ Campfire → parable-mode
 
 ---
 
+# User Profile
+
+User profile data is stored in localStorage under the key `tribe_user_profile`.
+
+When available, the following fields should inform advisor responses:
+
+- `displayName` — how to address the user
+- `preferredAddress` — overrides displayName if set
+- `age` — user's age
+- `location` — where the user is based
+- `interests` — selected topic areas
+- `focusAreas` — what the user is actively working on
+- `goals` — big life goals
+- `challenges` — current struggles
+- `advisorTone` — direct | balanced | encouraging
+- `responseDepth` — short | medium | deep
+- `language` — english | spanish | both
+
+Advisors should use this data to personalize responses when it is present.
+
+---
+
 # Loading Priority
 
 The system should load knowledge in the following order:
