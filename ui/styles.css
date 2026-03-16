@@ -634,6 +634,79 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   padding: 12px 24px 40px;
 }
 
+/* BVM Identity Block */
+.bvm-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  animation: fade-in 0.25s ease;
+}
+
+.bvm-avatar-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.bvm-avatar-img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 50%;
+  border: 3px solid #0EA5E9;
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+}
+
+.bvm-avatar-placeholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #0EA5E9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 26px;
+  font-weight: 700;
+  border: 3px solid #0EA5E9;
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+}
+
+.bvm-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  letter-spacing: 0.01em;
+}
+
+.bvm-hint {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.bvm-hint-link {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #0EA5E9;
+  cursor: pointer;
+  font-family: var(--font);
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.bvm-hint-link:hover { color: #0284C7; }
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* Advisor selector */
 .advisor-row {
   display: flex;
@@ -4079,6 +4152,10 @@ body.dark-mode .mode-pill:hover:not(.active) { background: #22263a; color: var(-
 /* Advisor row */
 body.dark-mode .advisor-chip-name { color: var(--text-2); }
 body.dark-mode .advisor-chip.active .advisor-chip-name { color: var(--text-1); }
+
+/* BVM identity */
+body.dark-mode .bvm-name { color: var(--text-2); }
+body.dark-mode .bvm-hint { color: var(--text-3); }
 
 /* Send button */
 body.dark-mode .send-btn { background: #f0f2f5; color: #0f1117; }

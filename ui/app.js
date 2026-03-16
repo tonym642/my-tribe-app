@@ -665,6 +665,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-profile').addEventListener('click', openProfile);
   document.getElementById('m-btn-profile').addEventListener('click', () => { closeMobileNav(); openProfile(); });
   document.getElementById('profile-back-btn').addEventListener('click', closeProfile);
+  document.getElementById('bvm-hint-profile-link').addEventListener('click', openProfile);
   document.getElementById('profile-save-btn').addEventListener('click', saveProfileData);
   document.getElementById('profile-save-top').addEventListener('click', saveProfileData);
 
@@ -810,6 +811,18 @@ function applyModeUI(mode, prev) {
     btn.classList.toggle('active', btn.dataset.mode === mode);
   });
 
+  // Toggle advisor row vs BVM identity block
+  const advisorRow  = document.getElementById('advisor-row');
+  const bvmIdentity = document.getElementById('bvm-identity');
+  if (mode === 'bvm') {
+    advisorRow.style.display  = 'none';
+    bvmIdentity.style.display = '';
+    renderBvmIdentity();
+  } else {
+    advisorRow.style.display  = '';
+    bvmIdentity.style.display = 'none';
+  }
+
   const chips = document.querySelectorAll('.advisor-chip');
 
   if (mode === 'tribe') {
@@ -832,11 +845,6 @@ function applyModeUI(mode, prev) {
 
   } else if (mode === 'bvm') {
     state.selectedAdvisors = new Set(['bvm']);
-    chips.forEach(chip => {
-      chip.classList.remove('active');
-      chip.classList.add('dim');
-      chip.style.cursor = 'default';
-    });
 
   } else if (mode === 'member') {
     // No default selection — user must choose explicitly
@@ -858,6 +866,26 @@ function applyModeUI(mode, prev) {
     });
     syncChipHighlights();
   }
+}
+
+function renderBvmIdentity() {
+  const profile     = getProfile();
+  const avatarWrap  = document.getElementById('bvm-avatar-wrap');
+  const nameEl      = document.getElementById('bvm-name');
+  const hintEl      = document.getElementById('bvm-hint');
+
+  if (profile.photo) {
+    avatarWrap.innerHTML = `<img src="${profile.photo}" alt="You" class="bvm-avatar-img">`;
+    hintEl.style.display = 'none';
+  } else {
+    const initial = (profile.displayName || 'Y')[0].toUpperCase();
+    avatarWrap.innerHTML = `<div class="bvm-avatar-placeholder">${initial}</div>`;
+    hintEl.style.display = '';
+  }
+
+  nameEl.textContent = profile.displayName
+    ? `${profile.preferredAddress || profile.displayName} — Best Version`
+    : 'Best Version of Me';
 }
 
 function toggleAdvisor(id) {
