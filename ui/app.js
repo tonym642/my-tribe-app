@@ -918,17 +918,16 @@ function formatError(err) {
 
 function stripMarkdown(text) {
   return text
-    .replace(/^---+\s*$/gm, '')          // horizontal rules
-    .replace(/^#{1,6}\s+/gm, '')          // headings
-    .replace(/\*\*(.+?)\*\*/g, '$1')      // **bold**
-    .replace(/\*(.+?)\*/g, '$1')          // *italic*
-    .replace(/__(.+?)__/g, '$1')          // __bold__
-    .replace(/_(.+?)_/g, '$1')            // _italic_
-    .replace(/`(.+?)`/g, '$1')            // `code`
-    .replace(/^\s*[-*+]\s+/gm, '')        // bullet markers
-    .replace(/^\s*\d+\.\s+/gm, '')        // numbered list markers
-    .replace(/^\s*>\s*/gm, '')            // blockquotes
-    .replace(/\n{3,}/g, '\n\n')           // collapse excess blank lines
+    .replace(/^---+\s*$/gm, '')           // horizontal rules
+    .replace(/^#{1,6}\s+/gm, '')           // headings
+    .replace(/\*(.+?)\*/g, '$1')           // *italic* (single star, not double)
+    .replace(/__(.+?)__/g, '$1')           // __bold__
+    .replace(/_(.+?)_/g, '$1')             // _italic_
+    .replace(/`(.+?)`/g, '$1')             // `code`
+    .replace(/^\s*[-*+]\s+/gm, '')         // bullet markers
+    .replace(/^\s*\d+\.\s+/gm, '')         // numbered list markers
+    .replace(/^\s*>\s*/gm, '')             // blockquotes
+    .replace(/\n{3,}/g, '\n\n')            // collapse excess blank lines
     .trim();
 }
 
@@ -985,7 +984,10 @@ function fillCard(card, text, isError = false) {
     textEl.innerHTML = `<span class="advisor-error-text">${esc(text)}</span>`;
   } else {
     const clean = stripAdvisorHeader(stripMarkdown(text), card.dataset.advisorId);
-    textEl.innerHTML = esc(clean).replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+    textEl.innerHTML = esc(clean)
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n\n/g, '<br><br>')
+      .replace(/\n/g, '<br>');
   }
 }
 
