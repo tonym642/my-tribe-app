@@ -588,6 +588,9 @@ body.dark-mode .msg-user-thread .advisor-text {
   padding: 8px 14px;
   margin-bottom: 8px;
   text-align: center;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 body.dark-mode #advisor-warning {
