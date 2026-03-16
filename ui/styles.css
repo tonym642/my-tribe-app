@@ -396,7 +396,7 @@ html, body {
   display: flex;
   gap: 12px;
   padding: 14px 0;
-  border-top: 1px solid var(--border-light);
+  border-top: 1px solid var(--border);
   animation: fadeUp 0.2s ease-out;
 }
 

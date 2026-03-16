@@ -950,6 +950,7 @@ function createLoadingCard(advisorId) {
   const a = ADVISORS[advisorId];
   const card = document.createElement('div');
   card.className = 'advisor-card';
+  card.dataset.advisorId = advisorId;
   card.style.setProperty('--advisor-color', a.color);
   const avatarSrc = `../assets/avatars/${advisorId}.png`;
   card.innerHTML = `
@@ -967,12 +968,23 @@ function createLoadingCard(advisorId) {
   return card;
 }
 
+function stripAdvisorHeader(text, advisorId) {
+  const a = ADVISORS[advisorId];
+  if (!a) return text;
+  let t = text.trim();
+  // Remove name line if present at start
+  if (t.startsWith(a.name)) t = t.slice(a.name.length).replace(/^[\r\n]+/, '');
+  // Remove title line if present next
+  if (t.startsWith(a.title)) t = t.slice(a.title.length).replace(/^[\r\n]+/, '');
+  return t.trim();
+}
+
 function fillCard(card, text, isError = false) {
   const textEl = card.querySelector('.advisor-text');
   if (isError) {
     textEl.innerHTML = `<span class="advisor-error-text">${esc(text)}</span>`;
   } else {
-    const clean = stripMarkdown(text);
+    const clean = stripAdvisorHeader(stripMarkdown(text), card.dataset.advisorId);
     textEl.innerHTML = esc(clean).replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
   }
 }
