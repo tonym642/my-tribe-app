@@ -333,14 +333,11 @@
     <!-- Sub-header -->
     <div class="debate-page-header">
       <div class="debate-page-header-inner">
-        <button class="debate-back-btn" id="debate-back-btn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-          Sessions
+        <button class="debate-back-btn" id="debate-back-btn" style="visibility:hidden"></button>
+        <button class="debate-history-btn debate-history-center" id="debate-history-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          History
         </button>
-        <div class="debate-page-title-group">
-          <span class="debate-page-title">Tribe Debate</span>
-          <span class="debate-page-subtitle">Ask one question and let your advisors debate it from different perspectives.</span>
-        </div>
         <button class="debate-new-btn" id="debate-new-btn" style="visibility:hidden">New Debate</button>
       </div>
     </div>
@@ -358,6 +355,12 @@
             <li>Each advisor responds from their own pillar perspective</li>
             <li>You can jump in anytime to guide the discussion</li>
           </ul>
+          <div class="debate-suggestions">
+            <button class="debate-suggestion-pill">Should I prioritize financial security or meaningful work?</button>
+            <button class="debate-suggestion-pill">Is discipline more important than motivation?</button>
+            <button class="debate-suggestion-pill">Should I follow logic or intuition when making big decisions?</button>
+            <button class="debate-suggestion-pill">Is it better to take risks early or build stability first?</button>
+          </div>
         </div>
 
         <!-- Thread messages -->
@@ -379,6 +382,19 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- Debate History Overlay -->
+  <div class="modal-overlay" id="debate-history-overlay">
+    <div class="modal history-modal">
+      <div class="modal-header">
+        <h3>Debate History</h3>
+        <button class="modal-close" id="debate-history-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="history-list" id="debate-history-list"></div>
+    </div>
   </div>
 
   <!-- Main Layout -->

@@ -3016,6 +3016,13 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   display: flex;
   align-items: center;
   gap: 12px;
+  position: relative;
+}
+
+.debate-history-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .debate-back-btn {
@@ -3105,6 +3112,45 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 
 .debate-empty-list li::before {
   content: '• ';
+}
+
+.debate-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+  max-width: 540px;
+}
+
+.debate-suggestion-pill {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  font-family: var(--font);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  text-align: center;
+}
+
+.debate-suggestion-pill:hover {
+  border-color: #9CA3AF;
+  color: var(--text-1);
+  background: var(--bg);
+}
+
+body.dark-mode .debate-suggestion-pill {
+  background: transparent;
+  border-color: #2a2d3a;
+  color: var(--text-2);
+}
+
+body.dark-mode .debate-suggestion-pill:hover {
+  border-color: #555e72;
+  color: var(--text-1);
 }
 
 /* Thread */
@@ -3228,7 +3274,8 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 }
 
 /* New Debate button in header */
-.debate-new-btn {
+.debate-new-btn,
+.debate-history-btn {
   padding: 6px 14px;
   border-radius: 20px;
   border: 1px solid var(--border);
@@ -3238,9 +3285,13 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   cursor: pointer;
   flex-shrink: 0;
   transition: border-color 0.15s, color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
-.debate-new-btn:hover {
+.debate-new-btn:hover,
+.debate-history-btn:hover {
   border-color: #9CA3AF;
   color: var(--text-1);
 }
@@ -3423,9 +3474,11 @@ body.dark-mode .va-chip:has(input:checked) { background: #f0f2f5; color: #0f1117
 
 /* Debate/voting/campfire footer buttons */
 body.dark-mode .debate-new-btn,
+body.dark-mode .debate-history-btn,
 body.dark-mode .voting-new-btn,
 body.dark-mode .campfire-new-btn { background: transparent; border-color: #2a2d3a; color: var(--text-2); }
 body.dark-mode .debate-new-btn:hover,
+body.dark-mode .debate-history-btn:hover,
 body.dark-mode .voting-new-btn:hover { border-color: #555e72; color: var(--text-1); }
 body.dark-mode .campfire-new-btn:hover { background: #D97706; color: white; border-color: #D97706; }
 

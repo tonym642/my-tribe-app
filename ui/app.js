@@ -412,6 +412,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Debate — page controls
   document.getElementById('debate-back-btn').addEventListener('click', closeDebate);
   document.getElementById('debate-new-btn').addEventListener('click', resetDebate);
+  document.getElementById('debate-history-btn').addEventListener('click', openDebateHistory);
+  document.getElementById('debate-history-close').addEventListener('click', closeDebateHistory);
+  document.getElementById('debate-history-overlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeDebateHistory();
+  });
 
   const $debateInput   = document.getElementById('debate-input');
   const $debateSendBtn = document.getElementById('debate-send-btn');
@@ -428,6 +433,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
   $debateSendBtn.addEventListener('click', submitDebate);
+
+  // Debate — suggestion pills
+  document.querySelectorAll('.debate-suggestion-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      $debateInput.value = pill.textContent.trim();
+      $debateSendBtn.disabled = false;
+      submitDebate();
+    });
+  });
 
   // Campfire — nav buttons (desktop + mobile)
   document.getElementById('btn-campfire').addEventListener('click', openCampfire);
@@ -2918,6 +2932,127 @@ async function runDebate(topic) {
 
   debateRunning = false;
   document.getElementById('debate-send-btn').disabled = false;
+
+  // Save completed debate to history
+  saveDebate(topic, messages);
+}
+
+// ── Debate History ────────────────────────────────────────────────
+
+function getDebates() {
+  try { return JSON.parse(localStorage.getItem('tribe_debates') || '[]'); }
+  catch { return []; }
+}
+
+function saveDebates(debates) {
+  localStorage.setItem('tribe_debates', JSON.stringify(debates));
+}
+
+function saveDebate(topic, messages) {
+  const debates = getDebates();
+  const debate = {
+    id: 'debate_' + Date.now(),
+    title: generateTitle(topic),
+    topic,
+    created_at: Date.now(),
+    updated_at: Date.now(),
+    messages
+  };
+  debates.unshift(debate);
+  saveDebates(debates);
+}
+
+function openDebateHistory() {
+  const debates = getDebates();
+  const $list = document.getElementById('debate-history-list');
+
+  if (debates.length === 0) {
+    $list.innerHTML = '<p class="history-empty">No debates yet.</p>';
+  } else {
+    $list.innerHTML = debates.map(debate => {
+      const title      = esc(debate.title || 'Untitled Debate');
+      const date       = formatRelativeDate(debate.updated_at);
+      const msgCount   = debate.messages.length;
+      const countLabel = msgCount === 1 ? '1 response' : `${msgCount} responses`;
+      return `
+        <div class="history-item" data-id="${debate.id}">
+          <div class="history-item-main">
+            <div class="history-item-title">${title}</div>
+            <div class="history-item-meta">${date} · ${countLabel}</div>
+          </div>
+          <div class="history-item-actions">
+            <button class="history-action" data-action="rename" data-id="${debate.id}" title="Rename">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="history-action history-delete" data-action="delete" data-id="${debate.id}" title="Delete">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
+          </div>
+        </div>`;
+    }).join('');
+
+    $list.querySelectorAll('.history-item-main').forEach(el => {
+      el.addEventListener('click', () => loadDebate(el.closest('.history-item').dataset.id));
+    });
+    $list.querySelectorAll('[data-action="rename"]').forEach(btn => {
+      btn.addEventListener('click', e => { e.stopPropagation(); renameDebate(btn.dataset.id); });
+    });
+    $list.querySelectorAll('[data-action="delete"]').forEach(btn => {
+      btn.addEventListener('click', e => { e.stopPropagation(); deleteDebate(btn.dataset.id); });
+    });
+  }
+
+  document.getElementById('debate-history-overlay').classList.add('open');
+}
+
+function closeDebateHistory() {
+  document.getElementById('debate-history-overlay').classList.remove('open');
+}
+
+function loadDebate(id) {
+  const debate = getDebates().find(d => d.id === id);
+  if (!debate) return;
+
+  // Reset UI then reconstruct thread
+  debateRunning = false;
+  document.getElementById('debate-thread').innerHTML = '';
+  document.getElementById('debate-empty').style.display = 'none';
+  document.getElementById('debate-new-btn').style.visibility = 'visible';
+  document.getElementById('debate-input').value = '';
+  document.getElementById('debate-input').placeholder = 'Continue the debate...';
+  document.getElementById('debate-input').style.height = 'auto';
+  document.getElementById('debate-send-btn').disabled = false;
+  document.getElementById('debate-page-stream').scrollTop = 0;
+
+  // User bubble for topic
+  document.getElementById('debate-thread').appendChild(createUserBubble(debate.topic));
+
+  // Reconstruct advisor messages
+  for (const msg of debate.messages) {
+    const wrap = appendDebateMessage(msg, false);
+    const textEl = wrap.querySelector('.debate-text');
+    textEl.classList.remove('debate-loading');
+    textEl.textContent = msg.text;
+  }
+
+  debateScrollBottom();
+  closeDebateHistory();
+}
+
+function renameDebate(id) {
+  const debates = getDebates();
+  const debate  = debates.find(d => d.id === id);
+  if (!debate) return;
+  const newTitle = prompt('Rename debate:', debate.title || 'Untitled Debate');
+  if (newTitle === null) return;
+  debate.title = newTitle.trim() || debate.title;
+  saveDebates(debates);
+  openDebateHistory();
+}
+
+function deleteDebate(id) {
+  saveDebates(getDebates().filter(d => d.id !== id));
+  openDebateHistory();
 }
 
 // ── Dark Mode ─────────────────────────────────────────────────────
