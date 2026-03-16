@@ -1115,11 +1115,12 @@ function stripAdvisorHeader(text, advisorId) {
   const a = ADVISORS[advisorId];
   if (!a) return text;
   let t = text.trim();
-  // Remove name line if present at start
-  if (t.startsWith(a.name)) t = t.slice(a.name.length).replace(/^[\r\n]+/, '');
-  // Remove title line if present next
-  if (t.startsWith(a.title)) t = t.slice(a.title.length).replace(/^[\r\n]+/, '');
-  return t.trim();
+  // Strip name and title even when wrapped in markdown (**, #, ##, etc.)
+  const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pat = (s) => new RegExp(`^#{0,3}\\s*\\**\\s*${esc(s)}\\s*\\**\\s*[:\\-]?\\s*`, 'i');
+  t = t.replace(pat(a.name), '').trim();
+  t = t.replace(pat(a.title), '').trim();
+  return t;
 }
 
 function fillCard(card, text, isError = false) {
