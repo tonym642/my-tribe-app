@@ -1,291 +1,162 @@
 # My Tribe — Stories System
 
-This file defines the **Stories feature** inside the My Tribe app.
+## Overview
 
-Stories are designed to mimic the familiar behavior of **social media stories**, but instead of mindless content, they deliver **daily wisdom, lessons, and reflection** from the Tribe advisors.
+Stories are short **inspirational biographies of real people**, narrated by the advisors.
 
-The goal is to replace social media scrolling with meaningful daily insights.
-
-Users will see stories in a **tap-through carousel interface**, similar to Instagram or Facebook stories.
+Each story features a real historical figure or unknown hero, introduced and narrated by one advisor speaking in their distinctive voice. The goal is to deliver **daily wisdom through real human experience**.
 
 ---
 
-# Core Behavior
+## Story Concept
 
-Stories are generated **once per day**.
+Stories are not generic snippets or parables. They are structured biographical accounts that follow a consistent arc:
 
-Generation trigger:
+- Who the person was
+- What challenge they faced
+- What defining choice they made
+- What happened as a result
+- What lesson the reader can take away
 
-**Trigger Option A**
-
-Stories generate the **first time the user opens the app each day.**
-
-Steps:
-
-1. App checks today's date.
-2. App checks if today's stories already exist.
-3. If they exist → load them.
-4. If not → generate them with AI.
-5. Store them for the day.
-6. Use them in the Stories UI.
-
-Stories must **not regenerate during the same day**.
+Stories should feel like **a mentor teaching through storytelling**.
 
 ---
 
-# Story Volume
+## Narrators
 
-Each day:
+Any advisor may narrate a story:
 
-• **1 story per advisor**  
-• **7 total stories per day**
+| Advisor | Voice Style |
+|---------|-------------|
+| Seth | Reflective, moral, faith-driven, quiet wisdom |
+| Marcus | Analytical, direct, structured, logical |
+| Emma | Empathetic, warm, emotionally aware |
+| Hannah | Practical, grounded, energy and resilience focused |
+| Rachel | Warm, perceptive, relationship and connection focused |
+| Frank | Direct, practical, risk and consequence focused |
+| Guide | Wise, mentoring, broad perspective |
 
-Advisors:
+### Example narrator introductions:
 
-1. Seth — Mindset  
-2. Marcus — Discipline / Strength  
-3. Emma — Emotions  
-4. Hannah — Relationships  
-5. Rachel — Health  
-6. Frank — Finance  
-7. Guide — Personal mentor  
+**Marcus:** "Let me tell you about someone who completely changed how we think about failure..."
 
----
+**Emma:** "Today I want to share a story about a man who discovered meaning in the darkest place imaginable..."
 
-# Story Storage
-
-Generated stories should be stored so they persist during the day.
-
-Example storage key: tribeStories_YYYY-MM-DD
-
-Example: tribeStories_2026-03-15
-
-
-Stories should not regenerate if this key exists.
+**Frank:** "Most people quit after the first setback. This man kept going after one thousand."
 
 ---
 
-# Unread Notification System
+## Story Categories
 
-Stories support **notification counters** similar to social media.
+Stories may come from any of these categories:
 
-Unread stories display as a badge on the bell icon.
+- Leaders
+- Entrepreneurs
+- Athletes
+- Scientists
+- Philosophers
+- Spiritual Figures
+- Unknown Heroes
 
-Example:
+**Unknown Heroes** are especially important and should appear regularly. These are ordinary people who did extraordinary things:
 
-🔔 **3**
+- Medical workers during pandemics
+- People who saved others during disasters
+- Individuals who built schools or helped communities
+- Soldiers who protected civilians
 
-Logic: 
-Unread = TotalStoriesToday - SeenStoriesToday
+Unknown Heroes often create the strongest emotional impact.
 
+---
 
-Seen stories must be tracked.
+## Story Structure (Slide Format)
 
-Example storage:
+Every story is presented as **4–6 slides** in a tap-through interface.
 
+### Slide sequence:
 
-tribeStoriesSeen = {
-"2026-03-15": ["story_id_1","story_id_3"]
+1. **Opening** — Advisor introduces the person in their distinctive voice (hook)
+2. **Context** — Who this person was and their background
+3. **The Struggle** — The challenge or obstacle they faced
+4. **The Decision** — The defining choice or action they took
+5. **The Outcome** — What happened as a result
+6. **The Lesson** — Clear, direct takeaway for the reader
+
+Each slide should be **2–3 sentences**. Total reading time: approximately 2–3 minutes.
+
+---
+
+## Daily Story
+
+When the user opens the app:
+
+1. Check today's date
+2. Check if today's story already exists in localStorage (`tribe_daily_story_YYYY-MM-DD`)
+3. If it exists → load it immediately
+4. If it does not exist → generate it via AI and cache it
+5. The same story appears all day; a new one generates the next day
+
+Daily story narrator and category are seeded by the current date for consistency.
+
+---
+
+## Random Story
+
+Users can generate unlimited additional stories on demand.
+
+- Button text: **"Tell Me Another Story"**
+- Picks a random advisor narrator
+- Picks a random category
+- Generates a new biography (different subject each time)
+- Does not replace the daily story
+
+---
+
+## Story Library
+
+Users can save any story they read.
+
+Saved stories persist in localStorage (`tribe_story_library`).
+
+Library supports filtering by category:
+- All
+- Leaders
+- Entrepreneurs
+- Athletes
+- Scientists
+- Philosophers
+- Spiritual
+- Unknown Heroes
+
+---
+
+## AI Generation
+
+Stories are generated by the Claude API with a structured prompt requesting a JSON response.
+
+### JSON format:
+
+```json
+{
+  "title": "Person Name — Theme",
+  "subject": "Person's full name",
+  "category": "Leaders",
+  "narrator": "marcus",
+  "slides": [
+    { "label": "Opening", "text": "Narrator's hook in their voice." },
+    { "label": "Context", "text": "Who this person was." },
+    { "label": "The Struggle", "text": "What challenge they faced." },
+    { "label": "The Decision", "text": "The defining choice they made." },
+    { "label": "The Outcome", "text": "What happened as a result." },
+    { "label": "The Lesson", "text": "Clear takeaway for the reader." }
+  ]
 }
-
----
-
-# Story Categories
-
-Stories rotate across categories to maintain variety.
-
-Possible types:
-
-• Biography  
-• Historical  
-• Biblical  
-• Philosophy  
-• Parable  
-• Fiction  
-• Business  
-• Science  
-• Sports  
-• Military  
-• Ancient Wisdom  
-
-The AI should vary categories each day.
-
----
-
-# Story Format
-
-Every story must follow this structure:
-StoryID:
-Advisor:
-Title:
-Type:
-Story:
-Lesson:
-
-
-Story text length:
-
-**120–180 words**
-
-Stories should be readable in **under 60 seconds**.
-
----
-
-# Example Stories
-
----
-
-StoryID: marcus_roosevelt  
-Advisor: Marcus  
-Title: Theodore Roosevelt's Discipline  
-Type: Biography  
-
-Story:  
-Theodore Roosevelt was a sick child who struggled with severe asthma. His father once told him something that shaped the rest of his life:
-
-“You have the mind, but you must build the body.”
-
-Roosevelt began lifting weights, boxing, hiking, and forcing himself to become stronger.
-
-He trained relentlessly and refused to accept weakness as his destiny.
-
-Years later he became a war hero, explorer, and President of the United States.
-
-Lesson:  
-Your starting point does not determine your future. Discipline does.
-
----
-
-StoryID: emma_samurai  
-Advisor: Emma  
-Title: The Samurai and the Insult  
-Type: Historical  
-
-Story:  
-A samurai once stood calmly while a man insulted him repeatedly.
-
-The insults continued for several minutes.
-
-The samurai never reacted.
-
-Finally the man stopped and asked:
-
-“Why did you not fight me?”
-
-The samurai replied:
-
-“If someone offers you a gift and you refuse it, who does the gift belong to?”
-
-The man answered:
-
-“To the one who brought it.”
-
-Lesson:  
-Not every emotion must be accepted.
-
----
-
-StoryID: frank_buffett  
-Advisor: Frank  
-Title: Warren Buffett's First Investment  
-Type: Biography  
-
-Story:  
-At eleven years old Warren Buffett bought his first stock.
-
-Soon after buying it, the price rose slightly and Buffett sold for a quick profit.
-
-Not long after, the stock continued rising and multiplied several times in value.
-
-Buffett later said this experience taught him the most important investing lesson of his life.
-
-Lesson:  
-Patience beats speed in investing.
-
----
-
-# AI Story Generation Rules
-
-When generating stories, the AI must:
-
-• Generate a **unique StoryID**  
-• Write in the **voice of the advisor**  
-• Provide a **clear lesson**  
-• Keep the story **concise and impactful**  
-• Avoid repeating previous stories  
-• Rotate story categories  
-
-Suggested StoryID format:
-
-
-advisor_topic_date
-
-
-Example:
-
-
-marcus_spartan_2026_03_15
-
-
----
-
-# Advisor Personalities
-
-AI must respect each advisor's tone.
-
-Seth — philosophical, reflective, mindset focused  
-
-Marcus — discipline, strength, endurance  
-
-Emma — emotional intelligence, inner calm  
-
-Hannah — relationships, empathy, connection  
-
-Rachel — health, body, longevity  
-
-Frank — money, investing, financial wisdom  
-
-Guide — deeper reflection, personal growth  
-
----
-
-# Story UI Behavior
-
-Stories display in a **horizontal avatar carousel**.
-
-Example:
-
-
-[Seth] [Marcus] [Emma] [Hannah] [Rachel] [Frank] [Guide]
-
-
-When tapped:
-
-• Full screen story opens  
-• Progress bar appears at the top  
-• Tap right → next story  
-• Tap left → previous story  
-
-Stories are marked **seen** once opened.
-
----
-
-# Future Expansion (Optional)
-
-Possible future upgrades:
-
-• AI personalized stories based on user struggles  
-• Story reflection prompts  
-• Story streak tracking  
-• Voice narration  
-• Story sharing inside tribe sessions  
-
----
-
-# System Goal
-
-The Stories system should feel like:
-
-**Social media for wisdom.**
-
-Users open the app, see new stories daily, and build a habit of learning something meaningful every day.
+```
+
+### Generation rules:
+
+- Include a mix of famous figures and unknown heroes
+- Narrator must speak in their distinctive voice from the first word
+- Each slide: 2–3 sentences maximum
+- The lesson must be direct and applicable to the reader's life
+- Return ONLY valid JSON, no extra text

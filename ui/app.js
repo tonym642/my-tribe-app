@@ -536,23 +536,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Stories — bell toggles panel
+  // Stories — bell toggle
   document.getElementById('btn-stories-nav').addEventListener('click', e => {
     e.stopPropagation();
     toggleStoriesPanel();
-  });
-
-  // Stories — tabs
-  document.getElementById('stories-tab-new').addEventListener('click', () => {
-    storiesPanelFilter = 'new';
-    document.getElementById('stories-tab-new').classList.add('active');
-    document.getElementById('stories-tab-archived').classList.remove('active');
-    renderStoriesPanel();
-  });
-  document.getElementById('stories-tab-archived').addEventListener('click', () => {
-    storiesPanelFilter = 'archived';
-    document.getElementById('stories-tab-archived').classList.add('active');
-    document.getElementById('stories-tab-new').classList.remove('active');
-    renderStoriesPanel();
   });
 
   // Stories — close panel when clicking outside
@@ -564,11 +551,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Stories — viewer controls
+  // Stories — library button in panel
+  document.getElementById('stories-library-btn').addEventListener('click', e => {
+    e.stopPropagation();
+    openStoryLibrary();
+  });
+
+  // Stories — "Tell Me Another" in panel
+  document.getElementById('stories-panel-another-btn').addEventListener('click', e => {
+    e.stopPropagation();
+    handleTellMeAnother();
+  });
+
+  // Stories — viewer: close, save, nav zones, "Tell Me Another", keyboard
   document.getElementById('story-close').addEventListener('click', closeStoryViewer);
+  document.getElementById('story-save-btn').addEventListener('click', saveStoryToLibrary);
+  document.getElementById('story-nav-prev').addEventListener('click', prevSlide);
+  document.getElementById('story-nav-next').addEventListener('click', nextSlide);
+  document.getElementById('story-another-btn').addEventListener('click', handleTellMeAnother);
   document.addEventListener('keydown', e => {
     if (!document.getElementById('story-viewer').classList.contains('open')) return;
-    if (e.key === 'Escape') closeStoryViewer();
+    if (e.key === 'Escape')       closeStoryViewer();
+    if (e.key === 'ArrowRight')   nextSlide();
+    if (e.key === 'ArrowLeft')    prevSlide();
+  });
+
+  // Stories — library modal
+  document.getElementById('story-library-close').addEventListener('click', closeStoryLibrary);
+  document.getElementById('story-library-overlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeStoryLibrary();
+  });
+  document.querySelectorAll('.story-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => renderStoryLibrary(btn.dataset.filter));
   });
 
   // About — desktop + mobile
@@ -1366,101 +1380,142 @@ let blCurrentBook  = '';
 
 // ── Stories ───────────────────────────────────────────────────────
 
-const STORY_ADVISORS = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'frank'];
-const ADVISOR_AVATAR  = {
-  seth:    '../assets/avatars/seth.png',
-  emma:    '../assets/avatars/emma.png',
-  frank:   '../assets/avatars/frank.png',
-  rachel:  '../assets/avatars/rachel.png',
-  guide:   '../assets/avatars/guide.svg',
-  marcus:  null,
-  hannah:  null
+const ADVISOR_AVATAR = {
+  seth:   '../assets/avatars/seth.png',
+  emma:   '../assets/avatars/emma.png',
+  frank:  '../assets/avatars/frank.png',
+  rachel: '../assets/avatars/rachel.png',
+  guide:  '../assets/avatars/guide.svg',
+  marcus: null,
+  hannah: null
 };
 
-let parsedStories  = [];   // all stories from md
-let svAdvisorId    = null; // currently viewed advisor
-let svStories      = [];   // today's stories for current advisor
-let svIndex        = 0;    // current story index
+const STORY_NARRATOR_IDS = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'frank', 'guide'];
+const STORY_CATEGORIES   = ['Leaders', 'Entrepreneurs', 'Athletes', 'Scientists', 'Philosophers', 'Spiritual Figures', 'Unknown Heroes'];
 
-// ── Parse ──
+// Current story being viewed + slide index
+let currentStory      = null;
+let currentSlideIndex = 0;
+let storyGenerating   = false;
 
-function parseStoriesMd(text) {
-  const result = [];
-  const blocks = text.split('---').map(b => b.trim()).filter(Boolean);
-  for (const block of blocks) {
-    if (!block.includes('Advisor:')) continue;
-    const line = key => {
-      const m = block.match(new RegExp(`^${key}:\\s*(.+)`, 'm'));
-      return m ? m[1].trim() : '';
-    };
-    const advisor  = line('Advisor').toLowerCase();
-    const title    = line('Title');
-    const type     = line('Type');
-    const storyM   = block.match(/^Story:\s*([\s\S]+?)(?=^Lesson:|$)/m);
-    const lessonM  = block.match(/^Lesson:\s*([\s\S]+?)$/m);
-    const story    = storyM  ? storyM[1].trim()  : '';
-    const lesson   = lessonM ? lessonM[1].trim() : '';
-    if (advisor && title) result.push({ advisor, title, type, story, lesson });
-  }
-  return result;
+// ── Storage ──
+
+function getDailyStoryKey() {
+  return `tribe_daily_story_${new Date().toISOString().slice(0, 10)}`;
 }
 
-// ── Daily rotation (seeded by date + advisor) ──
-
-function daySeed(advisorId) {
-  const d = new Date();
-  const base = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
-  return base + advisorId.split('').reduce((s, c) => s + c.charCodeAt(0), 0);
+function getDailyStoryRead() {
+  return localStorage.getItem(`tribe_story_read_${new Date().toISOString().slice(0, 10)}`) === 'true';
 }
 
-function seededShuffle(arr, seed) {
-  const a = [...arr];
-  let s   = seed;
-  for (let i = a.length - 1; i > 0; i--) {
-    s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
-    const j = s % (i + 1);
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
+function markDailyStoryRead() {
+  localStorage.setItem(`tribe_story_read_${new Date().toISOString().slice(0, 10)}`, 'true');
 }
 
-function getTodayStories(advisorId) {
-  const all = parsedStories.filter(s => s.advisor === advisorId);
-  return seededShuffle(all, daySeed(advisorId));
+function getStoryLibrary() {
+  try { return JSON.parse(localStorage.getItem('tribe_story_library') || '[]'); }
+  catch { return []; }
 }
 
-// ── Read state ──
-
-function readKey() {
-  return `tribe_stories_read_${new Date().toISOString().slice(0, 10)}`;
+function saveStoryLibraryData(stories) {
+  localStorage.setItem('tribe_story_library', JSON.stringify(stories));
 }
 
-function getReadSet() {
-  try { return new Set(JSON.parse(localStorage.getItem(readKey()) || '[]')); }
-  catch { return new Set(); }
+// ── AI Generation ──
+
+async function generateStoryAI(narratorId, category) {
+  const advisor = ADVISORS[narratorId];
+  const system  = `You generate short inspirational biography stories for the My Tribe app. Return ONLY a valid JSON object with no extra text, preamble, or markdown code fences.`;
+  const user    = `Generate an inspirational biography story.
+
+Narrator: ${advisor.name}, the ${advisor.title}
+Category: ${category}
+
+The narrator introduces and tells the story entirely in their distinctive voice:
+- Seth (Spiritual): reflective, moral, faith-driven, quiet wisdom
+- Marcus (Mindset): analytical, direct, logical, structured
+- Emma (Emotional): empathetic, warm, emotionally perceptive
+- Hannah (Health): practical, grounded, resilience-focused
+- Rachel (Relationships): warm, perceptive, connection-focused
+- Frank (Financial): direct, blunt, risk and consequence focused
+- Guide: wise, mentoring, broad perspective
+
+Include both famous historical figures AND unknown heroes (ordinary people who did extraordinary things: medical workers, disaster responders, community builders, soldiers who protected civilians).
+
+Return this exact JSON format only:
+{
+  "title": "Person Name — Theme",
+  "subject": "Person's full name",
+  "category": "${category}",
+  "narrator": "${narratorId}",
+  "slides": [
+    {"label": "Opening", "text": "Narrator's hook in their distinctive voice (1-2 sentences)"},
+    {"label": "Context", "text": "Who this person was and their background (2-3 sentences)"},
+    {"label": "The Struggle", "text": "The challenge or obstacle they faced (2-3 sentences)"},
+    {"label": "The Decision", "text": "The defining choice or action they took (2-3 sentences)"},
+    {"label": "The Outcome", "text": "What happened as a result (2-3 sentences)"},
+    {"label": "The Lesson", "text": "A clear, direct takeaway for the reader (1-2 sentences)"}
+  ]
+}`;
+
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: 900,
+      system,
+      messages: [{ role: 'user', content: user }]
+    })
+  });
+
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  const text = data.content[0].text;
+  const match = text.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('Invalid story JSON');
+  return JSON.parse(match[0]);
 }
 
-function markAdvisorRead(advisorId) {
-  const s = getReadSet();
-  s.add(advisorId);
-  localStorage.setItem(readKey(), JSON.stringify([...s]));
+async function generateDailyStory() {
+  const key = getDailyStoryKey();
+  try {
+    const cached = localStorage.getItem(key);
+    if (cached) return JSON.parse(cached);
+  } catch {}
+
+  // Seed narrator + category by today's date
+  const dateSeed   = parseInt(new Date().toISOString().slice(0, 10).replace(/-/g, ''));
+  const narratorId = STORY_NARRATOR_IDS[dateSeed % STORY_NARRATOR_IDS.length];
+  const category   = STORY_CATEGORIES[Math.floor(dateSeed / 10) % STORY_CATEGORIES.length];
+
+  const story = await generateStoryAI(narratorId, category);
+  story.date  = new Date().toISOString().slice(0, 10);
+  localStorage.setItem(key, JSON.stringify(story));
+  return story;
 }
 
-function getUnreadCount() {
-  const read = getReadSet();
-  return STORY_ADVISORS.filter(id => {
-    return getTodayStories(id).length > 0 && !read.has(id);
-  }).length;
+async function generateRandomStory() {
+  const narratorId = STORY_NARRATOR_IDS[Math.floor(Math.random() * STORY_NARRATOR_IDS.length)];
+  const category   = STORY_CATEGORIES[Math.floor(Math.random() * STORY_CATEGORIES.length)];
+  return generateStoryAI(narratorId, category);
 }
 
-// ── Strip rendering ──
-
-let storiesPanelFilter = 'new'; // 'new' | 'archived'
+// ── Init ──
 
 function initStories() {
-  if (knowledge.stories) parsedStories = parseStoriesMd(knowledge.stories);
   updateStoriesBadge();
+  // Kick off daily story generation in background
+  generateDailyStory().then(story => {
+    updateStoriesBadge();
+    // Refresh panel if open
+    if (document.getElementById('stories-panel').classList.contains('open')) {
+      renderStoriesPanel();
+    }
+  }).catch(() => {});
 }
+
+// ── Panel ──
 
 function toggleStoriesPanel() {
   const panel = document.getElementById('stories-panel');
@@ -1477,111 +1532,45 @@ function closeStoriesPanel() {
 }
 
 function renderStoriesPanel() {
-  const list = document.getElementById('stories-panel-list');
-  if (!list) return;
-  const read = getReadSet();
-  list.innerHTML = '';
+  const body = document.getElementById('stories-panel-body');
+  if (!body) return;
 
-  const advisorsToShow = STORY_ADVISORS.filter(id => {
-    const hasStories = getTodayStories(id).length > 0;
-    if (!hasStories) return false;
-    if (storiesPanelFilter === 'new')      return !read.has(id);
-    if (storiesPanelFilter === 'archived') return  read.has(id);
-    return true;
-  });
+  const key    = getDailyStoryKey();
+  let   cached = null;
+  try { cached = JSON.parse(localStorage.getItem(key)); } catch {}
 
-  if (!advisorsToShow.length) {
-    const empty = document.createElement('div');
-    empty.className = 'story-panel-empty';
-    empty.textContent = storiesPanelFilter === 'new' ? 'No new stories.' : 'No archived stories yet.';
-    list.appendChild(empty);
-    return;
-  }
-
-  // Unread first
-  advisorsToShow.sort((a, b) => {
-    const aRead = read.has(a) ? 1 : 0;
-    const bRead = read.has(b) ? 1 : 0;
-    return aRead - bRead;
-  });
-
-  advisorsToShow.forEach(id => {
-    const advisor = ADVISORS[id];
-    const todayStories = getTodayStories(id);
-    const firstStory = todayStories[0];
-    const isUnread = !read.has(id);
-
-    const item = document.createElement('div');
-    item.className = 'story-panel-item';
-
-    // Avatar
-    const avatarWrap = document.createElement('div');
-    avatarWrap.className = 'story-panel-avatar' + (isUnread ? ' unread' : '');
-    if (isUnread) avatarWrap.style.setProperty('--advisor-ring', advisor.color);
-
-    const avatarInner = document.createElement('div');
-    avatarInner.className = 'story-panel-avatar-inner';
-
-    const avatarSrc = ADVISOR_AVATAR[id];
-    if (avatarSrc) {
-      const img = document.createElement('img');
-      img.src = avatarSrc;
-      img.alt = advisor.name;
-      avatarInner.appendChild(img);
-    } else {
-      const init = document.createElement('div');
-      init.className = 'story-panel-initial';
-      init.style.background = advisor.color;
-      init.textContent = advisor.initial;
-      avatarInner.appendChild(init);
-    }
-    avatarWrap.appendChild(avatarInner);
-
-    // Info
-    const info = document.createElement('div');
-    info.className = 'story-panel-info';
-
-    const name = document.createElement('div');
-    name.className = 'story-panel-name';
-    name.textContent = advisor.name;
-
-    const titleEl = document.createElement('div');
-    titleEl.className = 'story-panel-title-text';
-    titleEl.textContent = firstStory ? firstStory.title : '';
-
-    const meta = document.createElement('div');
-    meta.className = 'story-panel-meta';
-    meta.textContent = (firstStory ? firstStory.type : '') + (todayStories.length > 1 ? ` · ${todayStories.length} stories` : '');
-
-    info.appendChild(name);
-    info.appendChild(titleEl);
-    info.appendChild(meta);
-
-    item.appendChild(avatarWrap);
-    item.appendChild(info);
-
-    // Unread dot
-    if (isUnread) {
-      const dot = document.createElement('div');
-      dot.className = 'story-panel-dot';
-      item.appendChild(dot);
-    }
-
-    item.addEventListener('click', () => {
+  if (cached) {
+    const advisor  = ADVISORS[cached.narrator] || {};
+    const avatarSrc = ADVISOR_AVATAR[cached.narrator];
+    const avatarHtml = avatarSrc
+      ? `<img src="${avatarSrc}" alt="${advisor.name || ''}" class="sp-avatar-img">`
+      : `<div class="sp-avatar-init" style="background:${advisor.color || '#888'}">${advisor.initial || '?'}</div>`;
+    body.innerHTML = `
+      <div class="sp-story-card" id="sp-story-card">
+        <div class="sp-card-avatar">${avatarHtml}</div>
+        <div class="sp-card-info">
+          <div class="sp-card-narrator">${esc(advisor.name || cached.narrator)}</div>
+          <div class="sp-card-title">${esc(cached.title || '')}</div>
+          <div class="sp-card-category">${esc(cached.category || '')}</div>
+        </div>
+        <svg class="sp-card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>`;
+    document.getElementById('sp-story-card').addEventListener('click', () => {
       closeStoriesPanel();
-      openStoryViewer(id);
+      openStoryViewer(cached);
     });
-
-    list.appendChild(item);
-  });
+  } else {
+    body.innerHTML = `<div class="sp-loading"><div class="sp-loading-text">Generating today's story…</div></div>`;
+  }
 }
 
 function updateStoriesBadge() {
   const badge = document.getElementById('stories-nav-badge');
   if (!badge) return;
-  const count = getUnreadCount();
-  if (count > 0) {
-    badge.textContent = count;
+  const key = getDailyStoryKey();
+  const hasStory = !!localStorage.getItem(key);
+  const isRead   = getDailyStoryRead();
+  if (hasStory && !isRead) {
     badge.style.display = 'inline-flex';
   } else {
     badge.style.display = 'none';
@@ -1590,54 +1579,193 @@ function updateStoriesBadge() {
 
 // ── Viewer ──
 
-function openStoryViewer(advisorId) {
-  const advisor = ADVISORS[advisorId];
-  if (!advisor) return;
-  svAdvisorId = advisorId;
-  svStories   = getTodayStories(advisorId);
-  svIndex     = 0;
+function openStoryViewer(story) {
+  if (!story || !story.slides || !story.slides.length) return;
+  currentStory      = story;
+  currentSlideIndex = 0;
   document.getElementById('story-viewer').classList.add('open');
   document.body.style.overflow = 'hidden';
-  renderStoryFrame();
+  renderStorySlide();
 }
 
 function closeStoryViewer() {
   document.getElementById('story-viewer').classList.remove('open');
   document.body.style.overflow = '';
-  markAdvisorRead(svAdvisorId);
+  currentStory      = null;
+  currentSlideIndex = 0;
+  markDailyStoryRead();
   updateStoriesBadge();
 }
 
-function renderStoryFrame() {
-  if (!svStories.length) { closeStoryViewer(); return; }
-  const story  = svStories[svIndex];
-  const advisor = ADVISORS[svAdvisorId];
+function renderStorySlide() {
+  if (!currentStory) return;
+  const slides  = currentStory.slides;
+  const slide   = slides[currentSlideIndex];
+  const advisor = ADVISORS[currentStory.narrator] || {};
+  const total   = slides.length;
 
-  // Header
+  // Progress bars
+  const $prog = document.getElementById('story-progress');
+  $prog.innerHTML = slides.map((_, i) =>
+    `<div class="story-prog-bar${i <= currentSlideIndex ? ' active' : ''}"></div>`
+  ).join('');
+
+  // Header avatar
   const avatarWrap = document.getElementById('story-header-avatar');
   avatarWrap.innerHTML = '';
-  const avatarSrc = ADVISOR_AVATAR[svAdvisorId];
+  const avatarSrc = ADVISOR_AVATAR[currentStory.narrator];
   if (avatarSrc) {
     const img = document.createElement('img');
     img.src = avatarSrc;
-    img.alt = advisor.name;
+    img.alt = advisor.name || '';
     avatarWrap.appendChild(img);
   } else {
     const init = document.createElement('div');
     init.className = 'story-header-initial';
-    init.style.background = advisor.color;
-    init.textContent = advisor.initial;
+    init.style.background = advisor.color || '#888';
+    init.textContent = advisor.initial || '?';
     avatarWrap.appendChild(init);
   }
-  document.getElementById('story-header-name').textContent = advisor.name;
-  document.getElementById('story-header-role').textContent = advisor.title;
+  document.getElementById('story-header-name').textContent = advisor.name || currentStory.narrator;
+  document.getElementById('story-header-role').textContent = advisor.title || '';
 
-  // Body
-  document.getElementById('story-type-tag').textContent = story.type;
-  document.getElementById('story-title').textContent    = story.title;
-  document.getElementById('story-text').textContent     = story.story;
-  document.getElementById('story-lesson').textContent   = story.lesson;
+  // Save button state
+  const $save = document.getElementById('story-save-btn');
+  const lib = getStoryLibrary();
+  const alreadySaved = lib.some(s => s.title === currentStory.title && s.narrator === currentStory.narrator);
+  $save.classList.toggle('saved', alreadySaved);
+  $save.title = alreadySaved ? 'Saved to library' : 'Save to library';
 
+  // Slide body
+  const isFirst = currentSlideIndex === 0;
+  const isLast  = currentSlideIndex === total - 1;
+
+  document.getElementById('story-slide-label').textContent    = slide.label || '';
+  document.getElementById('story-slide-category').textContent = isFirst ? (currentStory.category || '') : '';
+  document.getElementById('story-title').textContent          = isFirst ? (currentStory.title || '') : '';
+  document.getElementById('story-slide-text').textContent     = slide.text || '';
+
+  // Show "Tell Me Another Story" only on last slide
+  document.getElementById('story-another-btn').style.display = isLast ? 'inline-flex' : 'none';
+}
+
+function prevSlide() {
+  if (!currentStory || currentSlideIndex <= 0) return;
+  currentSlideIndex--;
+  renderStorySlide();
+}
+
+function nextSlide() {
+  if (!currentStory) return;
+  if (currentSlideIndex < currentStory.slides.length - 1) {
+    currentSlideIndex++;
+    renderStorySlide();
+  } else {
+    closeStoryViewer();
+  }
+}
+
+function saveStoryToLibrary() {
+  if (!currentStory) return;
+  const lib = getStoryLibrary();
+  const alreadySaved = lib.some(s => s.title === currentStory.title && s.narrator === currentStory.narrator);
+  if (alreadySaved) { showNotice('Already saved.'); return; }
+  lib.unshift({ ...currentStory, saved_at: Date.now() });
+  saveStoryLibraryData(lib);
+  renderStorySlide(); // refresh save button state
+  showNotice('Story saved to library.');
+}
+
+async function handleTellMeAnother() {
+  if (storyGenerating) return;
+  storyGenerating = true;
+  closeStoryViewer();
+  closeStoriesPanel();
+
+  // Show loading in panel
+  const body = document.getElementById('stories-panel-body');
+  if (body) body.innerHTML = `<div class="sp-loading"><div class="sp-loading-text">Generating a new story…</div></div>`;
+  document.getElementById('stories-panel').classList.add('open');
+
+  try {
+    const story = await generateRandomStory();
+    storyGenerating = false;
+    renderStoriesPanel(); // refresh panel (still shows daily)
+    openStoryViewer(story);
+  } catch (e) {
+    storyGenerating = false;
+    const b = document.getElementById('stories-panel-body');
+    if (b) b.innerHTML = `<div class="sp-loading"><div class="sp-loading-text">Could not generate story. Try again.</div></div>`;
+  }
+}
+
+// ── Story Library ──
+
+function openStoryLibrary() {
+  renderStoryLibrary('All');
+  document.getElementById('story-library-overlay').classList.add('open');
+  closeStoriesPanel();
+}
+
+function closeStoryLibrary() {
+  document.getElementById('story-library-overlay').classList.remove('open');
+}
+
+function renderStoryLibrary(filter) {
+  // Update active filter button
+  document.querySelectorAll('.story-filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === filter);
+  });
+
+  const lib  = getStoryLibrary();
+  const list = document.getElementById('story-library-list');
+  const filtered = filter === 'All' ? lib : lib.filter(s => s.category === filter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<p class="story-library-empty">${filter === 'All' ? 'No saved stories yet.' : 'No stories in this category.'}</p>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map((story, i) => {
+    const advisor = ADVISORS[story.narrator] || {};
+    const avatarSrc = ADVISOR_AVATAR[story.narrator];
+    const avatarHtml = avatarSrc
+      ? `<img src="${avatarSrc}" alt="${advisor.name || ''}" class="sl-avatar-img">`
+      : `<div class="sl-avatar-init" style="background:${advisor.color || '#888'}">${advisor.initial || '?'}</div>`;
+    return `
+      <div class="sl-item" data-index="${i}" data-filter="${esc(filter)}">
+        <div class="sl-avatar">${avatarHtml}</div>
+        <div class="sl-info">
+          <div class="sl-title">${esc(story.title || 'Untitled')}</div>
+          <div class="sl-meta">${esc(advisor.name || story.narrator)} · ${esc(story.category || '')}</div>
+        </div>
+        <button class="sl-delete" data-index="${i}" data-filter="${esc(filter)}" title="Remove">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        </button>
+      </div>`;
+  }).join('');
+
+  list.querySelectorAll('.sl-item').forEach(el => {
+    el.addEventListener('click', e => {
+      if (e.target.closest('.sl-delete')) return;
+      const idx = parseInt(el.dataset.index);
+      const story = filtered[idx];
+      closeStoryLibrary();
+      openStoryViewer(story);
+    });
+  });
+
+  list.querySelectorAll('.sl-delete').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const idx    = parseInt(btn.dataset.index);
+      const filter = btn.dataset.filter;
+      const story  = filtered[idx];
+      const allLib = getStoryLibrary().filter(s => !(s.title === story.title && s.narrator === story.narrator));
+      saveStoryLibraryData(allLib);
+      renderStoryLibrary(filter);
+    });
+  });
 }
 
 // ── About ─────────────────────────────────────────────────────────
