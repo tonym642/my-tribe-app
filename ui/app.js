@@ -645,6 +645,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Logo / brand → home (new chat + reset mode)
   document.getElementById('btn-home').addEventListener('click', () => {
     closeMobileNav();
+    closeDebate();
     startNewChat();
     setMode('member');
   });
