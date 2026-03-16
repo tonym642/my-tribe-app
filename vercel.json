@@ -1,7 +1,7 @@
 {
-  "routes": [
-    { "src": "/styles.css", "dest": "/ui/styles.css" },
-    { "src": "/app.js",     "dest": "/ui/app.js"     },
-    { "src": "/",           "dest": "/ui/chat.html"  }
+  "rewrites": [
+    { "source": "/styles.css", "destination": "/ui/styles.css" },
+    { "source": "/app.js",     "destination": "/ui/app.js"     },
+    { "source": "/",           "destination": "/ui/chat.html"  }
   ]
 }
