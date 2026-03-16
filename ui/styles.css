@@ -474,10 +474,30 @@ body.dark-mode .advisor-title {
   color: #9CA3AF;
 }
 
+body.dark-mode .advisor-text {
+  color: #AAAAAA;
+}
+
+body.dark-mode .msg-user-thread .advisor-text {
+  color: #F0F0F0;
+}
+
 .advisor-text {
   font-size: 15px;
-  color: var(--text-1);
+  color: #444444;
   line-height: 1.65;
+}
+
+/* ── User vs Advisor visual hierarchy in thread ──────────────────── */
+
+/* User name label — stronger weight */
+.msg-user-thread .advisor-name {
+  font-weight: 700;
+}
+
+/* User message text — primary/dark */
+.msg-user-thread .advisor-text {
+  color: #1A1A1A;
 }
 
 .advisor-text.streaming::after {
