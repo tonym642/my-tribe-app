@@ -541,6 +541,33 @@ body.dark-mode .advisor-title {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Mention autocomplete ────────────────────────────────────────── */
+
+#mention-dropdown {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+
+.mention-item {
+  padding: 8px 14px;
+  font-size: 14px;
+  font-family: var(--font);
+  color: var(--text-1);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.mention-item:hover {
+  background: var(--border-light);
+}
+
+body.dark-mode #mention-dropdown { background: #1a1d27; border-color: #2a2d3a; }
+body.dark-mode .mention-item:hover { background: #22263a; }
+
 /* ── Composer ────────────────────────────────────────────────────── */
 
 .composer {

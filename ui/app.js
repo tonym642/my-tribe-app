@@ -267,6 +267,7 @@ const state = {
   stopped: false,
   currentConvId: null,
   bookContext: null,   // set when continuing from a Book Lesson
+  lastSpeakers: [],    // tracks who last responded for mention routing
   get guideName() { return localStorage.getItem('tribe_guide_name') || 'a wise mentor and trusted advisor'; },
   set guideName(v){ localStorage.setItem('tribe_guide_name', v); }
 };
@@ -288,7 +289,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Input
   $input.addEventListener('input', onInputChange);
   $input.addEventListener('keydown', onKeydown);
+  $input.addEventListener('blur', () => setTimeout(hideMentionDropdown, 150));
   $sendBtn.addEventListener('click', () => state.isLoading ? handleStop() : handleSend());
+
+  // Mention autocomplete dropdown
+  document.getElementById('mention-dropdown').addEventListener('mousedown', e => {
+    const item = e.target.closest('.mention-item');
+    if (!item) return;
+    e.preventDefault();
+    insertMention(item.dataset.name);
+  });
 
   // Mode pills
   document.querySelectorAll('.mode-pill').forEach(btn => {
@@ -645,6 +655,47 @@ document.addEventListener('DOMContentLoaded', async () => {
 function onInputChange() {
   $sendBtn.disabled = !$input.value.trim() || state.isLoading;
   autoGrow();
+  updateMentionDropdown();
+}
+
+// ── Mention autocomplete ─────────────────────────────────────────
+
+const MENTION_OPTIONS = [...TRIBE.map(id => ADVISORS[id].name.toLowerCase()), 'all'];
+
+function updateMentionDropdown() {
+  const val = $input.value;
+  const cursor = $input.selectionStart;
+  const before = val.slice(0, cursor);
+  const atMatch = before.match(/@(\w*)$/);
+  if (!atMatch) { hideMentionDropdown(); return; }
+
+  const partial = atMatch[1].toLowerCase();
+  const filtered = MENTION_OPTIONS.filter(n => n.startsWith(partial));
+  if (filtered.length === 0) { hideMentionDropdown(); return; }
+
+  const $drop = document.getElementById('mention-dropdown');
+  $drop.innerHTML = filtered.map(n =>
+    `<div class="mention-item" data-name="${n}">@${n}</div>`
+  ).join('');
+  $drop.style.display = 'block';
+}
+
+function hideMentionDropdown() {
+  const $drop = document.getElementById('mention-dropdown');
+  if ($drop) $drop.style.display = 'none';
+}
+
+function insertMention(name) {
+  const val = $input.value;
+  const cursor = $input.selectionStart;
+  const before = val.slice(0, cursor).replace(/@\w*$/, `@${name} `);
+  const after  = val.slice(cursor);
+  $input.value = before + after;
+  const pos = before.length;
+  $input.focus();
+  $input.setSelectionRange(pos, pos);
+  hideMentionDropdown();
+  onInputChange();
 }
 
 function onKeydown(e) {
@@ -756,6 +807,35 @@ function syncChipHighlights() {
   });
 }
 
+// ── Mention routing ───────────────────────────────────────────────
+
+function extractMentions(text) {
+  const matches = text.match(/@(\w+)/g);
+  if (!matches) return [];
+  return matches.map(m => m.slice(1).toLowerCase());
+}
+
+function removeMentions(text) {
+  return text.replace(/@\w+/g, '').replace(/\s{2,}/g, ' ').trim();
+}
+
+function determineResponders(text) {
+  const sessionIds = Array.from(state.selectedAdvisors);
+  const mentions = extractMentions(text);
+
+  if (mentions.includes('all')) return sessionIds;
+
+  if (mentions.length > 0) {
+    const matched = sessionIds.filter(id =>
+      mentions.includes(ADVISORS[id]?.name.toLowerCase())
+    );
+    return matched.length > 0 ? matched : sessionIds;
+  }
+
+  // No mention: use last speaker; fall back to full selection on first message
+  return state.lastSpeakers.length > 0 ? state.lastSpeakers : sessionIds;
+}
+
 // ── Send / Stop ───────────────────────────────────────────────────
 
 const STOP_ICON  = `<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><rect x="0" y="0" width="12" height="12" rx="2"/></svg>`;
@@ -777,17 +857,26 @@ function handleStop() {
 }
 
 async function handleSend() {
-  const text = $input.value.trim();
-  if (!text || state.isLoading) return;
+  const rawText = $input.value.trim();
+  if (!rawText || state.isLoading) return;
 
   if (state.mode === 'member' && state.selectedAdvisors.size === 0) {
     showNotice('Select at least one advisor to continue.');
     return;
   }
 
+  // Resolve mention-based routing (member mode only)
+  const advisorIds = state.mode === 'member'
+    ? determineResponders(rawText)
+    : Array.from(state.selectedAdvisors);
+
+  // Strip @mentions from the text sent to AI
+  const aiText = state.mode === 'member' ? removeMentions(rawText) : rawText;
+
   // Reset input
   $input.value = '';
   $input.style.height = 'auto';
+  hideMentionDropdown();
   state.isLoading = true;
   state.stopped = false;
   setStopMode();
@@ -799,15 +888,12 @@ async function handleSend() {
   document.getElementById('mode-row').style.display = 'none';
   document.getElementById('advisor-row').style.display = 'none';
 
-  // Render user bubble
-  $inner.appendChild(createUserBubble(text));
+  // Render user bubble (show original text including @mentions)
+  $inner.appendChild(createUserBubble(rawText));
   scrollBottom();
-  addMsgToConv({ type: 'user', content: text });
+  addMsgToConv({ type: 'user', content: rawText });
 
-  // Determine responding advisors
-  const advisorIds = Array.from(state.selectedAdvisors);
-
-  // Insert loading cards for all advisors upfront
+  // Insert loading cards for responding advisors upfront
   const cards = {};
   for (const id of advisorIds) {
     const card = createLoadingCard(id);
@@ -816,22 +902,27 @@ async function handleSend() {
   }
   scrollBottom();
 
-  // Call each advisor sequentially (shows staggered arrival)
+  // Call each advisor sequentially
   // tribeContext accumulates prior responses so later advisors can reference them
   let tribeContext = '';
+  let lastResponderId = null;
   for (const id of advisorIds) {
     if (state.stopped) { fillCard(cards[id], 'Stopped.', true); continue; }
     try {
-      const response = await callAdvisor(ADVISORS[id], text, tribeContext);
+      const response = await callAdvisor(ADVISORS[id], aiText, tribeContext);
       fillCard(cards[id], response);
       addMsgToConv({ type: 'advisor', advisor_id: id, content: response });
       tribeContext += `\n\n${ADVISORS[id].name}:\n${response}`;
+      lastResponderId = id;
     } catch (err) {
       const msg = formatError(err);
       fillCard(cards[id], msg, true);
     }
     scrollBottom();
   }
+
+  // Track last speaker for default routing on next message
+  if (lastResponderId) state.lastSpeakers = [lastResponderId];
 
   // Guide synthesis: only for full tribe mode
   if (!state.stopped && state.mode === 'tribe' && tribeContext.trim() && advisorIds.length > 1) {
@@ -1071,6 +1162,7 @@ function startNewChat() {
   $welcome.style.display = '';
   document.getElementById('mode-row').style.display = '';
   document.getElementById('advisor-row').style.display = '';
+  state.lastSpeakers = [];
   $input.value = '';
   $input.style.height = 'auto';
   $sendBtn.disabled = true;
