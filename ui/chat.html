@@ -63,10 +63,6 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             Book Lessons
           </button>
-          <button class="nav-item" id="btn-daily-alignment">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Daily Alignment
-          </button>
         </div>
       </div>
 
@@ -226,10 +222,6 @@
       <button class="mobile-nav-item" id="m-btn-book-lessons">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         Book Lessons
-      </button>
-      <button class="mobile-nav-item" id="m-btn-daily-alignment">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Daily Alignment
       </button>
     </div>
     <div class="mobile-nav-section">
@@ -659,68 +651,6 @@
     </div>
   </div>
 
-  <!-- Daily Alignment Modal -->
-  <div class="modal-overlay" id="daily-overlay">
-    <div class="modal daily-modal">
-
-      <div class="modal-header">
-        <div class="daily-header-left">
-          <h3>Daily Alignment</h3>
-          <span class="align-saved-badge" id="align-saved-badge"></span>
-        </div>
-        <button class="modal-close" id="daily-close">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-
-      <div class="daily-body">
-
-        <!-- Section 1: Goals -->
-        <div class="align-section">
-          <div class="align-section-title">Focused Goals</div>
-          <p class="align-prompt">What important goals are you focused on today?</p>
-          <div id="align-goals"></div>
-          <div class="align-add-row">
-            <input type="text" class="align-add-input" id="align-goal-input" placeholder="Add a goal..." />
-            <button class="align-add-btn" id="align-goal-add">Add</button>
-          </div>
-        </div>
-
-        <!-- Section 2: Focus -->
-        <div class="align-section">
-          <div class="align-section-title">Focus</div>
-          <p class="align-prompt">Where is your focus right now?</p>
-          <div class="align-options" id="align-focus"></div>
-        </div>
-
-        <!-- Section 3: Emotional State -->
-        <div class="align-section">
-          <div class="align-section-title">Emotional State</div>
-          <p class="align-prompt">How is your emotional state today?</p>
-          <div class="align-options" id="align-emotional"></div>
-        </div>
-
-        <!-- Section 4: Self Image -->
-        <div class="align-section">
-          <div class="align-section-title">Self Image</div>
-          <p class="align-prompt">How do you currently view yourself?</p>
-          <div class="align-options" id="align-selfimage"></div>
-        </div>
-
-        <!-- Daily message (populated from coaching/daily-alignment.md) -->
-        <div class="align-message" id="align-message"></div>
-
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn-primary" id="align-save-btn">Save Entry</button>
-      </div>
-
-    </div>
-  </div>
 
   <!-- ── Campfire Page (full-page, replaces main layout when open) ── -->
   <div id="campfire-page" style="display:none">

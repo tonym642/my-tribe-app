@@ -166,7 +166,6 @@ const knowledge = {
   constitution:    null,
   guideSetup:      null,
   advisorRegistry: null,
-  dailyAlignment:  null,
   bookLessons:     null,
   stories:         null,
   about:           null,
@@ -190,13 +189,12 @@ async function fetchText(path) {
 
 async function loadKnowledge() {
   [knowledge.contextLoader, knowledge.constitution, knowledge.guideSetup,
-   knowledge.advisorRegistry, knowledge.dailyAlignment, knowledge.bookLessons,
+   knowledge.advisorRegistry, knowledge.bookLessons,
    knowledge.about, knowledge.stories] = await Promise.all([
     fetchText('../tribe-brain/context-loader.md'),
     fetchText('../tribe-brain/constitution.md'),
     fetchText('../tribe-brain/guide-setup.md'),
     fetchText('../tribe-brain/advisor-registry.md'),
-    fetchText('../coaching/daily-alignment.md'),
     fetchText('../coaching/book-lessons.md'),
     fetchText('../tribe-brain/about.md'),
     fetchText('../tribe-brain/stories.md')
@@ -211,7 +209,6 @@ async function loadKnowledge() {
     })
   ]);
 
-  applyDailyAlignmentConfig();
   initStories();
 }
 
@@ -359,22 +356,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.target === e.currentTarget) closeHistoryPanel();
   });
 
-  // Coaching — Daily Alignment
-  ['btn-daily-alignment', 'm-btn-daily-alignment'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('click', () => { closeMobileNav(); openDailyAlignment(); });
-  });
-
-  // Daily Alignment modal wiring
-  document.getElementById('daily-close').addEventListener('click', closeDailyAlignment);
-  document.getElementById('daily-overlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeDailyAlignment();
-  });
-  document.getElementById('align-save-btn').addEventListener('click', saveDailyAlignment);
-  document.getElementById('align-goal-add').addEventListener('click', addAlignGoal);
-  document.getElementById('align-goal-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') addAlignGoal();
-  });
 
   // Navigation — coming soon items (desktop + mobile)
   const comingSoon = [
@@ -2136,264 +2117,6 @@ function continueWithTribe(pillMode) {
   setMode(pillMode);
   $input.placeholder = `About "${blCurrentBook}": `;
   $input.focus();
-}
-
-// ── Daily Alignment config parser ────────────────────────────────
-
-function parseDailyAlignmentConfig(text) {
-  const lines = text.split('\n').map(l => l.trim());
-  const cfg = { defaultGoals: [], focus: [], emotional: [], selfImage: [], completionMessage: '' };
-
-  let section = null;
-  let collectingOptions = false;
-  let collectingMessage = false;
-
-  for (const line of lines) {
-    if (line === '---') { collectingOptions = false; collectingMessage = false; continue; }
-
-    if (line === '## 1. Focused Goals')   { section = 'goals';     collectingOptions = false; continue; }
-    if (line === '## 2. Focus')           { section = 'focus';     collectingOptions = false; continue; }
-    if (line === '## 3. Emotional State') { section = 'emotional'; collectingOptions = false; continue; }
-    if (line === '## 4. Self Image')      { section = 'selfImage'; collectingOptions = false; continue; }
-    if (line === '# Completion Message')  { section = 'message';   collectingMessage = false; continue; }
-    if (line.startsWith('#'))             { section = null; collectingOptions = false; continue; }
-
-    if (!line) continue;
-
-    if (section === 'goals' && line.startsWith('- ')) {
-      cfg.defaultGoals.push(line.slice(2).trim());
-    } else if (section === 'focus' || section === 'emotional' || section === 'selfImage') {
-      if (line === 'Options:') { collectingOptions = true; continue; }
-      if (collectingOptions && !line.startsWith('This ') && line !== 'Prompt:') {
-        cfg[section].push(line);
-      }
-    } else if (section === 'message') {
-      if (line === 'Example:') { collectingMessage = true; continue; }
-      if (collectingMessage && line) { cfg.completionMessage = line; collectingMessage = false; }
-    }
-  }
-  return cfg;
-}
-
-function applyDailyAlignmentConfig() {
-  if (!knowledge.dailyAlignment) return;
-  const cfg = parseDailyAlignmentConfig(knowledge.dailyAlignment);
-
-  const toOptions = labels => labels.map(l => ({ value: l, label: l }));
-
-  if (cfg.defaultGoals.length)     DEFAULT_GOALS          = cfg.defaultGoals;
-  if (cfg.focus.length)            FOCUS_OPTIONS          = toOptions(cfg.focus);
-  if (cfg.emotional.length)        EMOTIONAL_OPTIONS      = toOptions(cfg.emotional);
-  if (cfg.selfImage.length)        SELFIMAGE_OPTIONS      = toOptions(cfg.selfImage);
-  if (cfg.completionMessage)       DAILY_COMPLETION_MESSAGE = cfg.completionMessage;
-}
-
-// ── Daily Alignment ───────────────────────────────────────────────
-
-// These are fallback defaults — overwritten at startup from coaching/daily-alignment.md
-let DEFAULT_GOALS = ['Body transformation', 'Pink Fox & sXp', 'BAM'];
-
-let FOCUS_OPTIONS = [
-  { value: 'focused',    label: 'Focused on commitments and priorities' },
-  { value: 'distracted', label: 'Distracted or making excuses' },
-  { value: 'past',       label: 'Thinking about past problems' }
-];
-
-let EMOTIONAL_OPTIONS = [
-  { value: 'excited',   label: 'Excited' },
-  { value: 'grateful',  label: 'Grateful or at peace' },
-  { value: 'neutral',   label: 'Neutral' },
-  { value: 'down',      label: 'Down' },
-  { value: 'depressed', label: 'Depressed' }
-];
-
-let SELFIMAGE_OPTIONS = [
-  { value: 'strong',   label: 'Strong and confident' },
-  { value: 'balanced', label: 'Balanced' },
-  { value: 'low',      label: 'Low confidence' }
-];
-
-let DAILY_COMPLETION_MESSAGE = 'When your decisions align with your commitments, discipline, and values, progress becomes inevitable.';
-
-// In-memory state while panel is open
-let alignState = { goals: [], focus: null, emotional: null, selfImage: null };
-
-function getGoals() {
-  // Always start from config (daily-alignment.md) so changes to the file are reflected
-  const base = [...DEFAULT_GOALS];
-  // Append any goals the user added manually (stored separately)
-  try {
-    const custom = JSON.parse(localStorage.getItem('tribe_custom_goals') || '[]');
-    custom.forEach(g => { if (!base.includes(g)) base.push(g); });
-  } catch {}
-  return base;
-}
-
-function saveGoals(goals) {
-  // Only persist goals that are not already in the config defaults
-  const custom = goals.filter(g => !DEFAULT_GOALS.includes(g));
-  localStorage.setItem('tribe_custom_goals', JSON.stringify(custom));
-}
-
-function getDailyEntries() {
-  try { return JSON.parse(localStorage.getItem('tribe_daily_alignment') || '[]'); }
-  catch { return []; }
-}
-
-function saveDailyEntries(entries) {
-  localStorage.setItem('tribe_daily_alignment', JSON.stringify(entries));
-}
-
-function getTodayKey() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function getTodayEntry() {
-  return getDailyEntries().find(e => e.date === getTodayKey()) || null;
-}
-
-function openDailyAlignment() {
-  const goalTexts  = getGoals();
-  const todayEntry = getTodayEntry();
-
-  if (todayEntry) {
-    alignState.goals     = goalTexts.map(t => ({ text: t, checked: todayEntry.goals.includes(t) }));
-    alignState.focus     = todayEntry.focus;
-    alignState.emotional = todayEntry.emotional;
-    alignState.selfImage = todayEntry.selfImage;
-  } else {
-    alignState.goals     = goalTexts.map(t => ({ text: t, checked: false }));
-    alignState.focus     = null;
-    alignState.emotional = null;
-    alignState.selfImage = null;
-  }
-
-  renderAlignment();
-  document.getElementById('daily-overlay').classList.add('open');
-}
-
-function closeDailyAlignment() {
-  document.getElementById('daily-overlay').classList.remove('open');
-}
-
-function renderAlignment() {
-  renderAlignGoals();
-  renderAlignOptions('align-focus',     FOCUS_OPTIONS,     alignState.focus,     v => { alignState.focus     = v; });
-  renderAlignOptions('align-emotional', EMOTIONAL_OPTIONS, alignState.emotional, v => { alignState.emotional = v; });
-  renderAlignOptions('align-selfimage', SELFIMAGE_OPTIONS, alignState.selfImage, v => { alignState.selfImage = v; });
-
-  // Completion message from config
-  document.getElementById('align-message').textContent = `"${DAILY_COMPLETION_MESSAGE}"`;
-
-  const todayEntry = getTodayEntry();
-  const badge = document.getElementById('align-saved-badge');
-  if (todayEntry) {
-    badge.textContent = 'Saved today';
-    badge.classList.add('visible');
-    document.getElementById('align-save-btn').textContent = 'Update Entry';
-  } else {
-    badge.classList.remove('visible');
-    document.getElementById('align-save-btn').textContent = 'Save Entry';
-  }
-}
-
-function renderAlignGoals() {
-  const container = document.getElementById('align-goals');
-  container.innerHTML = alignState.goals.map((g, i) => `
-    <div class="align-goal-row" data-index="${i}">
-      <label class="align-check-label">
-        <input type="checkbox" class="align-checkbox" data-index="${i}" ${g.checked ? 'checked' : ''}>
-        <span class="align-goal-text">${esc(g.text)}</span>
-      </label>
-      <div class="align-goal-actions">
-        <button class="align-goal-btn" data-action="edit" data-index="${i}" title="Edit">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>
-        <button class="align-goal-btn align-goal-delete" data-action="delete" data-index="${i}" title="Remove">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-    </div>`).join('');
-
-  container.querySelectorAll('.align-checkbox').forEach(cb => {
-    cb.addEventListener('change', () => { alignState.goals[+cb.dataset.index].checked = cb.checked; });
-  });
-  container.querySelectorAll('[data-action="edit"]').forEach(btn => {
-    btn.addEventListener('click', () => editAlignGoal(+btn.dataset.index));
-  });
-  container.querySelectorAll('[data-action="delete"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      alignState.goals.splice(+btn.dataset.index, 1);
-      saveGoals(alignState.goals.map(g => g.text));
-      renderAlignGoals();
-    });
-  });
-}
-
-function editAlignGoal(index) {
-  const container = document.getElementById('align-goals');
-  const row = container.querySelector(`[data-index="${index}"]`);
-  const current = alignState.goals[index].text;
-  row.innerHTML = `
-    <input type="text" class="align-edit-input" value="${esc(current)}" style="flex:1" />
-    <div class="align-goal-actions" style="opacity:1">
-      <button class="align-goal-btn" data-action="save" title="Save">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      </button>
-    </div>`;
-  const input = row.querySelector('.align-edit-input');
-  input.focus(); input.select();
-  const commit = () => {
-    const val = input.value.trim();
-    if (val) { alignState.goals[index].text = val; saveGoals(alignState.goals.map(g => g.text)); }
-    renderAlignGoals();
-  };
-  row.querySelector('[data-action="save"]').addEventListener('click', commit);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') commit(); if (e.key === 'Escape') renderAlignGoals(); });
-}
-
-function renderAlignOptions(containerId, options, selected, onChange) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = options.map(opt => `
-    <div class="align-option ${selected === opt.value ? 'selected' : ''}" data-value="${opt.value}">
-      <span class="align-option-box"></span>
-      <span class="align-option-label">${esc(opt.label)}</span>
-    </div>`).join('');
-
-  container.querySelectorAll('.align-option').forEach(el => {
-    el.addEventListener('click', () => {
-      const val = el.dataset.value;
-      onChange(val);
-      container.querySelectorAll('.align-option').forEach(o => o.classList.toggle('selected', o.dataset.value === val));
-    });
-  });
-}
-
-function saveDailyAlignment() {
-  const today   = getTodayKey();
-  const entries = getDailyEntries().filter(e => e.date !== today);
-  entries.unshift({
-    date:      today,
-    goals:     alignState.goals.filter(g => g.checked).map(g => g.text),
-    focus:     alignState.focus,
-    emotional: alignState.emotional,
-    selfImage: alignState.selfImage,
-    saved_at:  Date.now()
-  });
-  saveDailyEntries(entries);
-  saveGoals(alignState.goals.map(g => g.text));
-  showNotice('Daily alignment saved.');
-  closeDailyAlignment();
-}
-
-function addAlignGoal() {
-  const input = document.getElementById('align-goal-input');
-  const text  = input.value.trim();
-  if (!text) return;
-  alignState.goals.push({ text, checked: false });
-  saveGoals(alignState.goals.map(g => g.text));
-  input.value = '';
-  renderAlignGoals();
 }
 
 // ── Campfire (Storytelling Experience) ───────────────────────────
