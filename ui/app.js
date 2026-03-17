@@ -378,7 +378,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     'btn-core-lessons',
     'btn-onboarding',
     'm-btn-core-lessons',
-    'm-btn-onboarding'
+    'm-btn-onboarding',
+    'btn-recommended-topics',
+    'btn-custom-topic',
+    'm-btn-recommended-topics',
+    'm-btn-custom-topic'
   ];
   comingSoon.forEach(id => {
     const el = document.getElementById(id);
@@ -609,30 +613,51 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Book Lessons — page controls
   document.getElementById('book-lessons-close').addEventListener('click', closeBookLessons);
-  document.getElementById('bl-start-btn').addEventListener('click', startBookLesson);
+  document.getElementById('bl-my-books-btn').addEventListener('click', blOpenMyBooks);
+  document.getElementById('bl-library-back').addEventListener('click', () => blShowPhase('bl-search-phase'));
 
-  // Book Lessons — mode buttons (input phase)
-  document.querySelectorAll('#bl-input-phase .bl-mode-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      blSelectedMode = btn.dataset.mode;
-      document.querySelectorAll('#bl-input-phase .bl-mode-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    });
+  // Book Lessons — search
+  document.getElementById('bl-search-btn').addEventListener('click', blSearchBook);
+  document.getElementById('bl-book-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') blSearchBook();
   });
 
-  // Book Lessons — mode buttons (lesson phase)
-  document.querySelectorAll('#bl-lesson-phase .bl-mode-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      blSelectedMode = btn.dataset.mode;
-      document.querySelectorAll('#bl-lesson-phase .bl-mode-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      startBookLesson();
-    });
+  // Book Lessons — confirm phase
+  document.getElementById('bl-confirm-start-btn').addEventListener('click', blStartLesson);
+  document.getElementById('bl-search-again-btn').addEventListener('click', () => blShowPhase('bl-search-phase'));
+
+  // Book Lessons — chapters toggle
+  document.getElementById('bl-chapters-toggle').addEventListener('click', () => {
+    const content = document.getElementById('bl-chapters-content');
+    const icon    = document.querySelector('#bl-chapters-toggle .bl-toggle-icon');
+    const isHidden = content.style.display === 'none';
+    content.style.display = isHidden ? '' : 'none';
+    icon?.classList.toggle('open', isHidden);
   });
 
-  // Book Lessons — tribe pills
-  document.querySelectorAll('.bl-tribe-pill').forEach(btn => {
-    btn.addEventListener('click', () => continueWithTribe(btn.dataset.mode));
+  // Book Lessons — back to topics
+  document.getElementById('bl-back-to-topics').addEventListener('click', blBackToTopics);
+
+  // Book Lessons — save book
+  document.getElementById('bl-save-btn').addEventListener('click', blSaveBook);
+
+  // Book Lessons — chat
+  document.getElementById('bl-chat-send').addEventListener('click', blSendChat);
+  document.getElementById('bl-chat-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') blSendChat();
+  });
+
+  // Book Lessons — advisor pills
+  document.querySelectorAll('.bl-adv-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      blActiveAdvisor = pill.dataset.advisor;
+      document.querySelectorAll('.bl-adv-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      const name = blActiveAdvisor === 'guide'
+        ? (ADVISORS.guide?.name || 'Guide')
+        : (ADVISORS[blActiveAdvisor]?.name || blActiveAdvisor);
+      document.getElementById('bl-active-advisor-name').textContent = name;
+    });
   });
 
   // Profile page (desktop + mobile)
@@ -1879,8 +1904,13 @@ function deleteConversation(id) {
 
 // ── Book Lessons ──────────────────────────────────────────────────
 
-let blSelectedMode = 'quick';
-let blCurrentBook  = '';
+// ── Book Lessons state ────────────────────────────────────────────
+let blCurrentBook     = '';      // user search string
+let blConfirmedBook   = null;    // { title, author, tagline }
+let blCurrentLesson   = null;    // { overview, keyConcepts[], chapters[], suggestedTopics[] }
+let blChatMessages    = [];      // [{role, content, advisorId}]
+let blCompletedTopics = new Set();
+let blActiveAdvisor   = 'guide';
 
 // ── Stories ───────────────────────────────────────────────────────
 
@@ -2320,18 +2350,43 @@ function closeAbout() {
   document.getElementById('about-overlay').classList.remove('open');
 }
 
+// ── Book Lessons helpers ──────────────────────────────────────────
+
+function getSavedBooks() {
+  try { return JSON.parse(localStorage.getItem('tribe_books') || '[]'); }
+  catch { return []; }
+}
+function saveBooksData(books) {
+  localStorage.setItem('tribe_books', JSON.stringify(books));
+}
+
+function blShowPhase(phaseId) {
+  ['bl-search-phase', 'bl-confirm-phase', 'bl-lesson-phase', 'bl-library-phase']
+    .forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (id === phaseId) {
+        el.style.display = id === 'bl-lesson-phase' ? 'flex' : '';
+      } else {
+        el.style.display = 'none';
+      }
+    });
+}
+
 function openBookLessons() {
-  blSelectedMode = 'quick';
-  blCurrentBook  = '';
-  // Reset to input phase
-  document.getElementById('bl-input-phase').style.display = '';
-  document.getElementById('bl-lesson-phase').style.display = 'none';
+  blCurrentBook     = '';
+  blConfirmedBook   = null;
+  blCurrentLesson   = null;
+  blChatMessages    = [];
+  blCompletedTopics = new Set();
+  blActiveAdvisor   = 'guide';
   document.getElementById('bl-book-input').value = '';
-  document.getElementById('bl-lesson-content').innerHTML = '';
-  // Sync mode buttons in input phase
-  document.querySelectorAll('#bl-input-phase .bl-mode-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.mode === 'quick');
-  });
+  document.querySelectorAll('.bl-adv-pill').forEach(p =>
+    p.classList.toggle('active', p.dataset.advisor === 'guide')
+  );
+  document.getElementById('bl-active-advisor-name').textContent =
+    ADVISORS.guide?.name || 'Guide';
+  blShowPhase('bl-search-phase');
   document.getElementById('main-layout').style.display = 'none';
   document.getElementById('book-lessons-page').style.display = 'flex';
   setTimeout(() => document.getElementById('bl-book-input').focus(), 100);
@@ -2342,104 +2397,361 @@ function closeBookLessons() {
   document.getElementById('main-layout').style.display = '';
 }
 
-function formatLessonText(text) {
-  return esc(text)
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n\n/g, '<br><br>')
-    .replace(/\n/g, '<br>');
-}
+// ── Step 1: Search — AI confirms book identity ────────────────────
 
-function buildBookLessonPrompt(bookTitle, mode) {
-  const base = knowledge.bookLessons || '';
-
-  const modeInstructions = {
-    quick: `Use the Quick lesson mode: cover only the Book Overview and top 3–5 Key Principles. Keep the total response under 300 words. Be concise and clear.`,
-    deep:  `Use the Deep Dive lesson mode: cover all five sections fully — Book Overview, Key Principles (up to 10), Practical Takeaways, Who This Book Helps Most, and Potential Critiques. Explain each idea in depth with examples where relevant.`,
-    interactive: `Use the Interactive lesson mode: present ideas one at a time. After each major section, include a short reflection question the user can think about. End with a practical challenge the user can act on today.`
-  };
-
-  return `${base}
-
----
-
-You are generating a Book Lesson for the My Tribe learning system.
-
-Book: "${bookTitle}"
-
-${modeInstructions[mode] || modeInstructions.quick}
-
-Format sections using **Section Title** on its own line before the content.
-
-Rules:
-- Write entirely in original language. Do not reproduce copyrighted text.
-- Summarize, interpret, and explain — do not quote at length.
-- Keep the tone clear, practical, and grounded.
-- Focus on how ideas apply to real decisions and personal growth.`;
-}
-
-async function startBookLesson() {
-  const bookTitle = document.getElementById('bl-book-input').value.trim();
-  if (!bookTitle) {
-    document.getElementById('bl-book-input').focus();
-    return;
-  }
-
-
-  blCurrentBook = bookTitle;
-
-  // Switch to lesson phase with loading state
-  document.getElementById('bl-input-phase').style.display = 'none';
-  const lessonPhase = document.getElementById('bl-lesson-phase');
-  lessonPhase.style.display = '';
-  document.getElementById('bl-current-book').textContent = bookTitle;
-
-  const contentEl = document.getElementById('bl-lesson-content');
-  contentEl.innerHTML = `<div class="bl-loading"><div class="typing-dots"><span></span><span></span><span></span></div> Generating lesson…</div>`;
-
-  // Sync mode buttons in lesson phase
-  document.querySelectorAll('#bl-lesson-phase .bl-mode-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.mode === blSelectedMode);
-  });
-
-  await fetchBookLesson(bookTitle, blSelectedMode);
-}
-
-async function fetchBookLesson(bookTitle, mode) {
-  const contentEl = document.getElementById('bl-lesson-content');
+async function blSearchBook() {
+  const query = document.getElementById('bl-book-input').value.trim();
+  if (!query) { document.getElementById('bl-book-input').focus(); return; }
+  blCurrentBook = query;
+  blShowPhase('bl-confirm-phase');
+  const card = document.getElementById('bl-confirm-card');
+  const startBtn = document.getElementById('bl-confirm-start-btn');
+  card.innerHTML = `<div class="bl-loading"><div class="typing-dots"><span></span><span></span><span></span></div> Looking up book…</div>`;
+  startBtn.style.display = 'none';
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'anthropic-version': '2023-06-01'
-      },
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: mode === 'quick' ? 600 : 1200,
-        system: buildBookLessonPrompt(bookTitle, mode),
-        messages: [{ role: 'user', content: `Generate a ${mode} lesson for: ${bookTitle}` }]
+        max_tokens: 300,
+        system: `You are a book reference assistant. Identify the most likely book from a title or partial title and return ONLY a valid JSON object. No extra text, no markdown code fences.`,
+        messages: [{
+          role: 'user',
+          content: `Identify this book: "${query}"\n\nReturn exactly: { "title": "Full Book Title", "author": "Author Name", "tagline": "One sentence describing what the book is about and who it helps most." }`
+        }]
       })
     });
-
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error?.message || `HTTP ${res.status}`);
-    }
-
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    contentEl.innerHTML = formatLessonText(data.content[0].text);
+    const raw = data.content[0].text.trim()
+      .replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+    blConfirmedBook = JSON.parse(raw);
+    card.innerHTML = `
+      <div class="bl-confirm-book-title">${esc(blConfirmedBook.title)}</div>
+      <div class="bl-confirm-author">by ${esc(blConfirmedBook.author)}</div>
+      <div class="bl-confirm-tagline">${esc(blConfirmedBook.tagline)}</div>
+    `;
+    startBtn.style.display = '';
   } catch (err) {
-    contentEl.innerHTML = `<span class="advisor-error-text">${esc(formatError(err))}</span>`;
+    card.innerHTML = `<span class="advisor-error-text">Could not identify the book. Try a more specific title.</span>`;
   }
 }
 
-function continueWithTribe(pillMode) {
-  state.bookContext = blCurrentBook;
-  closeBookLessons();
-  startNewChat();
-  setMode(pillMode);
-  $input.placeholder = `About "${blCurrentBook}": `;
-  $input.focus();
+// ── Step 2: Confirm → load full lesson ───────────────────────────
+
+async function blStartLesson() {
+  if (!blConfirmedBook) return;
+  blChatMessages    = [];
+  blCompletedTopics = new Set();
+  blCurrentLesson   = null;
+  blShowPhase('bl-lesson-phase');
+
+  // Book header
+  document.getElementById('bl-book-header').innerHTML = `
+    <div class="bl-book-header-title">${esc(blConfirmedBook.title)}</div>
+    <div class="bl-book-header-author">by ${esc(blConfirmedBook.author)}</div>
+  `;
+
+  // Show all sections, hide topic detail
+  ['bl-overview-section','bl-key-concepts-section','bl-chapters-section',
+   'bl-topics-section','bl-progress-section'].forEach(id =>
+    document.getElementById(id).style.display = ''
+  );
+  document.getElementById('bl-topic-detail').style.display = 'none';
+
+  // Loading states
+  document.getElementById('bl-overview-content').innerHTML =
+    `<div class="bl-loading"><div class="typing-dots"><span></span><span></span><span></span></div> Loading lesson…</div>`;
+  document.getElementById('bl-key-concepts-list').innerHTML = '';
+  document.getElementById('bl-chapters-content').innerHTML = '';
+  document.getElementById('bl-topics-list').innerHTML = '';
+  document.getElementById('bl-chat-messages').innerHTML = '';
+  blUpdateProgress();
+
+  // Save / saved state
+  const saved = getSavedBooks().find(b => b.title === blConfirmedBook.title);
+  document.getElementById('bl-save-btn').textContent = saved ? 'Saved' : 'Save to My Books';
+  document.getElementById('bl-saved-badge').style.display = saved ? '' : 'none';
+
+  // Collapse chapters
+  document.getElementById('bl-chapters-content').style.display = 'none';
+  document.querySelector('#bl-chapters-toggle .bl-toggle-icon')?.classList.remove('open');
+
+  await blFetchLesson();
+}
+
+async function blFetchLesson() {
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 1600,
+        system: `You generate structured book lessons for the My Tribe app. Return ONLY a valid JSON object. No extra text, no markdown code fences.`,
+        messages: [{
+          role: 'user',
+          content: `Generate a lesson for "${blConfirmedBook.title}" by ${blConfirmedBook.author}.
+
+Return this exact JSON:
+{
+  "overview": "2-3 sentence overview of the book's core message and approach",
+  "keyConcepts": ["Concept 1", "Concept 2", "Concept 3", "Concept 4", "Concept 5"],
+  "chapters": ["Chapter 1: Title — brief description", "Chapter 2: ..."],
+  "suggestedTopics": ["Topic or learning question 1", "Topic 2", "Topic 3", "Topic 4", "Topic 5", "Topic 6"]
+}
+
+chapters: actual chapter names if known, otherwise key sections (6–10 items).
+suggestedTopics: 6 practical topics or questions the reader can explore (e.g. "How identity-based habits work", "The role of environment in behavior change").`
+        }]
+      })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const raw = data.content[0].text.trim()
+      .replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+    blCurrentLesson = JSON.parse(raw);
+
+    document.getElementById('bl-overview-content').textContent = blCurrentLesson.overview;
+
+    document.getElementById('bl-key-concepts-list').innerHTML =
+      blCurrentLesson.keyConcepts.map(c =>
+        `<div class="bl-concept-chip">${esc(c)}</div>`
+      ).join('');
+
+    document.getElementById('bl-chapters-content').innerHTML =
+      `<div class="bl-chapters-list">${
+        blCurrentLesson.chapters.map(c =>
+          `<div class="bl-chapter-item">${esc(c)}</div>`
+        ).join('')
+      }</div>`;
+
+    blRenderTopics();
+    blUpdateProgress();
+
+    // Greeting from Guide
+    blAppendMessage('advisor',
+      `I've loaded **${blConfirmedBook.title}**. Click any topic above to explore it, or ask me anything about the book.`,
+      'guide');
+
+  } catch (err) {
+    document.getElementById('bl-overview-content').innerHTML =
+      `<span class="advisor-error-text">${esc(String(err))}</span>`;
+  }
+}
+
+// ── Topics ────────────────────────────────────────────────────────
+
+function blRenderTopics() {
+  if (!blCurrentLesson) return;
+  const list = document.getElementById('bl-topics-list');
+  list.innerHTML = blCurrentLesson.suggestedTopics.map((topic, i) => {
+    const done = blCompletedTopics.has(i);
+    return `<button class="bl-topic-btn${done ? ' completed' : ''}" data-topic="${i}">
+      <span class="bl-topic-check">${done ? '✓' : ''}</span>
+      <span>${esc(topic)}</span>
+    </button>`;
+  }).join('');
+  list.querySelectorAll('.bl-topic-btn').forEach(btn =>
+    btn.addEventListener('click', () => blClickTopic(parseInt(btn.dataset.topic)))
+  );
+}
+
+async function blClickTopic(index) {
+  if (!blCurrentLesson) return;
+  const topic = blCurrentLesson.suggestedTopics[index];
+
+  // Show topic detail, hide section list
+  ['bl-overview-section','bl-key-concepts-section','bl-chapters-section',
+   'bl-topics-section','bl-progress-section'].forEach(id =>
+    document.getElementById(id).style.display = 'none'
+  );
+  const detail = document.getElementById('bl-topic-detail');
+  const content = document.getElementById('bl-topic-content');
+  detail.style.display = '';
+  content.innerHTML = `<div class="bl-loading"><div class="typing-dots"><span></span><span></span><span></span></div> Loading topic…</div>`;
+  document.querySelector('.bl-lesson-body').scrollTop = 0;
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 700,
+        system: `You are a learning guide for the My Tribe app. Explain book topics clearly, practically, and with a personal-growth focus.`,
+        messages: [{
+          role: 'user',
+          content: `Book: "${blConfirmedBook.title}" by ${blConfirmedBook.author}
+Topic: "${topic}"
+
+Respond with exactly three labeled sections using this format:
+
+**Concept Explanation**
+[2-3 sentences explaining this concept from the book]
+
+**Real Life Application**
+[2-3 sentences on how to apply this in real life]
+
+**Reflection Question**
+[One thoughtful question for the reader to consider]`
+        }]
+      })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    content.innerHTML = blFormatTopicContent(data.content[0].text, topic);
+    blCompletedTopics.add(index);
+    blUpdateProgress();
+  } catch (err) {
+    content.innerHTML = `<span class="advisor-error-text">${esc(String(err))}</span>`;
+  }
+}
+
+function blFormatTopicContent(text, topicTitle) {
+  let html = `<div class="bl-topic-title">${esc(topicTitle)}</div>`;
+  // Convert **Section Label** to colored headers, preserve surrounding text
+  const formatted = text
+    .replace(/\*\*([^*]+)\*\*/g, (_, label) =>
+      `</p><div class="bl-topic-section-label">${esc(label)}</div><p>`)
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, ' ');
+  html += `<p>${formatted}</p>`;
+  // Clean up empty <p> tags
+  html = html.replace(/<p>\s*<\/p>/g, '');
+  return html;
+}
+
+function blBackToTopics() {
+  document.getElementById('bl-topic-detail').style.display = 'none';
+  ['bl-overview-section','bl-key-concepts-section','bl-chapters-section',
+   'bl-topics-section','bl-progress-section'].forEach(id =>
+    document.getElementById(id).style.display = ''
+  );
+  blRenderTopics();
+}
+
+function blUpdateProgress() {
+  const total = blCurrentLesson ? blCurrentLesson.suggestedTopics.length : 0;
+  const done  = blCompletedTopics.size;
+  const pct   = total > 0 ? (done / total) * 100 : 0;
+  document.getElementById('bl-progress-fill').style.width = pct + '%';
+  document.getElementById('bl-progress-label').textContent = `${done} of ${total} topics completed`;
+}
+
+// ── Chat ──────────────────────────────────────────────────────────
+
+function blAppendMessage(role, content, advisorId) {
+  blChatMessages.push({ role, content, advisorId });
+  const msgs = document.getElementById('bl-chat-messages');
+  const div  = document.createElement('div');
+  div.className = `bl-chat-bubble ${role}`;
+  if (role === 'advisor') {
+    const name = advisorId === 'guide'
+      ? (ADVISORS.guide?.name || 'Guide')
+      : (ADVISORS[advisorId]?.name || advisorId);
+    div.innerHTML = `<div class="bl-advisor-tag">${esc(name)}</div>${
+      typeof marked !== 'undefined' ? marked.parse(content) : esc(content)
+    }`;
+  } else {
+    div.textContent = content;
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function blSendChat() {
+  const input = document.getElementById('bl-chat-input');
+  const msg   = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  blAppendMessage('user', msg, null);
+
+  const msgs       = document.getElementById('bl-chat-messages');
+  const loadingDiv = document.createElement('div');
+  const advisorName = blActiveAdvisor === 'guide'
+    ? (ADVISORS.guide?.name || 'Guide')
+    : (ADVISORS[blActiveAdvisor]?.name || blActiveAdvisor);
+  loadingDiv.className = 'bl-chat-bubble advisor';
+  loadingDiv.innerHTML = `<div class="bl-advisor-tag">${esc(advisorName)}</div><div class="typing-dots"><span></span><span></span><span></span></div>`;
+  msgs.appendChild(loadingDiv);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    const bookCtx = blConfirmedBook
+      ? `"${blConfirmedBook.title}" by ${blConfirmedBook.author}`
+      : blCurrentBook;
+    const advisor  = ADVISORS[blActiveAdvisor];
+    const baseSystem = advisor?.system
+      || `You are a wise learning guide. Keep responses concise and practical.`;
+    const sysPrompt = `${baseSystem}\n\nYou are currently helping the user learn from the book ${bookCtx}. Keep answers relevant to the book's lessons and their real-life application. Be concise (3-5 sentences).`;
+
+    const history = blChatMessages.slice(-12)
+      .filter(m => m.role === 'user' || m.role === 'advisor')
+      .map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }));
+    // Replace last assistant with actual last user message
+    const apiMessages = history.slice(0, -1);
+    apiMessages.push({ role: 'user', content: msg });
+
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: MODEL, max_tokens: 500, system: sysPrompt, messages: apiMessages })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    loadingDiv.remove();
+    blAppendMessage('advisor', data.content[0].text, blActiveAdvisor);
+  } catch (err) {
+    loadingDiv.remove();
+    blAppendMessage('advisor', `Sorry, something went wrong. ${String(err)}`, blActiveAdvisor);
+  }
+}
+
+// ── Save / Library ────────────────────────────────────────────────
+
+function blSaveBook() {
+  if (!blConfirmedBook) return;
+  const books  = getSavedBooks();
+  const exists = books.find(b => b.title === blConfirmedBook.title);
+  if (!exists) {
+    books.unshift({
+      title: blConfirmedBook.title,
+      author: blConfirmedBook.author,
+      tagline: blConfirmedBook.tagline || '',
+      savedAt: new Date().toISOString()
+    });
+    saveBooksData(books);
+  }
+  document.getElementById('bl-save-btn').textContent = 'Saved';
+  document.getElementById('bl-saved-badge').style.display = '';
+}
+
+function blOpenMyBooks() {
+  blShowPhase('bl-library-phase');
+  const books = getSavedBooks();
+  const list  = document.getElementById('bl-books-list');
+  const empty = document.getElementById('bl-no-books');
+  if (books.length === 0) {
+    list.innerHTML = '';
+    empty.style.display = '';
+  } else {
+    empty.style.display = 'none';
+    list.innerHTML = books.map((b, i) =>
+      `<div class="bl-book-card" data-idx="${i}">
+        <div class="bl-book-card-title">${esc(b.title)}</div>
+        <div class="bl-book-card-author">by ${esc(b.author)}</div>
+      </div>`
+    ).join('');
+    list.querySelectorAll('.bl-book-card').forEach(card => {
+      const idx = parseInt(card.dataset.idx);
+      card.addEventListener('click', () => {
+        blConfirmedBook = books[idx];
+        blStartLesson();
+      });
+    });
+  }
 }
 
 // ── Campfire (Storytelling Experience) ───────────────────────────

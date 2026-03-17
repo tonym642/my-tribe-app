@@ -63,6 +63,16 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
             Book Lessons
           </button>
+          <button class="nav-item nav-item-soon" id="btn-recommended-topics">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Recommended Topics
+            <span class="nav-soon-badge">Soon</span>
+          </button>
+          <button class="nav-item nav-item-soon" id="btn-custom-topic">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+            Custom Topic
+            <span class="nav-soon-badge">Soon</span>
+          </button>
         </div>
       </div>
 
@@ -202,6 +212,14 @@
       <button class="mobile-nav-item" id="m-btn-book-lessons">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         Book Lessons
+      </button>
+      <button class="mobile-nav-item mobile-nav-item-soon" id="m-btn-recommended-topics">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Recommended Topics <span class="nav-soon-badge">Soon</span>
+      </button>
+      <button class="mobile-nav-item mobile-nav-item-soon" id="m-btn-custom-topic">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+        Custom Topic <span class="nav-soon-badge">Soon</span>
       </button>
     </div>
     <div class="mobile-nav-section">
@@ -562,51 +580,129 @@
   <div id="book-lessons-page" style="display:none">
     <div class="bl-page-layout">
 
+      <!-- Header -->
       <div class="bl-page-header">
         <h2 class="bl-page-title">Book Lessons</h2>
-        <button class="bl-page-close" id="book-lessons-close">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-
-      <!-- Input phase -->
-      <div id="bl-input-phase" class="bl-phase">
-        <p class="bl-intro">Enter a book title to generate a structured lesson.</p>
-        <input type="text" class="form-input" id="bl-book-input"
-          placeholder="Atomic Habits, Think and Grow Rich, The 7 Habits..." />
-        <div class="bl-mode-row">
-          <button class="bl-mode-btn active" data-mode="quick">Quick</button>
-          <button class="bl-mode-btn" data-mode="deep">Deep Dive</button>
-          <button class="bl-mode-btn" data-mode="interactive">Interactive</button>
-        </div>
-        <div style="margin-top:16px">
-          <button class="btn-primary" id="bl-start-btn">Start Lesson</button>
+        <div class="bl-header-actions">
+          <button class="bl-my-books-btn" id="bl-my-books-btn">My Books</button>
+          <button class="bl-page-close" id="book-lessons-close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
         </div>
       </div>
 
-      <!-- Lesson phase -->
+      <!-- Search Phase -->
+      <div id="bl-search-phase" class="bl-phase">
+        <div class="bl-search-container">
+          <p class="bl-intro">Enter a book title to start an interactive lesson with your Guide.</p>
+          <div class="bl-search-row">
+            <input type="text" class="form-input" id="bl-book-input"
+              placeholder="Atomic Habits, Think and Grow Rich, The 7 Habits..." />
+            <button class="btn-primary" id="bl-search-btn">Search</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm Phase -->
+      <div id="bl-confirm-phase" class="bl-phase" style="display:none">
+        <div class="bl-confirm-card" id="bl-confirm-card"></div>
+        <div class="bl-confirm-actions">
+          <button class="btn-primary" id="bl-confirm-start-btn" style="display:none">Start Lesson</button>
+          <button class="btn-secondary" id="bl-search-again-btn">Search Again</button>
+        </div>
+      </div>
+
+      <!-- Lesson Phase -->
       <div id="bl-lesson-phase" class="bl-phase" style="display:none">
-        <div class="bl-lesson-header">
-          <div id="bl-current-book" class="bl-book-title"></div>
-          <div class="bl-mode-row">
-            <button class="bl-mode-btn" data-mode="quick">Quick</button>
-            <button class="bl-mode-btn" data-mode="deep">Deep Dive</button>
-            <button class="bl-mode-btn" data-mode="interactive">Interactive</button>
+
+        <div class="bl-lesson-body">
+
+          <!-- Book Header -->
+          <div class="bl-book-header" id="bl-book-header"></div>
+
+          <!-- Overview -->
+          <div class="bl-section" id="bl-overview-section">
+            <div class="bl-section-title">Overview</div>
+            <div class="bl-section-body" id="bl-overview-content"></div>
           </div>
+
+          <!-- Key Concepts -->
+          <div class="bl-section" id="bl-key-concepts-section">
+            <div class="bl-section-title">Key Concepts</div>
+            <div class="bl-key-concepts-list" id="bl-key-concepts-list"></div>
+          </div>
+
+          <!-- Chapters (collapsible) -->
+          <div class="bl-section" id="bl-chapters-section">
+            <button class="bl-section-toggle" id="bl-chapters-toggle">
+              <span>Chapters</span>
+              <svg class="bl-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="bl-section-body" id="bl-chapters-content" style="display:none"></div>
+          </div>
+
+          <!-- Suggested Topics -->
+          <div class="bl-section" id="bl-topics-section">
+            <div class="bl-section-title">Suggested Topics</div>
+            <div class="bl-topics-list" id="bl-topics-list"></div>
+          </div>
+
+          <!-- Progress Tracker -->
+          <div class="bl-section" id="bl-progress-section">
+            <div class="bl-section-title">Progress</div>
+            <div class="bl-progress-bar"><div class="bl-progress-fill" id="bl-progress-fill"></div></div>
+            <div class="bl-progress-label" id="bl-progress-label">0 of 0 topics completed</div>
+          </div>
+
+          <!-- Topic Detail (shown when a topic is clicked) -->
+          <div id="bl-topic-detail" style="display:none">
+            <button class="bl-back-to-topics" id="bl-back-to-topics">← Back to Topics</button>
+            <div id="bl-topic-content" class="bl-topic-content"></div>
+          </div>
+
+          <!-- Save Book -->
+          <div class="bl-save-row">
+            <button class="bl-save-btn" id="bl-save-btn">Save to My Books</button>
+            <span class="bl-saved-badge" id="bl-saved-badge" style="display:none">✓ Saved</span>
+          </div>
+
+        </div><!-- /.bl-lesson-body -->
+
+        <!-- Chat Area -->
+        <div class="bl-chat-area">
+          <div class="bl-chat-advisor-row">
+            <span class="bl-chat-advisor-label">Talking to: <strong id="bl-active-advisor-name">Guide</strong></span>
+            <div class="bl-adv-pills" id="bl-adv-pills">
+              <button class="bl-adv-pill active" data-advisor="guide">Guide</button>
+              <button class="bl-adv-pill" data-advisor="seth">Seth</button>
+              <button class="bl-adv-pill" data-advisor="marcus">Marcus</button>
+              <button class="bl-adv-pill" data-advisor="emma">Emma</button>
+              <button class="bl-adv-pill" data-advisor="hannah">Hannah</button>
+              <button class="bl-adv-pill" data-advisor="rachel">Rachel</button>
+              <button class="bl-adv-pill" data-advisor="frank">Frank</button>
+            </div>
+          </div>
+          <div class="bl-chat-messages" id="bl-chat-messages"></div>
+          <div class="bl-chat-input-row">
+            <input type="text" class="bl-chat-input" id="bl-chat-input"
+              placeholder="Ask your Guide about this book..." />
+            <button class="bl-chat-send" id="bl-chat-send">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </div>
+        </div><!-- /.bl-chat-area -->
+
+      </div><!-- /#bl-lesson-phase -->
+
+      <!-- My Books Library Phase -->
+      <div id="bl-library-phase" class="bl-phase" style="display:none">
+        <div class="bl-library-header">
+          <h3 class="bl-library-title">My Books</h3>
+          <button class="bl-back-btn" id="bl-library-back">← Back to Search</button>
         </div>
-        <div id="bl-lesson-content" class="bl-lesson-content"></div>
-        <div class="bl-tribe-section">
-          <div class="bl-tribe-heading">Continue with your Tribe</div>
-          <div class="bl-tribe-pills">
-            <button class="bl-tribe-pill" data-mode="member">Ask a Member</button>
-            <button class="bl-tribe-pill" data-mode="guide">Ask Custom</button>
-            <button class="bl-tribe-pill" data-mode="bvm">Ask BVM</button>
-            <button class="bl-tribe-pill" data-mode="tribe">Ask My Tribe</button>
-            <button class="bl-tribe-pill" data-mode="parable">Show Parable</button>
-          </div>
+        <div id="bl-books-list" class="bl-books-list"></div>
+        <div id="bl-no-books" class="bl-no-books" style="display:none">
+          <p>No books saved yet. Complete a lesson and save your first book.</p>
         </div>
       </div>
 
