@@ -3213,10 +3213,6 @@ function openVoting() {
   votingAdvisorMode = 'all';
   document.querySelectorAll('.voting-type-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.vtype === 'yes-no'));
-  document.getElementById('va-btn-all').classList.add('active');
-  document.getElementById('va-btn-select').classList.remove('active');
-  document.getElementById('voting-advisor-chips').style.display = 'none';
-  document.querySelectorAll('.voting-advisor-check').forEach(c => c.checked = true);
   document.getElementById('voting-question').value = '';
   document.getElementById('voting-setup-phase').style.display = '';
   document.getElementById('voting-results-phase').style.display = 'none';
