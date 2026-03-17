@@ -655,9 +655,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Advisors page
   document.getElementById('btn-advisors').addEventListener('click', openAdvisorsPage);
   document.getElementById('m-btn-advisors').addEventListener('click', () => { closeMobileNav(); openAdvisorsPage(); });
-  document.getElementById('advisors-back-btn').addEventListener('click', closeAdvisorsPage);
-  document.getElementById('advisors-save-btn').addEventListener('click', saveAdvisorsPage);
   document.getElementById('advisors-save-bottom-btn').addEventListener('click', saveAdvisorsPage);
+  document.querySelectorAll('.adv-tab').forEach(tab => {
+    tab.addEventListener('click', () => switchAdvisorTab(tab.dataset.tab));
+  });
   document.getElementById('bvm-photo-input').addEventListener('change', e => {
     handleBvmPhotoUpload(e.target.files[0]);
     e.target.value = '';
@@ -1418,23 +1419,37 @@ function updateAdvisorChipNames() {
   });
 }
 
+function switchAdvisorTab(tabId) {
+  document.querySelectorAll('.adv-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tabId));
+  document.querySelectorAll('.adv-panel').forEach(p => p.classList.toggle('active', p.id === `adv-panel-${tabId}`));
+}
+
 function openAdvisorsPage() {
-  // Populate tribe name inputs
+  // Populate tribe name inputs + tab labels
   const names = getAdvisorNames();
   TRIBE_IDS.forEach(id => {
+    const displayName = names[id] || ADVISORS[id]?.name || '';
     const input = document.getElementById(`adv-name-${id}`);
-    if (input) input.value = names[id] || ADVISORS[id]?.name || '';
+    if (input) input.value = displayName;
+    const label = document.getElementById(`adv-tab-label-${id}`);
+    if (label) label.textContent = displayName || id;
   });
 
   // Populate Guide persona
   document.getElementById('adv-guide-persona').value = state.guideName !== 'a wise mentor and trusted advisor'
     ? state.guideName : '';
 
-  // Populate BVM section
+  // Populate BVM section + tab avatar
   const bvm = getBvmData();
   document.getElementById('bvm-name-input').value = bvm.name || '';
+  document.getElementById('adv-tab-label-bvm').textContent = bvm.name || 'BVM';
   _bvmPendingAvatar = null;
+
+  const tabBvmImg = document.getElementById('adv-tab-bvm-img');
+  const panelBvmImg = document.getElementById('adv-panel-bvm-img');
   if (bvm.avatar) {
+    tabBvmImg.outerHTML = `<img src="${bvm.avatar}" class="adv-tab-avatar" id="adv-tab-bvm-img" alt="BVM">`;
+    panelBvmImg.outerHTML = `<img src="${bvm.avatar}" class="adv-panel-avatar" id="adv-panel-bvm-img" alt="BVM">`;
     showBvmPreview(bvm.avatar, false);
   } else {
     document.getElementById('bvm-upload-area').style.display = '';
@@ -1442,6 +1457,9 @@ function openAdvisorsPage() {
     document.getElementById('bvm-preview-area').style.display = 'none';
     document.getElementById('bvm-upload-initial').textContent = (bvm.name || 'B')[0].toUpperCase();
   }
+
+  // Reset to first tab
+  switchAdvisorTab('seth');
 
   document.getElementById('main-layout').style.display = 'none';
   document.getElementById('advisors-page').style.display = 'flex';

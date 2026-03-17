@@ -1139,99 +1139,167 @@
 
   <!-- Advisors Settings Page -->
   <div id="advisors-page" style="display:none">
+    <div class="advisors-layout">
 
-    <div class="profile-topbar">
-      <button class="profile-back-btn" id="advisors-back-btn">← Back</button>
-      <div class="profile-topbar-title">Advisors</div>
-      <button class="btn-primary profile-save-top-btn" id="advisors-save-btn">Save</button>
-    </div>
+      <!-- Tab Bar -->
+      <div class="adv-tabs">
+        <button class="adv-tab active" data-tab="seth">
+          <img src="../assets/avatars/seth.png" class="adv-tab-avatar" alt="Seth">
+          <span class="adv-tab-label" id="adv-tab-label-seth">Seth</span>
+        </button>
+        <button class="adv-tab" data-tab="marcus">
+          <img src="../assets/avatars/marcus.png" class="adv-tab-avatar" alt="Marcus">
+          <span class="adv-tab-label" id="adv-tab-label-marcus">Marcus</span>
+        </button>
+        <button class="adv-tab" data-tab="emma">
+          <img src="../assets/avatars/emma.png" class="adv-tab-avatar" alt="Emma">
+          <span class="adv-tab-label" id="adv-tab-label-emma">Emma</span>
+        </button>
+        <button class="adv-tab" data-tab="hannah">
+          <img src="../assets/avatars/hannah.png" class="adv-tab-avatar" alt="Hannah">
+          <span class="adv-tab-label" id="adv-tab-label-hannah">Hannah</span>
+        </button>
+        <button class="adv-tab" data-tab="rachel">
+          <img src="../assets/avatars/rachel.png" class="adv-tab-avatar" alt="Rachel">
+          <span class="adv-tab-label" id="adv-tab-label-rachel">Rachel</span>
+        </button>
+        <button class="adv-tab" data-tab="frank">
+          <img src="../assets/avatars/frank.png" class="adv-tab-avatar" alt="Frank">
+          <span class="adv-tab-label" id="adv-tab-label-frank">Frank</span>
+        </button>
+        <button class="adv-tab" data-tab="guide">
+          <img src="../assets/avatars/guide.png" class="adv-tab-avatar" alt="Guide">
+          <span class="adv-tab-label">Guide</span>
+        </button>
+        <button class="adv-tab" data-tab="bvm">
+          <div class="adv-tab-avatar adv-tab-placeholder" id="adv-tab-bvm-img">B</div>
+          <span class="adv-tab-label" id="adv-tab-label-bvm">BVM</span>
+        </button>
+      </div>
 
-    <div class="profile-body">
-      <div class="profile-inner">
+      <!-- Panels -->
+      <div class="adv-panels">
 
-        <!-- Section 1: Your Tribe -->
-        <section class="profile-section">
-          <div class="profile-section-title">Your Tribe</div>
-          <p class="profile-section-desc">Customize the display names of your 6 core advisors.</p>
-          <div class="advisor-settings-list">
-
-            <div class="advisor-settings-card">
-              <img src="../assets/avatars/seth.png" class="advisor-settings-avatar" alt="Seth">
-              <div class="advisor-settings-info">
-                <div class="advisor-settings-role">Spiritual Advisor</div>
-                <input type="text" class="profile-input" id="adv-name-seth" placeholder="Seth">
-              </div>
-            </div>
-
-            <div class="advisor-settings-card">
-              <img src="../assets/avatars/marcus.png" class="advisor-settings-avatar" alt="Marcus">
-              <div class="advisor-settings-info">
-                <div class="advisor-settings-role">Mindset Advisor</div>
-                <input type="text" class="profile-input" id="adv-name-marcus" placeholder="Marcus">
-              </div>
-            </div>
-
-            <div class="advisor-settings-card">
-              <img src="../assets/avatars/emma.png" class="advisor-settings-avatar" alt="Emma">
-              <div class="advisor-settings-info">
-                <div class="advisor-settings-role">Emotional Advisor</div>
-                <input type="text" class="profile-input" id="adv-name-emma" placeholder="Emma">
-              </div>
-            </div>
-
-            <div class="advisor-settings-card">
-              <img src="../assets/avatars/hannah.png" class="advisor-settings-avatar" alt="Hannah">
-              <div class="advisor-settings-info">
-                <div class="advisor-settings-role">Health Advisor</div>
-                <input type="text" class="profile-input" id="adv-name-hannah" placeholder="Hannah">
-              </div>
-            </div>
-
-            <div class="advisor-settings-card">
-              <img src="../assets/avatars/rachel.png" class="advisor-settings-avatar" alt="Rachel">
-              <div class="advisor-settings-info">
-                <div class="advisor-settings-role">Relationships Advisor</div>
-                <input type="text" class="profile-input" id="adv-name-rachel" placeholder="Rachel">
-              </div>
-            </div>
-
-            <div class="advisor-settings-card">
-              <img src="../assets/avatars/frank.png" class="advisor-settings-avatar" alt="Frank">
-              <div class="advisor-settings-info">
-                <div class="advisor-settings-role">Financial Advisor</div>
-                <input type="text" class="profile-input" id="adv-name-frank" placeholder="Frank">
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        <!-- Section 2: Guide -->
-        <section class="profile-section">
-          <div class="profile-section-title">Guide — Your Custom Advisor</div>
-          <div class="advisor-settings-card">
-            <img src="../assets/avatars/guide.png" class="advisor-settings-avatar" alt="Guide">
-            <div class="advisor-settings-info">
-              <div class="advisor-settings-role">Personal Guide</div>
-              <input type="text" class="profile-input" id="adv-guide-persona" placeholder="e.g. My future self, a Stoic mentor, Dad...">
+        <!-- Seth -->
+        <div class="adv-panel active" id="adv-panel-seth">
+          <div class="adv-panel-header">
+            <img src="../assets/avatars/seth.png" class="adv-panel-avatar" alt="Seth">
+            <div>
+              <div class="adv-panel-role">Spiritual Advisor</div>
+              <div class="adv-panel-desc">Helps you evaluate decisions through the lens of faith, values, and moral character.</div>
             </div>
           </div>
-          <p class="profile-field-hint" style="margin-top:10px">Define who your Guide speaks as — a mentor, your future self, or anyone who represents your ideal voice.</p>
-        </section>
+          <div class="profile-field">
+            <label class="profile-label">Display Name</label>
+            <input type="text" class="profile-input" id="adv-name-seth" placeholder="Seth">
+          </div>
+        </div>
 
-        <!-- Section 3: BVM -->
-        <section class="profile-section">
-          <div class="profile-section-title">BVM — Best Version of Me</div>
-          <p class="profile-section-desc">Your A-level self — disciplined, clear, and aligned with your highest standards.</p>
+        <!-- Marcus -->
+        <div class="adv-panel" id="adv-panel-marcus">
+          <div class="adv-panel-header">
+            <img src="../assets/avatars/marcus.png" class="adv-panel-avatar" alt="Marcus">
+            <div>
+              <div class="adv-panel-role">Mindset Advisor</div>
+              <div class="adv-panel-desc">Helps you think clearly, build strong habits, and develop the mental discipline to follow through.</div>
+            </div>
+          </div>
+          <div class="profile-field">
+            <label class="profile-label">Display Name</label>
+            <input type="text" class="profile-input" id="adv-name-marcus" placeholder="Marcus">
+          </div>
+        </div>
 
+        <!-- Emma -->
+        <div class="adv-panel" id="adv-panel-emma">
+          <div class="adv-panel-header">
+            <img src="../assets/avatars/emma.png" class="adv-panel-avatar" alt="Emma">
+            <div>
+              <div class="adv-panel-role">Emotional Advisor</div>
+              <div class="adv-panel-desc">Helps you understand the emotional forces driving your thoughts and behavior.</div>
+            </div>
+          </div>
+          <div class="profile-field">
+            <label class="profile-label">Display Name</label>
+            <input type="text" class="profile-input" id="adv-name-emma" placeholder="Emma">
+          </div>
+        </div>
+
+        <!-- Hannah -->
+        <div class="adv-panel" id="adv-panel-hannah">
+          <div class="adv-panel-header">
+            <img src="../assets/avatars/hannah.png" class="adv-panel-avatar" alt="Hannah">
+            <div>
+              <div class="adv-panel-role">Health Advisor</div>
+              <div class="adv-panel-desc">Helps you protect the physical foundation that everything else depends on.</div>
+            </div>
+          </div>
+          <div class="profile-field">
+            <label class="profile-label">Display Name</label>
+            <input type="text" class="profile-input" id="adv-name-hannah" placeholder="Hannah">
+          </div>
+        </div>
+
+        <!-- Rachel -->
+        <div class="adv-panel" id="adv-panel-rachel">
+          <div class="adv-panel-header">
+            <img src="../assets/avatars/rachel.png" class="adv-panel-avatar" alt="Rachel">
+            <div>
+              <div class="adv-panel-role">Relationships Advisor</div>
+              <div class="adv-panel-desc">Helps you understand the quality of your connections and how they affect your decisions.</div>
+            </div>
+          </div>
+          <div class="profile-field">
+            <label class="profile-label">Display Name</label>
+            <input type="text" class="profile-input" id="adv-name-rachel" placeholder="Rachel">
+          </div>
+        </div>
+
+        <!-- Frank -->
+        <div class="adv-panel" id="adv-panel-frank">
+          <div class="adv-panel-header">
+            <img src="../assets/avatars/frank.png" class="adv-panel-avatar" alt="Frank">
+            <div>
+              <div class="adv-panel-role">Financial Advisor</div>
+              <div class="adv-panel-desc">Helps you think clearly about the financial dimensions of your decisions.</div>
+            </div>
+          </div>
+          <div class="profile-field">
+            <label class="profile-label">Display Name</label>
+            <input type="text" class="profile-input" id="adv-name-frank" placeholder="Frank">
+          </div>
+        </div>
+
+        <!-- Guide -->
+        <div class="adv-panel" id="adv-panel-guide">
+          <div class="adv-panel-header">
+            <img src="../assets/avatars/guide.png" class="adv-panel-avatar" alt="Guide">
+            <div>
+              <div class="adv-panel-role">Your Custom Advisor</div>
+              <div class="adv-panel-desc">Your Guide speaks as whoever you define — a mentor, your future self, or a trusted voice.</div>
+            </div>
+          </div>
+          <div class="profile-field">
+            <label class="profile-label">Your Guide represents...</label>
+            <input type="text" class="profile-input" id="adv-guide-persona" placeholder="e.g. My future self, a Stoic mentor, Dad...">
+          </div>
+        </div>
+
+        <!-- BVM -->
+        <div class="adv-panel" id="adv-panel-bvm">
+          <div class="adv-panel-header">
+            <div class="adv-panel-avatar adv-panel-placeholder" id="adv-panel-bvm-img">B</div>
+            <div>
+              <div class="adv-panel-role">Best Version of Me</div>
+              <div class="adv-panel-desc">Your A-level self — disciplined, clear, and aligned with your highest standards.</div>
+            </div>
+          </div>
           <div class="profile-field">
             <label class="profile-label">Display Name</label>
             <input type="text" class="profile-input" id="bvm-name-input" placeholder="Best Version of Me">
           </div>
-
           <div class="profile-field">
             <label class="profile-label">Avatar</label>
-
             <!-- Empty state -->
             <div id="bvm-upload-area" class="bvm-upload-area">
               <div class="bvm-upload-placeholder" id="bvm-upload-initial">B</div>
@@ -1239,13 +1307,11 @@
               <label class="bvm-upload-btn" for="bvm-photo-input">Upload Photo</label>
               <input type="file" id="bvm-photo-input" accept="image/*" style="display:none">
             </div>
-
             <!-- Processing state -->
             <div id="bvm-converting" class="bvm-converting" style="display:none">
               <div class="bvm-spinner"></div>
               <p id="bvm-converting-text" class="bvm-converting-text">Converting your photo into your personal avatar...</p>
             </div>
-
             <!-- Preview state -->
             <div id="bvm-preview-area" class="bvm-preview-area" style="display:none">
               <img id="bvm-preview-img" class="bvm-preview-img" alt="BVM Avatar Preview">
@@ -1255,16 +1321,16 @@
                 <input type="file" id="bvm-photo-retry" accept="image/*" style="display:none">
               </div>
             </div>
-
           </div>
-        </section>
-
-        <div class="profile-save-row">
-          <button class="btn-primary profile-save-btn" id="advisors-save-bottom-btn">Save Advisor Settings</button>
         </div>
 
-      </div><!-- .profile-inner -->
-    </div><!-- .profile-body -->
+      </div><!-- .adv-panels -->
+
+      <div class="profile-save-row">
+        <button class="btn-primary profile-save-btn" id="advisors-save-bottom-btn">Save Advisor Settings</button>
+      </div>
+
+    </div><!-- .advisors-layout -->
   </div><!-- #advisors-page -->
 
   <script src="./app.js"></script>

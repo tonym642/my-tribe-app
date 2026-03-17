@@ -3136,6 +3136,156 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   line-height: 1.5;
 }
 
+/* ── Advisors Page (tab layout) ──────────────────────────────── */
+
+#advisors-page {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.advisors-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 28px 32px 0;
+}
+
+/* Tab bar */
+.adv-tabs {
+  display: flex;
+  gap: 4px;
+  padding-bottom: 0;
+  overflow-x: auto;
+  flex-shrink: 0;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0;
+}
+.adv-tabs::-webkit-scrollbar { display: none; }
+
+.adv-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px 12px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  cursor: pointer;
+  transition: all 0.12s;
+  flex-shrink: 0;
+  margin-bottom: -1px;
+  font-family: var(--font);
+}
+.adv-tab:hover { background: var(--surface); }
+.adv-tab.active { border-bottom-color: #3b9eff; background: none; }
+
+.adv-tab-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  transition: box-shadow 0.12s;
+}
+.adv-tab.active .adv-tab-avatar {
+  box-shadow: 0 0 0 2px #3b9eff, 0 0 8px rgba(59,158,255,0.25);
+}
+
+.adv-tab-placeholder {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #3b9eff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+}
+.adv-tab.active .adv-tab-placeholder {
+  box-shadow: 0 0 0 2px #3b9eff, 0 0 8px rgba(59,158,255,0.25);
+}
+
+.adv-tab-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.adv-tab.active .adv-tab-label {
+  color: #3b9eff;
+  font-weight: 600;
+}
+
+/* Panels */
+.adv-panels {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 0 24px;
+}
+
+.adv-panel { display: none; }
+.adv-panel.active { display: block; }
+
+/* Panel header */
+.adv-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+
+.adv-panel-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  flex-shrink: 0;
+}
+
+.adv-panel-placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #3b9eff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.adv-panel-role {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.adv-panel-desc {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+
+/* Advisor settings cards (legacy, kept for reference) */
 /* Advisor settings cards */
 .advisor-settings-list {
   display: flex;
