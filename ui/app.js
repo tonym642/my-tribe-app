@@ -59,8 +59,8 @@ Keep your response to 3–5 sentences. Stay in character.`
   hannah: {
     id: 'hannah',
     name: 'Hannah',
-    title: 'Health Advisor',
-    desc: 'Energy, sleep & physical wellbeing',
+    title: 'The Growth Coach',
+    desc: 'Progress, motivation & personal development',
     initial: 'H',
     color: '#059669',
     system: `You are Hannah, the Health Advisor in the My Tribe app.
@@ -75,8 +75,8 @@ Keep your response to 3–5 sentences. Stay in character.`
   rachel: {
     id: 'rachel',
     name: 'Rachel',
-    title: 'Relationships Advisor',
-    desc: 'Bonds, communication & connection',
+    title: 'The Life Balance Guide',
+    desc: 'Life balance, wellbeing & fulfillment',
     initial: 'R',
     color: '#D97706',
     system: `You are Rachel, the Relationships Advisor in the My Tribe app.
@@ -91,8 +91,8 @@ Keep your response to 3–5 sentences. Stay in character.`
   frank: {
     id: 'frank',
     name: 'Frank',
-    title: 'Financial Advisor',
-    desc: 'Money, risk & long-term wealth',
+    title: 'The Realist',
+    desc: 'Honest feedback, practical advice & reality checks',
     initial: 'F',
     color: '#4F46E5',
     system: `You are Frank, the Financial Advisor in the My Tribe app.
@@ -106,10 +106,10 @@ Keep your response to 3–5 sentences. Stay in character.`
 
   guide: {
     id: 'guide',
-    name: 'Custom',
-    title: 'Your Custom Advisor',
-    desc: 'Your custom advisor persona',
-    initial: 'C',
+    name: 'Don M',
+    title: 'The Experience Advisor',
+    desc: 'Experience, wisdom & hard-earned perspective',
+    initial: 'D',
     color: '#0D9488',
     system: null // built dynamically from guideName
   },
