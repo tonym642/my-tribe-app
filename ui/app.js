@@ -512,11 +512,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-voting').addEventListener('click', openVoting);
   document.getElementById('m-btn-voting').addEventListener('click', () => { closeMobileNav(); openVoting(); });
 
-  // Voting — modal controls
+  // Voting — page controls
   document.getElementById('voting-close').addEventListener('click', closeVoting);
-  document.getElementById('voting-overlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeVoting();
-  });
   document.getElementById('voting-start-btn').addEventListener('click', runVoting);
 
   // Voting — type buttons
@@ -728,6 +725,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeMobileNav();
     closeDebate();
     closeAdvisorsPage();
+    closeVoting();
     startNewChat();
     setMode('member');
   });
@@ -2906,12 +2904,14 @@ function openVoting() {
   document.getElementById('voting-setup-phase').style.display = '';
   document.getElementById('voting-results-phase').style.display = 'none';
   renderVotingOptionsArea();
-  document.getElementById('voting-overlay').classList.add('open');
+  document.getElementById('main-layout').style.display = 'none';
+  document.getElementById('voting-page').style.display = 'flex';
   setTimeout(() => document.getElementById('voting-question').focus(), 100);
 }
 
 function closeVoting() {
-  document.getElementById('voting-overlay').classList.remove('open');
+  document.getElementById('voting-page').style.display = 'none';
+  document.getElementById('main-layout').style.display = '';
 }
 
 function renderVotingOptionsArea() {
