@@ -303,13 +303,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     btn.addEventListener('click', () => setMode(btn.dataset.mode));
   });
 
-  // Advisor chips
+  // Advisor chips + tooltips
   const $tooltip = document.createElement('div');
   $tooltip.id = 'advisor-tooltip';
   document.body.appendChild($tooltip);
 
   document.querySelectorAll('.advisor-chip').forEach(btn => {
     btn.addEventListener('click', () => toggleAdvisor(btn.dataset.advisor));
+
+    btn.addEventListener('mouseenter', () => {
+      const a = ADVISORS[btn.dataset.advisor];
+      if (!a) return;
+      $tooltip.innerHTML = `<span class="tt-title">${a.title}</span><span class="tt-desc">${a.desc}</span>`;
+      $tooltip.classList.add('visible');
+      const r = btn.getBoundingClientRect();
+      const tw = $tooltip.offsetWidth;
+      let left = r.left + r.width / 2 - tw / 2;
+      left = Math.max(8, Math.min(left, window.innerWidth - tw - 8));
+      $tooltip.style.left = left + 'px';
+      $tooltip.style.top  = (r.top - $tooltip.offsetHeight - 8 + window.scrollY) + 'px';
+    });
+
+    btn.addEventListener('mouseleave', () => $tooltip.classList.remove('visible'));
   });
 
   // Mode pill tooltips (BVM and any future pills with data-tip-* attributes)
