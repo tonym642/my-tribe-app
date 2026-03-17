@@ -11,8 +11,8 @@ const ADVISORS = {
   seth: {
     id: 'seth',
     name: 'Seth',
-    title: 'Spiritual Advisor',
-    desc: 'Faith, values & moral character',
+    title: 'The Spiritual Advisor',
+    desc: 'Meaning, purpose, values & inner alignment',
     initial: 'S',
     color: '#7C3AED',
     system: `You are Seth, the Spiritual Advisor in the My Tribe app.
@@ -27,8 +27,8 @@ Keep your response to 3–5 sentences. Stay in character.`
   marcus: {
     id: 'marcus',
     name: 'Marcus',
-    title: 'Mindset Advisor',
-    desc: 'Strategic thinking, mental models & clarity',
+    title: 'The Mindset Advisor',
+    desc: 'Thinking patterns, beliefs, discipline & mental strength',
     initial: 'M',
     color: '#2563EB',
     system: `You are Marcus, the Mindset Advisor in the My Tribe app.
@@ -43,8 +43,8 @@ Keep your response to 3–5 sentences. Stay in character.`
   emma: {
     id: 'emma',
     name: 'Emma',
-    title: 'Emotional Advisor',
-    desc: 'Feelings, needs & emotional patterns',
+    title: 'The Emotional Advisor',
+    desc: 'Emotional awareness, empathy & inner balance',
     initial: 'E',
     color: '#DB2777',
     system: `You are Emma, the Emotional Advisor in the My Tribe app.
@@ -59,8 +59,8 @@ Keep your response to 3–5 sentences. Stay in character.`
   hannah: {
     id: 'hannah',
     name: 'Hannah',
-    title: 'The Growth Coach',
-    desc: 'Progress, motivation & personal development',
+    title: 'The Reflection Advisor',
+    desc: 'Introspection, self-examination & personal growth',
     initial: 'H',
     color: '#059669',
     system: `You are Hannah, the Health Advisor in the My Tribe app.
@@ -75,8 +75,8 @@ Keep your response to 3–5 sentences. Stay in character.`
   rachel: {
     id: 'rachel',
     name: 'Rachel',
-    title: 'The Life Balance Guide',
-    desc: 'Life balance, wellbeing & fulfillment',
+    title: 'The Relationship Advisor',
+    desc: 'Relationships, communication, trust & boundaries',
     initial: 'R',
     color: '#D97706',
     system: `You are Rachel, the Relationships Advisor in the My Tribe app.
@@ -91,8 +91,8 @@ Keep your response to 3–5 sentences. Stay in character.`
   frank: {
     id: 'frank',
     name: 'Frank',
-    title: 'The Realist',
-    desc: 'Honest feedback, practical advice & reality checks',
+    title: 'The Realist Advisor',
+    desc: 'Practicality, honest feedback & real-world results',
     initial: 'F',
     color: '#4F46E5',
     system: `You are Frank, the Financial Advisor in the My Tribe app.
@@ -107,8 +107,8 @@ Keep your response to 3–5 sentences. Stay in character.`
   guide: {
     id: 'guide',
     name: 'Don M',
-    title: 'The Experience Advisor',
-    desc: 'Experience, wisdom & hard-earned perspective',
+    title: 'The Custom Advisor',
+    desc: 'Personalized guidance & unique perspectives',
     initial: 'D',
     color: '#0D9488',
     system: null // built dynamically from guideName
