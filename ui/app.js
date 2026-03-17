@@ -379,10 +379,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     'btn-onboarding',
     'm-btn-core-lessons',
     'm-btn-onboarding',
-    'btn-recommended-topics',
-    'btn-custom-topic',
-    'm-btn-recommended-topics',
-    'm-btn-custom-topic'
+    'btn-spiritual-lessons',
+    'm-btn-spiritual-lessons'
   ];
   comingSoon.forEach(id => {
     const el = document.getElementById(id);
