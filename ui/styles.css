@@ -1810,7 +1810,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 .about-modal .modal-body {
   flex: 1;
   min-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
   display: block;
 }
 
@@ -1818,8 +1818,6 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   font-size: 14px;
   line-height: 1.7;
   color: var(--text-2);
-  height: 100%;
-  overflow-y: auto;
 }
 
 .about-content p {
