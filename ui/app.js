@@ -59,7 +59,7 @@ Keep your response to 3–5 sentences. Stay in character.`
   hannah: {
     id: 'hannah',
     name: 'Hannah',
-    title: 'The Reflection Advisor',
+    title: 'The Health Advisor',
     desc: 'Introspection, self-examination & personal growth',
     initial: 'H',
     color: '#059669',
@@ -91,7 +91,7 @@ Keep your response to 3–5 sentences. Stay in character.`
   frank: {
     id: 'frank',
     name: 'Frank',
-    title: 'The Realist Advisor',
+    title: 'The Financial Advisor',
     desc: 'Practicality, honest feedback & real-world results',
     initial: 'F',
     color: '#4F46E5',
@@ -107,7 +107,7 @@ Keep your response to 3–5 sentences. Stay in character.`
   guide: {
     id: 'guide',
     name: 'Don M',
-    title: 'The Custom Advisor',
+    title: 'Your Custom Advisor',
     desc: 'Personalized guidance & unique perspectives',
     initial: 'D',
     color: '#0D9488',
