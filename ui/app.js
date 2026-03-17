@@ -607,11 +607,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-book-lessons').addEventListener('click', openBookLessons);
   document.getElementById('m-btn-book-lessons').addEventListener('click', () => { closeMobileNav(); openBookLessons(); });
 
-  // Book Lessons — modal controls
+  // Book Lessons — page controls
   document.getElementById('book-lessons-close').addEventListener('click', closeBookLessons);
-  document.getElementById('book-lessons-overlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeBookLessons();
-  });
   document.getElementById('bl-start-btn').addEventListener('click', startBookLesson);
 
   // Book Lessons — mode buttons (input phase)
@@ -726,6 +723,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeDebate();
     closeAdvisorsPage();
     closeVoting();
+    closeBookLessons();
     startNewChat();
     setMode('member');
   });
@@ -2334,12 +2332,14 @@ function openBookLessons() {
   document.querySelectorAll('#bl-input-phase .bl-mode-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.mode === 'quick');
   });
-  document.getElementById('book-lessons-overlay').classList.add('open');
+  document.getElementById('main-layout').style.display = 'none';
+  document.getElementById('book-lessons-page').style.display = 'flex';
   setTimeout(() => document.getElementById('bl-book-input').focus(), 100);
 }
 
 function closeBookLessons() {
-  document.getElementById('book-lessons-overlay').classList.remove('open');
+  document.getElementById('book-lessons-page').style.display = 'none';
+  document.getElementById('main-layout').style.display = '';
 }
 
 function formatLessonText(text) {

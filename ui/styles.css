@@ -1166,17 +1166,62 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 
 /* ── Book Lessons ────────────────────────────────────────────────── */
 
-.book-lessons-modal {
-  width: 580px;
-  max-height: 88vh;
+#book-lessons-page {
+  position: fixed;
+  top: var(--topbar-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg);
+  z-index: 100;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.bl-page-layout {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 32px 48px;
   display: flex;
   flex-direction: column;
+  min-height: 100%;
+}
+
+.bl-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.bl-page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.bl-page-close {
+  background: none;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.bl-page-close:hover {
+  background: var(--surface);
+  color: var(--text-1);
 }
 
 .bl-phase {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 22px 22px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 14px;
