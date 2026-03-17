@@ -515,7 +515,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('m-btn-voting').addEventListener('click', () => { closeMobileNav(); openVoting(); });
 
   // Voting — page controls
-  document.getElementById('voting-close').addEventListener('click', closeVoting);
   document.getElementById('voting-start-btn').addEventListener('click', runVoting);
 
   // Voting — type buttons
@@ -525,20 +524,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.querySelectorAll('.voting-type-btn').forEach(b => b.classList.toggle('active', b === btn));
       renderVotingOptionsArea();
     });
-  });
-
-  // Voting — advisor toggle
-  document.getElementById('va-btn-all').addEventListener('click', () => {
-    votingAdvisorMode = 'all';
-    document.getElementById('va-btn-all').classList.add('active');
-    document.getElementById('va-btn-select').classList.remove('active');
-    document.getElementById('voting-advisor-chips').style.display = 'none';
-  });
-  document.getElementById('va-btn-select').addEventListener('click', () => {
-    votingAdvisorMode = 'select';
-    document.getElementById('va-btn-select').classList.add('active');
-    document.getElementById('va-btn-all').classList.remove('active');
-    document.getElementById('voting-advisor-chips').style.display = 'flex';
   });
 
   // Voting — new vote
