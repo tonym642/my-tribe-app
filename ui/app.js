@@ -648,7 +648,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('m-btn-profile').addEventListener('click', () => { closeMobileNav(); openProfile(); });
   document.getElementById('profile-back-btn').addEventListener('click', closeProfile);
   document.getElementById('bvm-hint-link').addEventListener('click', openAdvisorsPage);
-  document.getElementById('bvm-settings-btn').addEventListener('click', openAdvisorsPage);
   document.getElementById('profile-save-btn').addEventListener('click', saveProfileData);
   document.getElementById('profile-save-top').addEventListener('click', saveProfileData);
 
