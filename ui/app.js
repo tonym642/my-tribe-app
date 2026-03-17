@@ -2263,13 +2263,9 @@ function renderStoryLibrary(filter) {
 
 // Map nav-button key → section heading in about.md
 const ABOUT_SECTIONS = {
-  'my-tribe':      'My Tribe',
-  'spiritual':     'Spiritual Advisor',
-  'mindset':       'Mindset Advisor',
-  'emotional':     'Emotional Advisor',
-  'health':        'Health Advisor',
-  'relationships': 'Relationships Advisor',
-  'financial':     'Financial Advisor'
+  'my-tribe':     'My Tribe',
+  'advisors':     'Advisors',
+  'disclaimers':  'Disclaimers'
 };
 const ABOUT_KEYS = Object.keys(ABOUT_SECTIONS);
 let aboutCurrentIndex = 0;
@@ -2285,15 +2281,22 @@ function parseAboutSection(sectionTitle) {
     if (lines[i].startsWith('## ')) break;
     body.push(lines[i]);
   }
-  return body.join('\n')
+  const blocks = body.join('\n')
     .trim()
     .replace(/---/g, '')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .split(/\n{2,}/)
     .map(p => p.trim())
-    .filter(Boolean)
-    .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
-    .join('');
+    .filter(Boolean);
+
+  return blocks.map(block => {
+    const bulletLines = block.split('\n').filter(l => l.trim().startsWith('•'));
+    if (bulletLines.length > 0) {
+      const items = bulletLines.map(l => `<li>${l.replace(/^•\s*/, '')}</li>`).join('');
+      return `<ul class="about-bullet-list">${items}</ul>`;
+    }
+    return `<p>${block.replace(/\n/g, '<br>')}</p>`;
+  }).join('');
 }
 
 function renderAboutFrame() {

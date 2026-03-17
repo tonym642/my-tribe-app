@@ -1818,6 +1818,28 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   margin: 0 0 14px;
 }
 
+.about-bullet-list {
+  margin: 0 0 14px 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.about-bullet-list li {
+  position: relative;
+  padding-left: 16px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+
+.about-bullet-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: #3b9eff;
+}
+
 .about-content strong {
   color: var(--text-1);
   font-weight: 600;
