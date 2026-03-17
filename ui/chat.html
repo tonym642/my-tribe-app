@@ -497,7 +497,7 @@
           </button>
           <button class="advisor-chip" data-advisor="guide">
             <img class="advisor-avatar-img" src="../assets/avatars/guide.png" alt="Guide">
-            <span class="advisor-chip-name">Guide</span>
+            <span class="advisor-chip-name">Custom</span>
           </button>
         </div>
 
@@ -645,7 +645,7 @@
           <div class="bl-tribe-heading">Continue with your Tribe</div>
           <div class="bl-tribe-pills">
             <button class="bl-tribe-pill" data-mode="member">Ask a Member</button>
-            <button class="bl-tribe-pill" data-mode="guide">Ask Your Guide</button>
+            <button class="bl-tribe-pill" data-mode="guide">Ask Custom</button>
             <button class="bl-tribe-pill" data-mode="bvm">Ask BVM</button>
             <button class="bl-tribe-pill" data-mode="tribe">Ask My Tribe</button>
             <button class="bl-tribe-pill" data-mode="parable">Show Parable</button>
@@ -932,8 +932,8 @@
           <div class="guide-item-desc">BVM stands for Best Version of Me — an advisor built from your own values and goals. Ask BVM when you want to hear what your best self would say.</div>
         </div>
         <div class="guide-item">
-          <div class="guide-item-label">Ask Your Guide</div>
-          <div class="guide-item-desc">Your Guide is a personal mentor you define yourself — a Stoic philosopher, your future self, a trusted elder. Configure your Guide's identity in Settings.</div>
+          <div class="guide-item-label">Ask Custom</div>
+          <div class="guide-item-desc">Your Custom advisor speaks as whoever you define — a Stoic philosopher, your future self, a trusted elder. Configure the identity in Settings → Advisors.</div>
         </div>
       </div>
     </div>
@@ -1169,7 +1169,7 @@
         </button>
         <button class="adv-tab" data-tab="guide">
           <img src="../assets/avatars/guide.png" class="adv-tab-avatar" alt="Guide">
-          <span class="adv-tab-label">Guide</span>
+          <span class="adv-tab-label" id="adv-tab-label-guide">Custom</span>
         </button>
         <button class="adv-tab" data-tab="bvm">
           <div class="adv-tab-avatar adv-tab-placeholder" id="adv-tab-bvm-img">B</div>
@@ -1270,18 +1270,23 @@
           </div>
         </div>
 
-        <!-- Guide -->
+        <!-- Guide / Custom -->
         <div class="adv-panel" id="adv-panel-guide">
           <div class="adv-panel-header">
-            <img src="../assets/avatars/guide.png" class="adv-panel-avatar" alt="Guide">
+            <img src="../assets/avatars/guide.png" class="adv-panel-avatar" alt="Custom">
             <div>
-              <div class="adv-panel-role">Your Custom Advisor</div>
-              <div class="adv-panel-desc">Your Guide speaks as whoever you define — a mentor, your future self, or a trusted voice.</div>
+              <div class="adv-panel-role">Custom Advisor</div>
+              <div class="adv-panel-desc">Speaks as whoever you define — a mentor, your future self, or any trusted voice.</div>
             </div>
           </div>
           <div class="profile-field">
-            <label class="profile-label">Your Guide represents...</label>
+            <label class="profile-label">Display Name</label>
+            <input type="text" class="profile-input" id="adv-name-guide" placeholder="Custom">
+          </div>
+          <div class="profile-field">
+            <label class="profile-label">Speaks as...</label>
             <input type="text" class="profile-input" id="adv-guide-persona" placeholder="e.g. My future self, a Stoic mentor, Dad...">
+            <p class="profile-field-hint">Define who this advisor speaks as in conversations.</p>
           </div>
         </div>
 

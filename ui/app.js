@@ -106,10 +106,10 @@ Keep your response to 3–5 sentences. Stay in character.`
 
   guide: {
     id: 'guide',
-    name: 'Guide',
-    title: 'Your Personal Guide',
-    desc: 'Your chosen mentor or future self',
-    initial: 'G',
+    name: 'Custom',
+    title: 'Your Custom Advisor',
+    desc: 'Your custom advisor persona',
+    initial: 'C',
     color: '#0D9488',
     system: null // built dynamically from guideName
   },
@@ -1401,7 +1401,7 @@ function saveAdvisorNames(names) {
 // Apply saved names to ADVISORS object and DOM chips
 function applyAdvisorNames() {
   const names = getAdvisorNames();
-  TRIBE_IDS.forEach(id => {
+  [...TRIBE_IDS, 'guide'].forEach(id => {
     if (names[id]) ADVISORS[id].name = names[id];
   });
   updateAdvisorChipNames();
@@ -1425,9 +1425,9 @@ function switchAdvisorTab(tabId) {
 }
 
 function openAdvisorsPage() {
-  // Populate tribe name inputs + tab labels
+  // Populate tribe + guide name inputs + tab labels
   const names = getAdvisorNames();
-  TRIBE_IDS.forEach(id => {
+  [...TRIBE_IDS, 'guide'].forEach(id => {
     const displayName = names[id] || ADVISORS[id]?.name || '';
     const input = document.getElementById(`adv-name-${id}`);
     if (input) input.value = displayName;
@@ -1472,21 +1472,23 @@ function closeAdvisorsPage() {
 }
 
 function saveAdvisorsPage() {
-  // Save tribe names
+  // Save tribe + guide display names
   const names = getAdvisorNames();
-  TRIBE_IDS.forEach(id => {
+  [...TRIBE_IDS, 'guide'].forEach(id => {
     const val = document.getElementById(`adv-name-${id}`)?.value.trim();
     if (val) names[id] = val;
     else delete names[id];
   });
   saveAdvisorNames(names);
   applyAdvisorNames();
+  // update guide tab label live
+  const guideTabLabel = document.getElementById('adv-tab-label-guide');
+  if (guideTabLabel) guideTabLabel.textContent = names.guide || ADVISORS.guide.name;
 
-  // Save Guide persona
+  // Save Custom advisor persona ("speaks as")
   const guideVal = document.getElementById('adv-guide-persona').value.trim();
   state.guideName = guideVal || 'a wise mentor and trusted advisor';
   localStorage.setItem('tribe_guide_name', state.guideName);
-  // keep Settings modal in sync
   const guideInput = document.getElementById('guide-name-input');
   if (guideInput) guideInput.value = state.guideName;
 
