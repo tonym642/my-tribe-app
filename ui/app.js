@@ -659,6 +659,33 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.adv-tab').forEach(tab => {
     tab.addEventListener('click', () => switchAdvisorTab(tab.dataset.tab));
   });
+
+  // Advisor panel action links (delegated)
+  document.getElementById('advisors-page').addEventListener('click', e => {
+    const link = e.target.closest('[data-adv-action]');
+    if (!link) return;
+    e.preventDefault();
+    const action = link.dataset.advAction;
+    const advisorId = link.dataset.advId;
+    if (action === 'save') {
+      saveAdvisorsPage();
+    } else {
+      openAdvPopup(action, advisorId);
+    }
+  });
+
+  // Popup close — backdrop click or data-close-popup buttons
+  document.getElementById('adv-popup-backdrop').addEventListener('click', closeAdvPopup);
+  document.getElementById('advisors-page').addEventListener('click', e => {
+    if (e.target.closest('[data-close-popup]')) closeAdvPopup();
+  });
+
+  // Popup save buttons
+  document.getElementById('popup-name-save-btn').addEventListener('click', savePopupName);
+  document.getElementById('popup-settings-custom-save-btn').addEventListener('click', savePopupSettingsCustom);
+  document.getElementById('bvm-use-avatar').addEventListener('click', confirmBvmAvatar);
+
+  // Photo inputs in popups
   document.getElementById('bvm-photo-input').addEventListener('change', e => {
     handleBvmPhotoUpload(e.target.files[0]);
     e.target.value = '';
@@ -667,7 +694,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     handleBvmPhotoUpload(e.target.files[0]);
     e.target.value = '';
   });
-  document.getElementById('bvm-use-avatar').addEventListener('click', confirmBvmAvatar);
+  document.getElementById('custom-photo-input').addEventListener('change', e => {
+    saveCustomPhoto(e.target.files[0]);
+    e.target.value = '';
+  });
 
   // Profile — add custom interest
   document.getElementById('pf-add-interest-btn').addEventListener('click', () => {
@@ -1425,35 +1455,39 @@ function switchAdvisorTab(tabId) {
 }
 
 function openAdvisorsPage() {
-  // Populate tribe + guide name inputs + tab labels
+  // Update tab labels with current names
   const names = getAdvisorNames();
   [...TRIBE_IDS, 'guide'].forEach(id => {
     const displayName = names[id] || ADVISORS[id]?.name || '';
-    const input = document.getElementById(`adv-name-${id}`);
-    if (input) input.value = displayName;
     const label = document.getElementById(`adv-tab-label-${id}`);
     if (label) label.textContent = displayName || id;
   });
 
-  // Populate Guide persona
-  document.getElementById('adv-guide-persona').value = state.guideName !== 'a wise mentor and trusted advisor'
-    ? state.guideName : '';
-
-  // Populate BVM section + tab avatar
+  // Update BVM tab + panel avatar if one is saved
   const bvm = getBvmData();
   _bvmPendingAvatar = null;
-
-  const tabBvmImg = document.getElementById('adv-tab-bvm-img');
-  const panelBvmImg = document.getElementById('adv-panel-bvm-img');
   if (bvm.avatar) {
-    tabBvmImg.outerHTML = `<img src="${bvm.avatar}" class="adv-tab-avatar" id="adv-tab-bvm-img" alt="BVM">`;
-    panelBvmImg.outerHTML = `<img src="${bvm.avatar}" class="adv-panel-avatar" id="adv-panel-bvm-img" alt="BVM">`;
-    showBvmPreview(bvm.avatar, false);
-  } else {
-    document.getElementById('bvm-upload-area').style.display = '';
-    document.getElementById('bvm-converting').style.display = 'none';
-    document.getElementById('bvm-preview-area').style.display = 'none';
-    document.getElementById('bvm-upload-initial').textContent = 'B';
+    const tabBvmImg = document.getElementById('adv-tab-bvm-img');
+    if (tabBvmImg.tagName === 'DIV') {
+      tabBvmImg.outerHTML = `<img src="${bvm.avatar}" class="adv-tab-avatar" id="adv-tab-bvm-img" alt="BVM">`;
+    } else {
+      tabBvmImg.src = bvm.avatar;
+    }
+    const panelBvmImg = document.getElementById('adv-panel-bvm-img');
+    if (panelBvmImg.tagName === 'DIV') {
+      panelBvmImg.outerHTML = `<img src="${bvm.avatar}" class="adv-panel-avatar" id="adv-panel-bvm-img" alt="BVM">`;
+    } else {
+      panelBvmImg.src = bvm.avatar;
+    }
+  }
+
+  // Update Custom avatar if one is saved
+  const customAvatar = localStorage.getItem('tribe_custom_avatar');
+  if (customAvatar) {
+    const guideImg = document.getElementById('adv-panel-guide-img');
+    if (guideImg) guideImg.src = customAvatar;
+    const guideTabImg = document.querySelector('[data-tab="guide"] .adv-tab-avatar');
+    if (guideTabImg) guideTabImg.src = customAvatar;
   }
 
   // Reset to first tab
@@ -1464,33 +1498,123 @@ function openAdvisorsPage() {
 }
 
 function closeAdvisorsPage() {
+  closeAdvPopup();
   document.getElementById('advisors-page').style.display = 'none';
   document.getElementById('main-layout').style.display = '';
   _bvmPendingAvatar = null;
 }
 
-function saveAdvisorsPage() {
-  // Save tribe + guide display names
+// ── Advisor Popups ────────────────────────────────────────────────
+
+let _currentPopupAdvisor = null;
+
+function openAdvPopup(action, advisorId) {
+  _currentPopupAdvisor = advisorId;
+
+  // Hide all popups, show backdrop
+  document.querySelectorAll('.adv-popup').forEach(p => { p.style.display = 'none'; });
+  document.getElementById('adv-popup-backdrop').style.display = '';
+
+  if (action === 'edit-name') {
+    const names = getAdvisorNames();
+    const current = names[advisorId] || ADVISORS[advisorId]?.name || '';
+    document.getElementById('popup-name-input').value = current;
+    document.getElementById('adv-popup-edit-name').style.display = '';
+    setTimeout(() => document.getElementById('popup-name-input').focus(), 50);
+
+  } else if (action === 'change-photo') {
+    document.getElementById('adv-popup-photo').style.display = '';
+    if (advisorId === 'bvm') {
+      document.getElementById('photo-simple-area').style.display = 'none';
+      document.getElementById('photo-bvm-area').style.display = '';
+      const bvm = getBvmData();
+      if (bvm.avatar) {
+        showBvmPreview(bvm.avatar, false);
+      } else {
+        document.getElementById('bvm-upload-area').style.display = '';
+        document.getElementById('bvm-converting').style.display = 'none';
+        document.getElementById('bvm-preview-area').style.display = 'none';
+        document.getElementById('bvm-upload-initial').textContent = 'B';
+      }
+    } else if (advisorId === 'guide') {
+      document.getElementById('photo-bvm-area').style.display = 'none';
+      document.getElementById('photo-simple-area').style.display = '';
+      const customAvatar = localStorage.getItem('tribe_custom_avatar');
+      const previewWrap = document.getElementById('photo-simple-preview-wrap');
+      if (customAvatar) {
+        document.getElementById('photo-simple-preview').src = customAvatar;
+        previewWrap.style.display = '';
+      } else {
+        previewWrap.style.display = 'none';
+      }
+    }
+
+  } else if (action === 'settings') {
+    if (advisorId === 'guide') {
+      document.getElementById('popup-guide-persona').value =
+        state.guideName !== 'a wise mentor and trusted advisor' ? state.guideName : '';
+      document.getElementById('adv-popup-settings-custom').style.display = '';
+      setTimeout(() => document.getElementById('popup-guide-persona').focus(), 50);
+    } else if (advisorId === 'bvm') {
+      document.getElementById('adv-popup-settings-bvm').style.display = '';
+    }
+  }
+}
+
+function closeAdvPopup() {
+  document.querySelectorAll('.adv-popup').forEach(p => { p.style.display = 'none'; });
+  document.getElementById('adv-popup-backdrop').style.display = 'none';
+  _currentPopupAdvisor = null;
+}
+
+function savePopupName() {
+  const advisorId = _currentPopupAdvisor;
+  const newName = document.getElementById('popup-name-input').value.trim();
+  if (!advisorId) { closeAdvPopup(); return; }
   const names = getAdvisorNames();
-  [...TRIBE_IDS, 'guide'].forEach(id => {
-    const val = document.getElementById(`adv-name-${id}`)?.value.trim();
-    if (val) names[id] = val;
-    else delete names[id];
-  });
+  if (newName) names[advisorId] = newName;
+  else delete names[advisorId];
   saveAdvisorNames(names);
   applyAdvisorNames();
-  // update guide tab label live
-  const guideTabLabel = document.getElementById('adv-tab-label-guide');
-  if (guideTabLabel) guideTabLabel.textContent = names.guide || ADVISORS.guide.name;
+  const tabLabel = document.getElementById(`adv-tab-label-${advisorId}`);
+  if (tabLabel) tabLabel.textContent = newName || ADVISORS[advisorId]?.name || advisorId;
+  closeAdvPopup();
+  showNotice('Name saved.');
+}
 
-  // Save Custom advisor persona ("speaks as")
-  const guideVal = document.getElementById('adv-guide-persona').value.trim();
-  state.guideName = guideVal || 'a wise mentor and trusted advisor';
+function saveCustomPhoto(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const base64 = e.target.result;
+    localStorage.setItem('tribe_custom_avatar', base64);
+    const guideImg = document.getElementById('adv-panel-guide-img');
+    if (guideImg) guideImg.src = base64;
+    const guideTabImg = document.querySelector('[data-tab="guide"] .adv-tab-avatar');
+    if (guideTabImg) guideTabImg.src = base64;
+    const previewWrap = document.getElementById('photo-simple-preview-wrap');
+    document.getElementById('photo-simple-preview').src = base64;
+    previewWrap.style.display = '';
+    showNotice('Photo saved.');
+  };
+  reader.readAsDataURL(file);
+}
+
+function savePopupSettingsCustom() {
+  const val = document.getElementById('popup-guide-persona').value.trim();
+  state.guideName = val || 'a wise mentor and trusted advisor';
   localStorage.setItem('tribe_guide_name', state.guideName);
   const guideInput = document.getElementById('guide-name-input');
   if (guideInput) guideInput.value = state.guideName;
+  closeAdvPopup();
+  showNotice('Custom advisor settings saved.');
+}
 
-  // Save BVM avatar if pending (name is always "BVM")
+function saveAdvisorsPage() {
+  // Names and persona are saved immediately from their popup cards.
+  // This button re-applies all names and updates BVM identity.
+  applyAdvisorNames();
+
   const bvm = getBvmData();
   bvm.name = 'BVM';
   if (_bvmPendingAvatar) {
@@ -1551,9 +1675,27 @@ function confirmBvmAvatar() {
   bvm.avatar = _bvmPendingAvatar;
   bvm.name = 'BVM';
   saveBvmData(bvm);
+  // Update tab avatar
+  const tabBvmImg = document.getElementById('adv-tab-bvm-img');
+  if (tabBvmImg) {
+    if (tabBvmImg.tagName === 'DIV') {
+      tabBvmImg.outerHTML = `<img src="${bvm.avatar}" class="adv-tab-avatar" id="adv-tab-bvm-img" alt="BVM">`;
+    } else {
+      tabBvmImg.src = bvm.avatar;
+    }
+  }
+  // Update panel avatar
+  const panelBvmImg = document.getElementById('adv-panel-bvm-img');
+  if (panelBvmImg) {
+    if (panelBvmImg.tagName === 'DIV') {
+      panelBvmImg.outerHTML = `<img src="${bvm.avatar}" class="adv-panel-avatar" id="adv-panel-bvm-img" alt="BVM">`;
+    } else {
+      panelBvmImg.src = bvm.avatar;
+    }
+  }
   _bvmPendingAvatar = null;
   renderBvmIdentity();
-  document.getElementById('bvm-use-avatar').style.display = 'none';
+  closeAdvPopup();
   showNotice('BVM avatar saved.');
 }
 

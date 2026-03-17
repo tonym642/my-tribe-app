@@ -3250,6 +3250,11 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   margin-bottom: 28px;
 }
 
+.adv-panel-info {
+  flex: 1;
+  min-width: 0;
+}
+
 .adv-panel-avatar {
   width: 64px;
   height: 64px;
@@ -3286,6 +3291,135 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   font-size: 13px;
   color: var(--text-2);
   line-height: 1.5;
+}
+
+/* Panel action links */
+.adv-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.adv-action-link {
+  font-size: 12px;
+  color: var(--text-3);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.adv-action-link:hover {
+  color: #3b9eff;
+  text-decoration: underline;
+}
+
+.adv-action-save {
+  color: #3b9eff;
+  font-weight: 600;
+}
+
+.adv-action-save:hover {
+  color: #2a8af0;
+}
+
+.adv-action-sep {
+  font-size: 11px;
+  color: var(--border);
+  user-select: none;
+}
+
+/* Advisor popup backdrop */
+.adv-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 200;
+}
+
+/* Advisor popup card */
+.adv-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(440px, calc(100vw - 32px));
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  z-index: 201;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.adv-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.adv-popup-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.adv-popup-close {
+  background: none;
+  border: none;
+  color: var(--text-3);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+
+.adv-popup-close:hover {
+  background: var(--surface);
+  color: var(--text-1);
+}
+
+.adv-popup-body {
+  padding: 20px;
+  flex: 1;
+}
+
+.adv-popup-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.adv-popup-info-text {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.adv-photo-preview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  margin: 0 auto;
+}
+
+.btn-sm {
+  padding: 7px 16px;
+  font-size: 13px;
 }
 
 /* Advisor settings cards (legacy, kept for reference) */
