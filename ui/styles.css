@@ -319,21 +319,22 @@ html, body {
 }
 
 .welcome-prompt {
-  padding: 8px 16px;
+  padding: 8px 18px;
   border: 1px solid var(--border);
   border-radius: 20px;
   background: var(--surface);
   font-family: var(--font);
   font-size: 13px;
+  font-weight: 500;
   color: var(--text-2);
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
 
 .welcome-prompt:hover {
-  border-color: #9CA3AF;
-  color: var(--text-1);
   background: var(--bg);
+  color: var(--text-1);
+  border-color: var(--border);
 }
 
 /* ── Onboarding pills ────────────────────────────────────────────── */
@@ -921,8 +922,12 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   justify-content: center;
 }
 
+/* .mode-pill — uses shared .btn base values, kept as alias */
 .mode-pill {
-  padding: 5px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
   border-radius: 20px;
   border: 1px solid var(--border);
   background: var(--surface);
@@ -931,7 +936,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   font-weight: 500;
   color: var(--text-2);
   cursor: pointer;
-  transition: all 0.12s;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
   user-select: none;
 }
 
@@ -1153,6 +1158,101 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   border-top: 1px solid var(--border);
 }
 
+/* ── Button System ──────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.btn svg {
+  flex-shrink: 0;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  width: 15px;
+  height: 15px;
+}
+
+.btn:hover {
+  background: var(--bg);
+  color: var(--text-1);
+  border-color: var(--border);
+}
+
+/* Filled / active state — blue */
+.btn.btn-primary {
+  background: #3b9eff;
+  color: white;
+  border-color: #2a8af0;
+  width: auto;
+  padding: 8px 18px;
+  border-radius: 20px;
+}
+
+.btn.btn-primary:hover {
+  background: #2a8af0;
+  opacity: 1;
+}
+
+/* Dark filled (used in modals) */
+.btn.btn-dark {
+  background: var(--text-1);
+  color: var(--surface);
+  border-color: var(--text-1);
+  border-radius: var(--r-sm);
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--r-sm);
+}
+
+.btn.btn-dark:hover { opacity: 0.85; }
+
+/* Ghost — no background */
+.btn.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-2);
+}
+
+.btn.btn-ghost:hover {
+  background: var(--bg);
+  border-color: var(--border);
+  color: var(--text-1);
+}
+
+/* Size variants */
+.btn.btn-sm {
+  padding: 5px 14px;
+  font-size: 12px;
+  border-radius: 16px;
+}
+
+.btn.btn-lg {
+  padding: 10px 24px;
+  font-size: 14px;
+}
+
+/* Full-width */
+.btn.btn-block {
+  width: 100%;
+  border-radius: var(--r-sm);
+}
+
+/* Legacy aliases — keeps existing markup working */
 .btn-primary {
   width: 100%;
   padding: 10px;
@@ -1304,17 +1404,22 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   display: flex;
   gap: 10px;
 }
+/* .btn-secondary — alias for .btn with slightly square radius for modal contexts */
 .btn-secondary {
-  padding: 10px 20px;
-  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 20px;
   border: 1px solid var(--border);
   background: var(--surface);
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-2);
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.12s, color 0.12s;
+  user-select: none;
 }
 .btn-secondary:hover { background: var(--bg); color: var(--text-1); }
 
@@ -1599,20 +1704,26 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 }
 .bl-adv-pills::-webkit-scrollbar { display: none; }
 .bl-adv-pill {
-  background: none;
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 3px 10px;
+  border-radius: 20px;
+  padding: 5px 14px;
   font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
   color: var(--text-2);
   font-family: var(--font);
-  transition: border-color 0.15s, color 0.15s;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
-.bl-adv-pill:hover, .bl-adv-pill.active {
-  border-color: var(--accent, #2563EB);
-  color: var(--accent, #2563EB);
+.bl-adv-pill:hover {
+  background: var(--bg);
+  color: var(--text-1);
+}
+.bl-adv-pill.active {
+  background: #3b9eff;
+  color: white;
+  border-color: #2a8af0;
 }
 .bl-chat-messages {
   flex: 1;
@@ -2127,21 +2238,26 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 
 .story-filter-btn {
   padding: 5px 14px;
-  border-radius: 999px;
+  border-radius: 20px;
   border: 1px solid var(--border);
-  background: none;
+  background: var(--surface);
   font-size: 12px;
+  font-weight: 500;
   font-family: var(--font);
   color: var(--text-2);
   cursor: pointer;
   transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
 
-.story-filter-btn.active,
 .story-filter-btn:hover {
-  background: var(--text-1);
-  color: var(--surface);
-  border-color: var(--text-1);
+  background: var(--bg);
+  color: var(--text-1);
+}
+
+.story-filter-btn.active {
+  background: #3b9eff;
+  color: white;
+  border-color: #2a8af0;
 }
 
 .story-library-list {
@@ -3908,9 +4024,11 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   margin: 0 auto;
 }
 
+/* standalone .btn-sm for legacy non-.btn elements */
 .btn-sm {
-  padding: 7px 16px;
-  font-size: 13px;
+  padding: 5px 14px;
+  font-size: 12px;
+  border-radius: 16px;
 }
 
 /* Advisor settings cards (legacy, kept for reference) */
@@ -4273,22 +4391,24 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   flex: 1;
   padding: 8px 6px;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 20px;
   background: var(--surface);
   font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
   color: var(--text-2);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
 
 .voting-type-btn.active {
-  background: var(--text-1);
+  background: #3b9eff;
   color: white;
-  border-color: var(--text-1);
+  border-color: #2a8af0;
 }
 
 .voting-type-btn:hover:not(.active) {
-  border-color: #9CA3AF;
+  background: var(--bg);
   color: var(--text-1);
 }
 
@@ -4406,20 +4526,27 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
 }
 
 .vat-btn {
-  padding: 6px 16px;
+  padding: 8px 18px;
   border: 1px solid var(--border);
   border-radius: 20px;
   background: var(--surface);
   font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
   color: var(--text-2);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.vat-btn:hover:not(.active) {
+  background: var(--bg);
+  color: var(--text-1);
 }
 
 .vat-btn.active {
-  background: var(--text-1);
+  background: #3b9eff;
   color: white;
-  border-color: var(--text-1);
+  border-color: #2a8af0;
 }
 
 /* Advisor chips */
@@ -4869,20 +4996,21 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
 .debate-suggestion-pill {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: 20px;
   padding: 8px 18px;
   font-size: 13px;
+  font-weight: 500;
   color: var(--text-2);
   cursor: pointer;
   font-family: var(--font);
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
   text-align: center;
 }
 
 .debate-suggestion-pill:hover {
-  border-color: #9CA3AF;
-  color: var(--text-1);
   background: var(--bg);
+  color: var(--text-1);
+  border-color: var(--border);
 }
 
 body.dark-mode .debate-suggestion-pill {
@@ -5225,11 +5353,14 @@ body.dark-mode .align-add-btn { background: #22263a; color: var(--text-2); borde
 /* bl-book-input dark override removed — handled by form-input dark rules */
 
 /* Voting type / vat / va chips in dark */
-body.dark-mode .voting-type-btn,
-body.dark-mode .vat-btn,
+body.dark-mode .voting-type-btn { background: var(--surface); border-color: #2a2d3a; color: var(--text-2); }
+body.dark-mode .voting-type-btn:hover:not(.active) { background: #22263a; color: var(--text-1); }
+body.dark-mode .voting-type-btn.active { background: #3b9eff; color: white; border-color: #2a8af0; }
+body.dark-mode .vat-btn { background: var(--surface); border-color: #2a2d3a; color: var(--text-2); }
+body.dark-mode .vat-btn:hover:not(.active) { background: #22263a; color: var(--text-1); }
 body.dark-mode .va-chip { background: #1a1d27; border-color: #2a2d3a; color: var(--text-2); }
 body.dark-mode .voting-type-btn.active,
-body.dark-mode .vat-btn.active { background: #f0f2f5; color: #0f1117; border-color: #f0f2f5; }
+body.dark-mode .vat-btn.active { background: #3b9eff; color: white; border-color: #2a8af0; }
 body.dark-mode .va-chip:has(input:checked) { background: #f0f2f5; color: #0f1117; border-color: #f0f2f5; }
 
 /* Debate/voting footer buttons */
@@ -5249,9 +5380,9 @@ body.dark-mode .sp-story-card { background: #22263a; }
 body.dark-mode .sp-story-card:hover { background: #2a2e42; }
 body.dark-mode .stories-library-btn { border-color: #2a2d3a; color: var(--text-2); }
 body.dark-mode .stories-library-btn:hover { border-color: #555e72; color: var(--text-1); }
-body.dark-mode .story-filter-btn { border-color: #2a2d3a; color: var(--text-2); }
-body.dark-mode .story-filter-btn.active,
-body.dark-mode .story-filter-btn:hover { background: var(--text-1); color: #0f1117; border-color: var(--text-1); }
+body.dark-mode .story-filter-btn { background: var(--surface); border-color: #2a2d3a; color: var(--text-2); }
+body.dark-mode .story-filter-btn:hover { background: #22263a; color: var(--text-1); }
+body.dark-mode .story-filter-btn.active { background: #3b9eff; color: white; border-color: #2a8af0; }
 body.dark-mode .sl-item:hover { background: #22263a; }
 
 /* Chat cards */
@@ -5296,8 +5427,9 @@ body.dark-mode .bl-chat-advisor-row,
 body.dark-mode .bl-chat-input-row { background: #0f1117; border-color: #2a2d3a; }
 body.dark-mode .bl-chat-input { background: #1a1d27; border-color: #2a2d3a; color: var(--text-1); }
 body.dark-mode .bl-chat-bubble.advisor { background: #1a1d27; border-color: #2a2d3a; }
-body.dark-mode .bl-adv-pill { background: transparent; border-color: #2a2d3a; color: var(--text-2); }
-body.dark-mode .bl-adv-pill:hover, body.dark-mode .bl-adv-pill.active { border-color: var(--accent, #3b82f6); color: var(--accent, #3b82f6); }
+body.dark-mode .bl-adv-pill { background: var(--surface); border-color: #2a2d3a; color: var(--text-2); }
+body.dark-mode .bl-adv-pill:hover { background: #22263a; color: var(--text-1); }
+body.dark-mode .bl-adv-pill.active { background: #3b9eff; color: white; border-color: #2a8af0; }
 body.dark-mode .bl-progress-bar { background: #1a1d27; border-color: #2a2d3a; }
 
 /* Scrollbars */
