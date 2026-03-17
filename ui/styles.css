@@ -3329,7 +3329,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   padding: 4px 12px;
 }
 
-/* Panel action links */
+/* Panel action pills */
 .adv-panel-actions {
   display: flex;
   align-items: center;
@@ -3339,32 +3339,23 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   justify-content: flex-end;
 }
 
-.adv-action-link {
+.adv-action-pill {
   font-size: 12px;
-  color: var(--text-3);
+  font-weight: 500;
+  color: var(--text-2);
   text-decoration: none;
   white-space: nowrap;
-  transition: color 0.15s;
+  padding: 4px 11px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
-.adv-action-link:hover {
+.adv-action-pill:hover {
+  background: #3b9eff18;
+  border-color: #3b9eff;
   color: #3b9eff;
-  text-decoration: underline;
-}
-
-.adv-action-save {
-  color: #3b9eff;
-  font-weight: 600;
-}
-
-.adv-action-save:hover {
-  color: #2a8af0;
-}
-
-.adv-action-sep {
-  font-size: 11px;
-  color: var(--border);
-  user-select: none;
 }
 
 /* Advisor popup backdrop */

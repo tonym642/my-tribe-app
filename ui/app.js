@@ -655,7 +655,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Advisors page
   document.getElementById('btn-advisors').addEventListener('click', openAdvisorsPage);
   document.getElementById('m-btn-advisors').addEventListener('click', () => { closeMobileNav(); openAdvisorsPage(); });
-  document.getElementById('advisors-save-bottom-btn').addEventListener('click', saveAdvisorsPage);
   document.querySelectorAll('.adv-tab').forEach(tab => {
     tab.addEventListener('click', () => switchAdvisorTab(tab.dataset.tab));
   });
@@ -731,6 +730,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-home').addEventListener('click', () => {
     closeMobileNav();
     closeDebate();
+    closeAdvisorsPage();
     startNewChat();
     setMode('member');
   });
