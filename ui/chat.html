@@ -460,7 +460,7 @@
           <div class="bvm-avatar-wrap" id="bvm-avatar-wrap"></div>
           <div class="bvm-name" id="bvm-name"></div>
           <div class="bvm-hint" id="bvm-hint" style="display:none">
-            Add your photo in <button class="bvm-hint-link" id="bvm-hint-profile-link">Settings → Profile</button> for a more personal experience
+            <button class="bvm-hint-link" id="bvm-hint-link">Upload a photo to personalize your BVM avatar →</button>
           </div>
         </div>
 
@@ -574,6 +574,63 @@
       </div>
       <div class="modal-footer">
         <button class="btn-primary" id="settings-save">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BVM Settings Modal -->
+  <div class="modal-overlay" id="bvm-settings-overlay">
+    <div class="modal bvm-settings-modal">
+      <div class="modal-header">
+        <h3>BVM Settings</h3>
+        <button class="modal-close" id="bvm-settings-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- BVM Name -->
+        <div class="form-group">
+          <label class="form-label">Display Name</label>
+          <input type="text" class="form-input" id="bvm-name-input" placeholder="Best Version of Me">
+          <p class="form-hint">How your best self is addressed in conversations.</p>
+        </div>
+
+        <!-- Avatar Section -->
+        <div class="form-group">
+          <label class="form-label">Avatar</label>
+
+          <!-- Empty state: no avatar uploaded yet -->
+          <div id="bvm-upload-area" class="bvm-upload-area">
+            <div class="bvm-upload-placeholder" id="bvm-upload-initial">B</div>
+            <p class="bvm-upload-prompt">Upload a photo to create a BVM avatar that looks like you.</p>
+            <label class="bvm-upload-btn" for="bvm-photo-input">Upload Photo</label>
+            <input type="file" id="bvm-photo-input" accept="image/*" style="display:none">
+          </div>
+
+          <!-- Processing state -->
+          <div id="bvm-converting" class="bvm-converting" style="display:none">
+            <div class="bvm-spinner"></div>
+            <p id="bvm-converting-text" class="bvm-converting-text">Converting your photo into your personal avatar...</p>
+          </div>
+
+          <!-- Preview state: photo processed, awaiting confirmation -->
+          <div id="bvm-preview-area" class="bvm-preview-area" style="display:none">
+            <img id="bvm-preview-img" class="bvm-preview-img" alt="BVM Avatar Preview">
+            <div class="bvm-preview-actions">
+              <button class="btn-primary" id="bvm-use-avatar">Use This Avatar</button>
+              <label class="bvm-upload-btn-sm" for="bvm-photo-retry">Upload Different Photo</label>
+              <input type="file" id="bvm-photo-retry" accept="image/*" style="display:none">
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="bvm-settings-save">Save</button>
       </div>
     </div>
   </div>
@@ -1008,15 +1065,6 @@
           <div class="profile-section-title">Profile</div>
 
           <div class="profile-photo-row">
-            <div class="profile-photo-wrap">
-              <div class="profile-photo-preview" id="profile-photo-preview">
-                <img id="profile-photo-img" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:50%;">
-                <div class="profile-photo-initial" id="profile-photo-initial">?</div>
-              </div>
-              <label class="profile-photo-upload-btn" for="profile-photo-input">Change Photo</label>
-              <input type="file" id="profile-photo-input" accept="image/*" style="display:none">
-            </div>
-
             <div class="profile-basic-fields">
               <div class="profile-field">
                 <label class="profile-label">Name advisors call you</label>

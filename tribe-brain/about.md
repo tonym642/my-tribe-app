@@ -13,7 +13,7 @@ The idea is simple: no single perspective is enough to make a great decision. A 
 
 Your Tribe is that council. It includes a Spiritual Advisor, a Mindset Advisor, an Emotional Advisor, a Health Advisor, a Relationships Advisor, and a Financial Advisor. You can ask one advisor a question, ask your whole Tribe at once, or explore ideas through debate, story, or deep reflection.
 
-There is also a Guide — a persona you define — who speaks from the perspective of whoever most represents your ideal self. And a BVM (Best Version of Me), who challenges you directly and holds you to the highest standard.
+There is also a Guide — a persona you define — who speaks from the perspective of whoever most represents your ideal self. And BVM (Best Version of Me) — not an external advisor, but the user's own highest self. BVM is the A-level version of you: disciplined, clear, responsible, and aligned with your highest standards. It reflects back what the best version of you would think, choose, and do.
 
 My Tribe does not make decisions for you. It helps you think better so you can make decisions you are proud of.
 

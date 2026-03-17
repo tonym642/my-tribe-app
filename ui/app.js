@@ -646,14 +646,25 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-profile').addEventListener('click', openProfile);
   document.getElementById('m-btn-profile').addEventListener('click', () => { closeMobileNav(); openProfile(); });
   document.getElementById('profile-back-btn').addEventListener('click', closeProfile);
-  document.getElementById('bvm-hint-profile-link').addEventListener('click', openProfile);
+  document.getElementById('bvm-hint-link').addEventListener('click', openBvmSettings);
   document.getElementById('profile-save-btn').addEventListener('click', saveProfileData);
   document.getElementById('profile-save-top').addEventListener('click', saveProfileData);
 
-  // Profile — photo upload
-  document.getElementById('profile-photo-input').addEventListener('change', e => {
-    handleProfilePhotoUpload(e.target.files[0]);
+  // BVM Settings
+  document.getElementById('bvm-settings-close').addEventListener('click', closeBvmSettings);
+  document.getElementById('bvm-settings-overlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeBvmSettings();
   });
+  document.getElementById('bvm-settings-save').addEventListener('click', saveBvmSettings);
+  document.getElementById('bvm-photo-input').addEventListener('change', e => {
+    handleBvmPhotoUpload(e.target.files[0]);
+    e.target.value = '';
+  });
+  document.getElementById('bvm-photo-retry').addEventListener('change', e => {
+    handleBvmPhotoUpload(e.target.files[0]);
+    e.target.value = '';
+  });
+  document.getElementById('bvm-use-avatar').addEventListener('click', confirmBvmAvatar);
 
   // Profile — add custom interest
   document.getElementById('pf-add-interest-btn').addEventListener('click', () => {
@@ -850,23 +861,21 @@ function applyModeUI(mode, prev) {
 }
 
 function renderBvmIdentity() {
-  const profile     = getProfile();
-  const avatarWrap  = document.getElementById('bvm-avatar-wrap');
-  const nameEl      = document.getElementById('bvm-name');
-  const hintEl      = document.getElementById('bvm-hint');
+  const bvm        = getBvmData();
+  const avatarWrap = document.getElementById('bvm-avatar-wrap');
+  const nameEl     = document.getElementById('bvm-name');
+  const hintEl     = document.getElementById('bvm-hint');
 
-  if (profile.photo) {
-    avatarWrap.innerHTML = `<img src="${profile.photo}" alt="You" class="bvm-avatar-img">`;
+  if (bvm.avatar) {
+    avatarWrap.innerHTML = `<img src="${bvm.avatar}" alt="BVM" class="bvm-avatar-img">`;
     hintEl.style.display = 'none';
   } else {
-    const initial = (profile.displayName || 'Y')[0].toUpperCase();
+    const initial = (bvm.name || 'B')[0].toUpperCase();
     avatarWrap.innerHTML = `<div class="bvm-avatar-placeholder">${initial}</div>`;
     hintEl.style.display = '';
   }
 
-  nameEl.textContent = profile.displayName
-    ? `${profile.preferredAddress || profile.displayName} — Best Version`
-    : 'Best Version of Me';
+  nameEl.textContent = bvm.name || 'Best Version of Me';
 }
 
 function toggleAdvisor(id) {
@@ -1299,18 +1308,6 @@ function loadProfileData() {
   document.getElementById('pf-goals').value           = p.goals || '';
   document.getElementById('pf-challenges').value      = p.challenges || '';
 
-  const img = document.getElementById('profile-photo-img');
-  const initial = document.getElementById('profile-photo-initial');
-  if (p.photo) {
-    img.src = p.photo;
-    img.style.display = '';
-    initial.style.display = 'none';
-  } else {
-    img.style.display = 'none';
-    initial.style.display = '';
-    initial.textContent = (p.displayName || '?')[0].toUpperCase();
-  }
-
   profileInterests = new Set(p.interests || []);
   profileFocusAreas = p.focusAreas || [];
   renderInterestChips();
@@ -1318,7 +1315,6 @@ function loadProfileData() {
 }
 
 function saveProfileData() {
-  const img = document.getElementById('profile-photo-img');
   const p = {
     displayName:      document.getElementById('pf-display-name').value.trim(),
     age:              document.getElementById('pf-age').value,
@@ -1332,8 +1328,7 @@ function saveProfileData() {
     advisorTone:      document.getElementById('pf-advisor-tone').value,
     responseDepth:    document.getElementById('pf-response-depth').value,
     goals:            document.getElementById('pf-goals').value.trim(),
-    challenges:       document.getElementById('pf-challenges').value.trim(),
-    photo:            img.style.display !== 'none' ? img.src : ''
+    challenges:       document.getElementById('pf-challenges').value.trim()
   };
   localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
   showNotice('Profile saved.');
@@ -1377,16 +1372,116 @@ function makeRemovableChip(text, onRemove) {
   return chip;
 }
 
-function handleProfilePhotoUpload(file) {
+// ── BVM Settings ──────────────────────────────────────────────────
+
+const BVM_KEY = 'tribe_bvm';
+
+function getBvmData() {
+  try { return JSON.parse(localStorage.getItem(BVM_KEY) || '{}'); }
+  catch { return {}; }
+}
+
+function saveBvmData(data) {
+  localStorage.setItem(BVM_KEY, JSON.stringify(data));
+}
+
+// Staged processing messages
+const BVM_PROCESSING_STAGES = [
+  { text: 'Uploading photo...', delay: 0 },
+  { text: 'Analyzing your features...', delay: 900 },
+  { text: 'Converting your photo into your personal avatar...', delay: 2000 },
+  { text: 'Finalizing your avatar...', delay: 3200 }
+];
+
+let _bvmPendingAvatar = null;
+
+function openBvmSettings() {
+  const bvm = getBvmData();
+  document.getElementById('bvm-name-input').value = bvm.name || '';
+  _bvmPendingAvatar = null;
+  // Show correct state
+  if (bvm.avatar) {
+    showBvmPreview(bvm.avatar, false); // confirmed state — skip action buttons, show upload area instead
+    document.getElementById('bvm-upload-area').style.display = 'none';
+    document.getElementById('bvm-converting').style.display = 'none';
+    document.getElementById('bvm-preview-area').style.display = '';
+    document.getElementById('bvm-preview-img').src = bvm.avatar;
+    document.getElementById('bvm-use-avatar').style.display = 'none'; // already confirmed
+  } else {
+    document.getElementById('bvm-upload-area').style.display = '';
+    document.getElementById('bvm-converting').style.display = 'none';
+    document.getElementById('bvm-preview-area').style.display = 'none';
+    document.getElementById('bvm-use-avatar').style.display = '';
+    // update placeholder initial
+    const bvmName = bvm.name || 'B';
+    document.getElementById('bvm-upload-initial').textContent = bvmName[0].toUpperCase();
+  }
+  document.getElementById('bvm-settings-overlay').classList.add('open');
+}
+
+function closeBvmSettings() {
+  document.getElementById('bvm-settings-overlay').classList.remove('open');
+  _bvmPendingAvatar = null;
+}
+
+function saveBvmSettings() {
+  const bvm = getBvmData();
+  bvm.name = document.getElementById('bvm-name-input').value.trim() || 'Best Version of Me';
+  if (_bvmPendingAvatar) {
+    bvm.avatar = _bvmPendingAvatar;
+    _bvmPendingAvatar = null;
+  }
+  saveBvmData(bvm);
+  renderBvmIdentity();
+  closeBvmSettings();
+  showNotice('BVM settings saved.');
+}
+
+function handleBvmPhotoUpload(file) {
   if (!file || !file.type.startsWith('image/')) return;
+
+  // Show processing state
+  document.getElementById('bvm-upload-area').style.display = 'none';
+  document.getElementById('bvm-preview-area').style.display = 'none';
+  document.getElementById('bvm-converting').style.display = '';
+
+  const textEl = document.getElementById('bvm-converting-text');
+
+  // Run staged messages
+  BVM_PROCESSING_STAGES.forEach(({ text, delay }) => {
+    setTimeout(() => { if (textEl) textEl.textContent = text; }, delay);
+  });
+
+  // Read file and show preview after stages complete
   const reader = new FileReader();
   reader.onload = e => {
-    const img = document.getElementById('profile-photo-img');
-    img.src = e.target.result;
-    img.style.display = '';
-    document.getElementById('profile-photo-initial').style.display = 'none';
+    const base64 = e.target.result;
+    setTimeout(() => {
+      _bvmPendingAvatar = base64;
+      showBvmPreview(base64, true);
+    }, BVM_PROCESSING_STAGES[BVM_PROCESSING_STAGES.length - 1].delay + 700);
   };
   reader.readAsDataURL(file);
+}
+
+function showBvmPreview(src, showConfirm) {
+  document.getElementById('bvm-upload-area').style.display = 'none';
+  document.getElementById('bvm-converting').style.display = 'none';
+  document.getElementById('bvm-preview-area').style.display = '';
+  document.getElementById('bvm-preview-img').src = src;
+  document.getElementById('bvm-use-avatar').style.display = showConfirm ? '' : 'none';
+}
+
+function confirmBvmAvatar() {
+  if (!_bvmPendingAvatar) return;
+  const bvm = getBvmData();
+  bvm.avatar = _bvmPendingAvatar;
+  bvm.name = document.getElementById('bvm-name-input').value.trim() || bvm.name || 'Best Version of Me';
+  saveBvmData(bvm);
+  _bvmPendingAvatar = null;
+  renderBvmIdentity();
+  document.getElementById('bvm-use-avatar').style.display = 'none';
+  showNotice('BVM avatar saved.');
 }
 
 function openSettings() {
