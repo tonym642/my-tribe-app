@@ -377,10 +377,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const comingSoon = [
     'btn-core-lessons',
     'btn-onboarding',
-    'btn-reflections-settings',
     'm-btn-core-lessons',
-    'm-btn-onboarding',
-    'm-btn-reflections-settings'
+    'm-btn-onboarding'
   ];
   comingSoon.forEach(id => {
     const el = document.getElementById(id);
