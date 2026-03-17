@@ -188,6 +188,7 @@ html, body {
 /* Nested submenu */
 .nav-item-group {
   position: relative;
+  width: 100%;
 }
 
 .nav-submenu {
