@@ -2646,16 +2646,31 @@ function blAppendMessage(role, content, advisorId) {
   blChatMessages.push({ role, content, advisorId });
   const msgs = document.getElementById('bl-chat-messages');
   const div  = document.createElement('div');
-  div.className = `bl-chat-bubble ${role}`;
-  if (role === 'advisor') {
-    const name = advisorId === 'guide'
-      ? (ADVISORS.guide?.name || 'Guide')
-      : (ADVISORS[advisorId]?.name || advisorId);
-    div.innerHTML = `<div class="bl-advisor-tag">${esc(name)}</div>${
-      typeof marked !== 'undefined' ? marked.parse(content) : esc(content)
-    }`;
+
+  if (role === 'user') {
+    div.className = 'advisor-card msg-user-thread';
+    div.innerHTML = `
+      <div class="advisor-thread-avatar user-avatar-circle">You</div>
+      <div class="advisor-meta">
+        <div class="advisor-header"><span class="advisor-name">You</span></div>
+        <div class="advisor-text">${esc(content)}</div>
+      </div>`;
   } else {
-    div.textContent = content;
+    const a          = ADVISORS[advisorId] || ADVISORS.guide;
+    const avatarSrc  = `../assets/avatars/${advisorId}.png`;
+    const parsed     = typeof marked !== 'undefined' ? marked.parse(content) : esc(content);
+    div.className    = 'advisor-card';
+    div.style.setProperty('--advisor-color', a.color);
+    div.innerHTML = `
+      <img class="advisor-thread-avatar" src="${avatarSrc}" alt="${a.name}"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="advisor-avatar" style="background:${a.color};display:none">${a.initial}</div>
+      <div class="advisor-meta">
+        <div class="advisor-header">
+          <span class="advisor-name">${esc(a.name)}</span>
+        </div>
+        <div class="advisor-text">${parsed}</div>
+      </div>`;
   }
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
@@ -2670,11 +2685,18 @@ async function blSendChat() {
 
   const msgs       = document.getElementById('bl-chat-messages');
   const loadingDiv = document.createElement('div');
-  const advisorName = blActiveAdvisor === 'guide'
-    ? (ADVISORS.guide?.name || 'Guide')
-    : (ADVISORS[blActiveAdvisor]?.name || blActiveAdvisor);
-  loadingDiv.className = 'bl-chat-bubble advisor';
-  loadingDiv.innerHTML = `<div class="bl-advisor-tag">${esc(advisorName)}</div><div class="typing-dots"><span></span><span></span><span></span></div>`;
+  const a          = ADVISORS[blActiveAdvisor] || ADVISORS.guide;
+  const avatarSrc  = `../assets/avatars/${blActiveAdvisor}.png`;
+  loadingDiv.className = 'advisor-card';
+  loadingDiv.style.setProperty('--advisor-color', a.color);
+  loadingDiv.innerHTML = `
+    <img class="advisor-thread-avatar" src="${avatarSrc}" alt="${a.name}"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="advisor-avatar" style="background:${a.color};display:none">${a.initial}</div>
+    <div class="advisor-meta">
+      <div class="advisor-header"><span class="advisor-name">${esc(a.name)}</span></div>
+      <div class="advisor-text"><span class="advisor-thinking">${esc(a.name)} is thinking<div class="typing-dots" style="height:auto"><span></span><span></span><span></span></div></span></div>
+    </div>`;
   msgs.appendChild(loadingDiv);
   msgs.scrollTop = msgs.scrollHeight;
 
