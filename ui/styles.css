@@ -803,9 +803,9 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 }
 
 .mode-pill.active {
-  background: var(--text-1);
+  background: #3b9eff;
   color: white;
-  border-color: var(--text-1);
+  border-color: #2a8af0;
 }
 
 .mode-pill:hover:not(.active) {
@@ -4146,7 +4146,7 @@ body.dark-mode .welcome-prompt:hover { background: #22263a; border-color: #555e7
 
 /* Mode pills */
 body.dark-mode .mode-pill { background: #1a1d27; border-color: #2a2d3a; color: var(--text-2); }
-body.dark-mode .mode-pill.active { background: #f0f2f5; color: #0f1117; border-color: #f0f2f5; }
+body.dark-mode .mode-pill.active { background: #3b9eff; color: white; border-color: #2a8af0; }
 body.dark-mode .mode-pill:hover:not(.active) { background: #22263a; color: var(--text-1); }
 
 /* Advisor row */
