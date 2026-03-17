@@ -3140,7 +3140,10 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 
 #advisors-page {
   position: fixed;
-  inset: 0;
+  top: var(--topbar-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: var(--bg);
   z-index: 100;
   display: flex;
