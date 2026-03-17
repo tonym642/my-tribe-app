@@ -754,8 +754,8 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 }
 
 .advisor-chip.active .advisor-avatar-img {
-  border-color: var(--chip-active, #5B6CFF);
-  box-shadow: 0 0 0 2px var(--chip-glow, transparent);
+  border-color: #3b9eff;
+  box-shadow: 0 0 0 3px rgba(59, 158, 255, 0.4), 0 0 10px rgba(59, 158, 255, 0.3);
 }
 
 .advisor-chip.active .advisor-chip-name {
