@@ -173,16 +173,11 @@ html, body {
   background: var(--bg);
 }
 
-.nav-item.has-sub {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .nav-item.has-sub::after {
   content: '‹';
   color: var(--text-3);
   font-size: 14px;
+  margin-left: auto;
 }
 
 /* Nested submenu */
