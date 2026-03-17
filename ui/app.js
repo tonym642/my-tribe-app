@@ -878,7 +878,7 @@ function renderBvmIdentity() {
     hintEl.style.display = '';
   }
 
-  nameEl.textContent = bvm.name || 'Best Version of Me';
+  nameEl.textContent = 'BVM';
 }
 
 function toggleAdvisor(id) {
@@ -1441,8 +1441,6 @@ function openAdvisorsPage() {
 
   // Populate BVM section + tab avatar
   const bvm = getBvmData();
-  document.getElementById('bvm-name-input').value = bvm.name || '';
-  document.getElementById('adv-tab-label-bvm').textContent = bvm.name || 'BVM';
   _bvmPendingAvatar = null;
 
   const tabBvmImg = document.getElementById('adv-tab-bvm-img');
@@ -1455,7 +1453,7 @@ function openAdvisorsPage() {
     document.getElementById('bvm-upload-area').style.display = '';
     document.getElementById('bvm-converting').style.display = 'none';
     document.getElementById('bvm-preview-area').style.display = 'none';
-    document.getElementById('bvm-upload-initial').textContent = (bvm.name || 'B')[0].toUpperCase();
+    document.getElementById('bvm-upload-initial').textContent = 'B';
   }
 
   // Reset to first tab
@@ -1492,9 +1490,9 @@ function saveAdvisorsPage() {
   const guideInput = document.getElementById('guide-name-input');
   if (guideInput) guideInput.value = state.guideName;
 
-  // Save BVM name (avatar saved separately via confirmBvmAvatar)
+  // Save BVM avatar if pending (name is always "BVM")
   const bvm = getBvmData();
-  bvm.name = document.getElementById('bvm-name-input').value.trim() || 'Best Version of Me';
+  bvm.name = 'BVM';
   if (_bvmPendingAvatar) {
     bvm.avatar = _bvmPendingAvatar;
     _bvmPendingAvatar = null;
@@ -1551,7 +1549,7 @@ function confirmBvmAvatar() {
   if (!_bvmPendingAvatar) return;
   const bvm = getBvmData();
   bvm.avatar = _bvmPendingAvatar;
-  bvm.name = document.getElementById('bvm-name-input').value.trim() || bvm.name || 'Best Version of Me';
+  bvm.name = 'BVM';
   saveBvmData(bvm);
   _bvmPendingAvatar = null;
   renderBvmIdentity();
