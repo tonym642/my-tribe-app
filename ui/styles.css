@@ -3011,11 +3011,20 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   gap: 24px;
 }
 
+.cf-page-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+}
+
 .campfire-step-heading {
   font-size: 22px;
   font-weight: 700;
   color: var(--text-1);
   letter-spacing: -0.02em;
+  margin-top: -8px;
 }
 
 /* Storyteller cards */
@@ -3048,7 +3057,14 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   box-shadow: 0 0 0 3px rgba(120,53,15,0.08);
 }
 
-.cf-sc-icon { font-size: 28px; line-height: 1; }
+.cf-sc-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-2);
+}
+.cf-storyteller-card.active .cf-sc-icon,
+.cf-storyteller-card:hover .cf-sc-icon { color: var(--text-1); }
 .cf-sc-label { font-size: 15px; font-weight: 700; color: var(--text-1); }
 .cf-sc-sub { font-size: 12px; color: var(--text-3); }
 
@@ -3114,20 +3130,25 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 }
 
 .cf-pillar-btn {
-  padding: 14px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
   background: var(--surface);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-1);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
   cursor: pointer;
   font-family: var(--font);
-  transition: border-color 0.15s, background 0.15s;
-  text-align: center;
+  transition: border-color 0.12s, background 0.12s, color 0.12s;
+  text-align: left;
 }
-.cf-pillar-btn:hover { border-color: #D97706; }
-.cf-pillar-btn.active { border-color: #78350f; background: #fffbeb; color: #78350f; }
+.cf-pillar-btn svg { flex-shrink: 0; }
+.cf-pillar-btn:hover { background: var(--bg); color: var(--text-1); border-color: var(--border); }
+.cf-pillar-btn.active { background: #3b9eff; color: white; border-color: #2a8af0; }
+.cf-pillar-btn.active svg { stroke: white; }
 
 /* Story structure guide */
 .campfire-structure-guide {
@@ -5318,9 +5339,9 @@ body.dark-mode .cf-advisor-avatar-btn:hover { border-color: #D97706; }
 body.dark-mode .cf-storyteller-card.active,
 body.dark-mode .cf-format-card.active,
 body.dark-mode .cf-advisor-avatar-btn.active { border-color: #78350f; background: #1f1a10; }
-body.dark-mode .cf-pillar-btn { background: #1a1d27; border-color: #2a2d3a; }
-body.dark-mode .cf-pillar-btn:hover { border-color: #D97706; }
-body.dark-mode .cf-pillar-btn.active { background: #1f1a10; border-color: #78350f; color: #fbbf24; }
+body.dark-mode .cf-pillar-btn { background: #1a1d27; border-color: #2a2d3a; color: var(--text-2); }
+body.dark-mode .cf-pillar-btn:hover { background: #22263a; color: var(--text-1); }
+body.dark-mode .cf-pillar-btn.active { background: #3b9eff; border-color: #2a8af0; color: white; }
 body.dark-mode .cf-moderator-msg { background: #1f1a10; border-color: #78350f; }
 body.dark-mode .cf-mod-text { color: #fbbf24; }
 body.dark-mode .cf-mod-closing { background: #0f1117; border-color: #2a2d3a; }
