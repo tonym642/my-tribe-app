@@ -210,6 +210,7 @@ async function loadKnowledge() {
   ]);
 
   initStories();
+  applyAdvisorNames();
 }
 
 function buildSystemPrompt(advisor) {
@@ -375,10 +376,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Navigation — coming soon items (desktop + mobile)
   const comingSoon = [
     'btn-core-lessons',
-    'btn-onboarding', 'btn-advisors',
+    'btn-onboarding',
     'btn-reflections-settings',
     'm-btn-core-lessons',
-    'm-btn-onboarding', 'm-btn-advisors',
+    'm-btn-onboarding',
     'm-btn-reflections-settings'
   ];
   comingSoon.forEach(id => {
@@ -646,16 +647,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-profile').addEventListener('click', openProfile);
   document.getElementById('m-btn-profile').addEventListener('click', () => { closeMobileNav(); openProfile(); });
   document.getElementById('profile-back-btn').addEventListener('click', closeProfile);
-  document.getElementById('bvm-hint-link').addEventListener('click', openBvmSettings);
+  document.getElementById('bvm-hint-link').addEventListener('click', openAdvisorsPage);
+  document.getElementById('bvm-settings-btn').addEventListener('click', openAdvisorsPage);
   document.getElementById('profile-save-btn').addEventListener('click', saveProfileData);
   document.getElementById('profile-save-top').addEventListener('click', saveProfileData);
 
-  // BVM Settings
-  document.getElementById('bvm-settings-close').addEventListener('click', closeBvmSettings);
-  document.getElementById('bvm-settings-overlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeBvmSettings();
-  });
-  document.getElementById('bvm-settings-save').addEventListener('click', saveBvmSettings);
+  // Advisors page
+  document.getElementById('btn-advisors').addEventListener('click', openAdvisorsPage);
+  document.getElementById('m-btn-advisors').addEventListener('click', () => { closeMobileNav(); openAdvisorsPage(); });
+  document.getElementById('advisors-back-btn').addEventListener('click', closeAdvisorsPage);
+  document.getElementById('advisors-save-btn').addEventListener('click', saveAdvisorsPage);
+  document.getElementById('advisors-save-bottom-btn').addEventListener('click', saveAdvisorsPage);
   document.getElementById('bvm-photo-input').addEventListener('change', e => {
     handleBvmPhotoUpload(e.target.files[0]);
     e.target.value = '';
@@ -1372,59 +1374,105 @@ function makeRemovableChip(text, onRemove) {
   return chip;
 }
 
-// ── BVM Settings ──────────────────────────────────────────────────
+// ── Advisors Page ─────────────────────────────────────────────────
 
-const BVM_KEY = 'tribe_bvm';
+const BVM_KEY          = 'tribe_bvm';
+const ADVISOR_NAMES_KEY = 'tribe_advisor_names';
+
+const TRIBE_IDS = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'frank'];
 
 function getBvmData() {
   try { return JSON.parse(localStorage.getItem(BVM_KEY) || '{}'); }
   catch { return {}; }
 }
-
 function saveBvmData(data) {
   localStorage.setItem(BVM_KEY, JSON.stringify(data));
 }
 
-// Staged processing messages
-const BVM_PROCESSING_STAGES = [
-  { text: 'Uploading photo...', delay: 0 },
-  { text: 'Analyzing your features...', delay: 900 },
-  { text: 'Converting your photo into your personal avatar...', delay: 2000 },
-  { text: 'Finalizing your avatar...', delay: 3200 }
-];
+function getAdvisorNames() {
+  try { return JSON.parse(localStorage.getItem(ADVISOR_NAMES_KEY) || '{}'); }
+  catch { return {}; }
+}
+function saveAdvisorNames(names) {
+  localStorage.setItem(ADVISOR_NAMES_KEY, JSON.stringify(names));
+}
 
-let _bvmPendingAvatar = null;
+// Apply saved names to ADVISORS object and DOM chips
+function applyAdvisorNames() {
+  const names = getAdvisorNames();
+  TRIBE_IDS.forEach(id => {
+    if (names[id]) ADVISORS[id].name = names[id];
+  });
+  updateAdvisorChipNames();
+}
 
-function openBvmSettings() {
+function updateAdvisorChipNames() {
+  const names = getAdvisorNames();
+  document.querySelectorAll('.advisor-chip').forEach(chip => {
+    const id = chip.dataset.advisor;
+    const name = names[id] || ADVISORS[id]?.name;
+    if (name) {
+      const el = chip.querySelector('.advisor-chip-name');
+      if (el) el.textContent = name;
+    }
+  });
+}
+
+function openAdvisorsPage() {
+  // Populate tribe name inputs
+  const names = getAdvisorNames();
+  TRIBE_IDS.forEach(id => {
+    const input = document.getElementById(`adv-name-${id}`);
+    if (input) input.value = names[id] || ADVISORS[id]?.name || '';
+  });
+
+  // Populate Guide persona
+  document.getElementById('adv-guide-persona').value = state.guideName !== 'a wise mentor and trusted advisor'
+    ? state.guideName : '';
+
+  // Populate BVM section
   const bvm = getBvmData();
   document.getElementById('bvm-name-input').value = bvm.name || '';
   _bvmPendingAvatar = null;
-  // Show correct state
   if (bvm.avatar) {
-    showBvmPreview(bvm.avatar, false); // confirmed state — skip action buttons, show upload area instead
-    document.getElementById('bvm-upload-area').style.display = 'none';
-    document.getElementById('bvm-converting').style.display = 'none';
-    document.getElementById('bvm-preview-area').style.display = '';
-    document.getElementById('bvm-preview-img').src = bvm.avatar;
-    document.getElementById('bvm-use-avatar').style.display = 'none'; // already confirmed
+    showBvmPreview(bvm.avatar, false);
   } else {
     document.getElementById('bvm-upload-area').style.display = '';
     document.getElementById('bvm-converting').style.display = 'none';
     document.getElementById('bvm-preview-area').style.display = 'none';
-    document.getElementById('bvm-use-avatar').style.display = '';
-    // update placeholder initial
-    const bvmName = bvm.name || 'B';
-    document.getElementById('bvm-upload-initial').textContent = bvmName[0].toUpperCase();
+    document.getElementById('bvm-upload-initial').textContent = (bvm.name || 'B')[0].toUpperCase();
   }
-  document.getElementById('bvm-settings-overlay').classList.add('open');
+
+  document.getElementById('main-layout').style.display = 'none';
+  document.getElementById('advisors-page').style.display = 'flex';
 }
 
-function closeBvmSettings() {
-  document.getElementById('bvm-settings-overlay').classList.remove('open');
+function closeAdvisorsPage() {
+  document.getElementById('advisors-page').style.display = 'none';
+  document.getElementById('main-layout').style.display = '';
   _bvmPendingAvatar = null;
 }
 
-function saveBvmSettings() {
+function saveAdvisorsPage() {
+  // Save tribe names
+  const names = getAdvisorNames();
+  TRIBE_IDS.forEach(id => {
+    const val = document.getElementById(`adv-name-${id}`)?.value.trim();
+    if (val) names[id] = val;
+    else delete names[id];
+  });
+  saveAdvisorNames(names);
+  applyAdvisorNames();
+
+  // Save Guide persona
+  const guideVal = document.getElementById('adv-guide-persona').value.trim();
+  state.guideName = guideVal || 'a wise mentor and trusted advisor';
+  localStorage.setItem('tribe_guide_name', state.guideName);
+  // keep Settings modal in sync
+  const guideInput = document.getElementById('guide-name-input');
+  if (guideInput) guideInput.value = state.guideName;
+
+  // Save BVM name (avatar saved separately via confirmBvmAvatar)
   const bvm = getBvmData();
   bvm.name = document.getElementById('bvm-name-input').value.trim() || 'Best Version of Me';
   if (_bvmPendingAvatar) {
@@ -1433,26 +1481,33 @@ function saveBvmSettings() {
   }
   saveBvmData(bvm);
   renderBvmIdentity();
-  closeBvmSettings();
-  showNotice('BVM settings saved.');
+
+  showNotice('Advisor settings saved.');
 }
+
+// ── BVM Avatar Conversion ─────────────────────────────────────────
+
+const BVM_PROCESSING_STAGES = [
+  { text: 'Uploading photo...',                              delay: 0    },
+  { text: 'Analyzing your features...',                     delay: 900  },
+  { text: 'Converting your photo into your personal avatar...', delay: 2000 },
+  { text: 'Finalizing your avatar...',                      delay: 3200 }
+];
+
+let _bvmPendingAvatar = null;
 
 function handleBvmPhotoUpload(file) {
   if (!file || !file.type.startsWith('image/')) return;
 
-  // Show processing state
   document.getElementById('bvm-upload-area').style.display = 'none';
   document.getElementById('bvm-preview-area').style.display = 'none';
   document.getElementById('bvm-converting').style.display = '';
 
   const textEl = document.getElementById('bvm-converting-text');
-
-  // Run staged messages
   BVM_PROCESSING_STAGES.forEach(({ text, delay }) => {
     setTimeout(() => { if (textEl) textEl.textContent = text; }, delay);
   });
 
-  // Read file and show preview after stages complete
   const reader = new FileReader();
   reader.onload = e => {
     const base64 = e.target.result;

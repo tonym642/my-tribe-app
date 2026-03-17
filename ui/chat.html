@@ -458,7 +458,12 @@
         <!-- BVM Identity Block (shown only in BVM mode) -->
         <div class="bvm-identity" id="bvm-identity" style="display:none">
           <div class="bvm-avatar-wrap" id="bvm-avatar-wrap"></div>
-          <div class="bvm-name" id="bvm-name"></div>
+          <div class="bvm-name-row">
+            <div class="bvm-name" id="bvm-name"></div>
+            <button class="bvm-settings-btn" id="bvm-settings-btn" title="BVM Settings">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </button>
+          </div>
           <div class="bvm-hint" id="bvm-hint" style="display:none">
             <button class="bvm-hint-link" id="bvm-hint-link">Upload a photo to personalize your BVM avatar →</button>
           </div>
@@ -574,63 +579,6 @@
       </div>
       <div class="modal-footer">
         <button class="btn-primary" id="settings-save">Save Settings</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- BVM Settings Modal -->
-  <div class="modal-overlay" id="bvm-settings-overlay">
-    <div class="modal bvm-settings-modal">
-      <div class="modal-header">
-        <h3>BVM Settings</h3>
-        <button class="modal-close" id="bvm-settings-close">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
-      <div class="modal-body">
-
-        <!-- BVM Name -->
-        <div class="form-group">
-          <label class="form-label">Display Name</label>
-          <input type="text" class="form-input" id="bvm-name-input" placeholder="Best Version of Me">
-          <p class="form-hint">How your best self is addressed in conversations.</p>
-        </div>
-
-        <!-- Avatar Section -->
-        <div class="form-group">
-          <label class="form-label">Avatar</label>
-
-          <!-- Empty state: no avatar uploaded yet -->
-          <div id="bvm-upload-area" class="bvm-upload-area">
-            <div class="bvm-upload-placeholder" id="bvm-upload-initial">B</div>
-            <p class="bvm-upload-prompt">Upload a photo to create a BVM avatar that looks like you.</p>
-            <label class="bvm-upload-btn" for="bvm-photo-input">Upload Photo</label>
-            <input type="file" id="bvm-photo-input" accept="image/*" style="display:none">
-          </div>
-
-          <!-- Processing state -->
-          <div id="bvm-converting" class="bvm-converting" style="display:none">
-            <div class="bvm-spinner"></div>
-            <p id="bvm-converting-text" class="bvm-converting-text">Converting your photo into your personal avatar...</p>
-          </div>
-
-          <!-- Preview state: photo processed, awaiting confirmation -->
-          <div id="bvm-preview-area" class="bvm-preview-area" style="display:none">
-            <img id="bvm-preview-img" class="bvm-preview-img" alt="BVM Avatar Preview">
-            <div class="bvm-preview-actions">
-              <button class="btn-primary" id="bvm-use-avatar">Use This Avatar</button>
-              <label class="bvm-upload-btn-sm" for="bvm-photo-retry">Upload Different Photo</label>
-              <input type="file" id="bvm-photo-retry" accept="image/*" style="display:none">
-            </div>
-          </div>
-
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-primary" id="bvm-settings-save">Save</button>
       </div>
     </div>
   </div>
@@ -1188,6 +1136,136 @@
       </div><!-- .profile-inner -->
     </div><!-- .profile-body -->
   </div><!-- #profile-page -->
+
+  <!-- Advisors Settings Page -->
+  <div id="advisors-page" style="display:none">
+
+    <div class="profile-topbar">
+      <button class="profile-back-btn" id="advisors-back-btn">← Back</button>
+      <div class="profile-topbar-title">Advisors</div>
+      <button class="btn-primary profile-save-top-btn" id="advisors-save-btn">Save</button>
+    </div>
+
+    <div class="profile-body">
+      <div class="profile-inner">
+
+        <!-- Section 1: Your Tribe -->
+        <section class="profile-section">
+          <div class="profile-section-title">Your Tribe</div>
+          <p class="profile-section-desc">Customize the display names of your 6 core advisors.</p>
+          <div class="advisor-settings-list">
+
+            <div class="advisor-settings-card">
+              <img src="../assets/avatars/seth.png" class="advisor-settings-avatar" alt="Seth">
+              <div class="advisor-settings-info">
+                <div class="advisor-settings-role">Spiritual Advisor</div>
+                <input type="text" class="profile-input" id="adv-name-seth" placeholder="Seth">
+              </div>
+            </div>
+
+            <div class="advisor-settings-card">
+              <img src="../assets/avatars/marcus.png" class="advisor-settings-avatar" alt="Marcus">
+              <div class="advisor-settings-info">
+                <div class="advisor-settings-role">Mindset Advisor</div>
+                <input type="text" class="profile-input" id="adv-name-marcus" placeholder="Marcus">
+              </div>
+            </div>
+
+            <div class="advisor-settings-card">
+              <img src="../assets/avatars/emma.png" class="advisor-settings-avatar" alt="Emma">
+              <div class="advisor-settings-info">
+                <div class="advisor-settings-role">Emotional Advisor</div>
+                <input type="text" class="profile-input" id="adv-name-emma" placeholder="Emma">
+              </div>
+            </div>
+
+            <div class="advisor-settings-card">
+              <img src="../assets/avatars/hannah.png" class="advisor-settings-avatar" alt="Hannah">
+              <div class="advisor-settings-info">
+                <div class="advisor-settings-role">Health Advisor</div>
+                <input type="text" class="profile-input" id="adv-name-hannah" placeholder="Hannah">
+              </div>
+            </div>
+
+            <div class="advisor-settings-card">
+              <img src="../assets/avatars/rachel.png" class="advisor-settings-avatar" alt="Rachel">
+              <div class="advisor-settings-info">
+                <div class="advisor-settings-role">Relationships Advisor</div>
+                <input type="text" class="profile-input" id="adv-name-rachel" placeholder="Rachel">
+              </div>
+            </div>
+
+            <div class="advisor-settings-card">
+              <img src="../assets/avatars/frank.png" class="advisor-settings-avatar" alt="Frank">
+              <div class="advisor-settings-info">
+                <div class="advisor-settings-role">Financial Advisor</div>
+                <input type="text" class="profile-input" id="adv-name-frank" placeholder="Frank">
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Section 2: Guide -->
+        <section class="profile-section">
+          <div class="profile-section-title">Guide — Your Custom Advisor</div>
+          <div class="advisor-settings-card">
+            <img src="../assets/avatars/guide.png" class="advisor-settings-avatar" alt="Guide">
+            <div class="advisor-settings-info">
+              <div class="advisor-settings-role">Personal Guide</div>
+              <input type="text" class="profile-input" id="adv-guide-persona" placeholder="e.g. My future self, a Stoic mentor, Dad...">
+            </div>
+          </div>
+          <p class="profile-field-hint" style="margin-top:10px">Define who your Guide speaks as — a mentor, your future self, or anyone who represents your ideal voice.</p>
+        </section>
+
+        <!-- Section 3: BVM -->
+        <section class="profile-section">
+          <div class="profile-section-title">BVM — Best Version of Me</div>
+          <p class="profile-section-desc">Your A-level self — disciplined, clear, and aligned with your highest standards.</p>
+
+          <div class="profile-field">
+            <label class="profile-label">Display Name</label>
+            <input type="text" class="profile-input" id="bvm-name-input" placeholder="Best Version of Me">
+          </div>
+
+          <div class="profile-field">
+            <label class="profile-label">Avatar</label>
+
+            <!-- Empty state -->
+            <div id="bvm-upload-area" class="bvm-upload-area">
+              <div class="bvm-upload-placeholder" id="bvm-upload-initial">B</div>
+              <p class="bvm-upload-prompt">Upload a photo to create a BVM avatar that looks like you.</p>
+              <label class="bvm-upload-btn" for="bvm-photo-input">Upload Photo</label>
+              <input type="file" id="bvm-photo-input" accept="image/*" style="display:none">
+            </div>
+
+            <!-- Processing state -->
+            <div id="bvm-converting" class="bvm-converting" style="display:none">
+              <div class="bvm-spinner"></div>
+              <p id="bvm-converting-text" class="bvm-converting-text">Converting your photo into your personal avatar...</p>
+            </div>
+
+            <!-- Preview state -->
+            <div id="bvm-preview-area" class="bvm-preview-area" style="display:none">
+              <img id="bvm-preview-img" class="bvm-preview-img" alt="BVM Avatar Preview">
+              <div class="bvm-preview-actions">
+                <button class="btn-primary" id="bvm-use-avatar">Use This Avatar</button>
+                <label class="bvm-upload-btn-sm" for="bvm-photo-retry">Upload Different Photo</label>
+                <input type="file" id="bvm-photo-retry" accept="image/*" style="display:none">
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <div class="profile-save-row">
+          <button class="btn-primary profile-save-btn" id="advisors-save-bottom-btn">Save Advisor Settings</button>
+        </div>
+
+      </div><!-- .profile-inner -->
+    </div><!-- .profile-body -->
+  </div><!-- #advisors-page -->
 
   <script src="./app.js"></script>
 </body>

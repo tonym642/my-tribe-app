@@ -3128,6 +3128,60 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   letter-spacing: 0.06em;
 }
 
+/* Profile section description */
+.profile-section-desc {
+  font-size: 13px;
+  color: var(--text-2);
+  margin: -8px 0 0;
+  line-height: 1.5;
+}
+
+/* Advisor settings cards */
+.advisor-settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.advisor-settings-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--surface);
+}
+
+.advisor-settings-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  flex-shrink: 0;
+}
+
+.advisor-settings-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.advisor-settings-role {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.advisor-settings-info .profile-input {
+  margin: 0;
+}
+
 /* Photo row */
 .profile-photo-row {
   display: flex;
