@@ -1966,6 +1966,9 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .bl-chat-title {
   font-size: 13px;
@@ -1974,6 +1977,16 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
+.bl-chat-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-2);
+  padding: 2px;
+  display: none; /* shown via media query on mobile */
+  align-items: center;
+}
+.bl-chat-close:hover { color: var(--text-1); }
 
 .bl-chat-advisor-row {
   padding: 8px 14px;
@@ -5802,6 +5815,8 @@ body.dark-mode .bl-chat-input-row { background: #0f1117; border-color: #2a2d3a; 
 body.dark-mode .bl-discussion-toggle { background: #1a1d27; border-color: #2a2d3a; color: var(--text-2); }
 body.dark-mode .bl-discussion-toggle:hover,
 body.dark-mode .bl-discussion-toggle.active { background: #22263a; color: #3b9eff; border-color: #3b9eff; }
+body.dark-mode .bl-chat-area { background: #0f1117; }
+body.dark-mode .bl-chat-close { color: var(--text-2); }
 body.dark-mode .bl-chat-input { background: #1a1d27; border-color: #2a2d3a; color: var(--text-1); }
 body.dark-mode .bl-chat-bubble.advisor { background: #1a1d27; border-color: #2a2d3a; }
 body.dark-mode .bl-adv-pill { background: var(--surface); border-color: #2a2d3a; color: var(--text-2); }
@@ -5818,16 +5833,82 @@ body.dark-mode .debate-thread::-webkit-scrollbar-thumb,
 body.dark-mode .campfire-story-content::-webkit-scrollbar-thumb,
 body.dark-mode .campfire-discussion-feed::-webkit-scrollbar-thumb { background: #2a2d3a; }
 
-/* Book Lessons — mobile: stack chat below content */
+/* ── Mobile Discussion Drawer ── */
+.bl-drawer-open-btn {
+  display: none;
+}
+.bl-drawer-backdrop {
+  display: none;
+}
+
 @media (max-width: 768px) {
-  #bl-lesson-phase { flex-direction: column; }
+  /* Floating drawer-open button */
+  .bl-drawer-open-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 120;
+    background: var(--accent, #2563EB);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  }
+
+  /* Backdrop */
+  .bl-drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 130;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .bl-drawer-backdrop.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* Chat area becomes a bottom drawer */
+  #bl-lesson-phase { flex-direction: row; } /* keep lesson body full width */
   .bl-chat-area {
-    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100% !important;
+    height: 75vh;
     border-left: none;
     border-top: 1px solid var(--border);
-    height: 260px;
+    border-radius: 16px 16px 0 0;
+    z-index: 140;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
   }
-  .bl-chat-advisor-row { flex-direction: row; align-items: center; gap: 10px; }
+  .bl-chat-area.drawer-open {
+    transform: translateY(0);
+  }
+  /* Hide desktop toggle on mobile */
+  .bl-discussion-toggle { display: none !important; }
+
+  /* Show close button in header */
+  .bl-chat-close { display: flex; }
+}
+
+@media (min-width: 769px) {
+  .bl-drawer-open-btn { display: none !important; }
+  .bl-drawer-backdrop { display: none !important; }
+  .bl-chat-close { display: none; }
 }
 
 /* ── Help Content ─────────────────────────────────────────────────────────── */

@@ -692,8 +692,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.key === 'Enter') blSendChat();
   });
 
-  // Book Lessons — Discussion panel toggle (desktop)
+  // Book Lessons — Discussion panel toggle (desktop) + drawer (mobile)
   document.getElementById('bl-discussion-toggle').addEventListener('click', blToggleDiscussion);
+  document.getElementById('bl-drawer-open-btn').addEventListener('click', blOpenDrawer);
+  document.getElementById('bl-chat-close').addEventListener('click', blCloseDrawer);
+  document.getElementById('bl-drawer-backdrop').addEventListener('click', blCloseDrawer);
 
   // Profile page (desktop + mobile)
   document.getElementById('btn-profile').addEventListener('click', openProfile);
@@ -2910,6 +2913,17 @@ function blToggleDiscussion() {
   const toggle = document.getElementById('bl-discussion-toggle');
   const hidden = area.classList.toggle('collapsed');
   toggle.classList.toggle('active', !hidden);
+}
+
+function blOpenDrawer() {
+  document.getElementById('bl-chat-area').classList.add('drawer-open');
+  document.getElementById('bl-drawer-backdrop').classList.add('visible');
+  setTimeout(() => document.getElementById('bl-chat-input').focus(), 300);
+}
+
+function blCloseDrawer() {
+  document.getElementById('bl-chat-area').classList.remove('drawer-open');
+  document.getElementById('bl-drawer-backdrop').classList.remove('visible');
 }
 
 async function blSendChat() {
