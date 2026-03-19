@@ -1601,7 +1601,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 
 /* ── Search Phase ── */
 .bl-search-container {
-  max-width: 520px;
+  max-width: 720px;
   margin: 40px auto 0;
 }
 .bl-intro {
