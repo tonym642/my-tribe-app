@@ -692,18 +692,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.key === 'Enter') blSendChat();
   });
 
-  // Book Lessons — advisor pills
-  document.querySelectorAll('.bl-adv-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      blActiveAdvisor = pill.dataset.advisor;
-      document.querySelectorAll('.bl-adv-pill').forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
-      const name = blActiveAdvisor === 'guide'
-        ? (ADVISORS.guide?.name || 'Guide')
-        : (ADVISORS[blActiveAdvisor]?.name || blActiveAdvisor);
-      document.getElementById('bl-active-advisor-name').textContent = name;
-    });
-  });
+  // Book Lessons — Discussion panel toggle (desktop)
+  document.getElementById('bl-discussion-toggle').addEventListener('click', blToggleDiscussion);
 
   // Profile page (desktop + mobile)
   document.getElementById('btn-profile').addEventListener('click', openProfile);
@@ -2909,17 +2899,42 @@ function blAppendMessage(role, content, advisorId) {
   msgs.scrollTop = msgs.scrollHeight;
 }
 
+// Resolve @mention to an advisor ID for book lessons
+function blResolveAdvisor(text) {
+  const mention = extractMentions(text)[0];
+  if (!mention) return blActiveAdvisor || 'guide';
+  // Try exact match first, then prefix match
+  const ids = Object.keys(ADVISORS);
+  return ids.find(id => id === mention)
+      || ids.find(id => id.startsWith(mention))
+      || 'guide';
+}
+
+function blToggleDiscussion() {
+  const area   = document.getElementById('bl-chat-area');
+  const toggle = document.getElementById('bl-discussion-toggle');
+  const hidden = area.classList.toggle('collapsed');
+  toggle.classList.toggle('active', !hidden);
+}
+
 async function blSendChat() {
-  const input = document.getElementById('bl-chat-input');
-  const msg   = input.value.trim();
-  if (!msg) return;
+  const input    = document.getElementById('bl-chat-input');
+  const rawMsg   = input.value.trim();
+  if (!rawMsg) return;
   input.value = '';
-  blAppendMessage('user', msg, null);
+
+  // Resolve advisor from @mention, fall back to last used
+  const advisorId = blResolveAdvisor(rawMsg);
+  blActiveAdvisor = advisorId;
+  // Strip @mention for AI, keep original for display
+  const aiMsg = removeMentions(rawMsg);
+
+  blAppendMessage('user', rawMsg, null);
 
   const msgs       = document.getElementById('bl-chat-messages');
   const loadingDiv = document.createElement('div');
-  const a          = ADVISORS[blActiveAdvisor] || ADVISORS.guide;
-  const avatarSrc  = `../assets/avatars/${blActiveAdvisor}.png`;
+  const a          = ADVISORS[advisorId] || ADVISORS.guide;
+  const avatarSrc  = `../assets/avatars/${advisorId}.png`;
   loadingDiv.className = 'advisor-card';
   loadingDiv.style.setProperty('--advisor-color', a.color);
   loadingDiv.innerHTML = `
@@ -2934,20 +2949,17 @@ async function blSendChat() {
   msgs.scrollTop = msgs.scrollHeight;
 
   try {
-    const bookCtx = blConfirmedBook
+    const bookCtx    = blConfirmedBook
       ? `"${blConfirmedBook.title}" by ${blConfirmedBook.author}`
       : blCurrentBook;
-    const advisor  = ADVISORS[blActiveAdvisor];
-    const baseSystem = advisor?.system
-      || `You are a wise learning guide. Keep responses concise and practical.`;
-    const sysPrompt = `${baseSystem}\n\nYou are currently helping the user learn from the book ${bookCtx}. Keep answers relevant to the book's lessons and their real-life application. Be concise (3-5 sentences).`;
+    const baseSystem = a.system || `You are a wise learning guide. Keep responses concise and practical.`;
+    const sysPrompt  = `${baseSystem}\n\nYou are currently helping the user learn from the book ${bookCtx}. Keep answers relevant to the book's lessons and their real-life application. Be concise (3-5 sentences).`;
 
     const history = blChatMessages.slice(-12)
       .filter(m => m.role === 'user' || m.role === 'advisor')
       .map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }));
-    // Replace last assistant with actual last user message
     const apiMessages = history.slice(0, -1);
-    apiMessages.push({ role: 'user', content: msg });
+    apiMessages.push({ role: 'user', content: aiMsg || rawMsg });
 
     const res = await fetch(API_URL, {
       method: 'POST',
@@ -2957,10 +2969,10 @@ async function blSendChat() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     loadingDiv.remove();
-    blAppendMessage('advisor', data.content[0].text, blActiveAdvisor);
+    blAppendMessage('advisor', data.content[0].text, advisorId);
   } catch (err) {
     loadingDiv.remove();
-    blAppendMessage('advisor', `Sorry, something went wrong. ${String(err)}`, blActiveAdvisor);
+    blAppendMessage('advisor', `Sorry, something went wrong. ${String(err)}`, advisorId);
   }
 }
 

@@ -1915,6 +1915,35 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   justify-content: center;
 }
 
+/* ── Discussion toggle button (desktop only) ── */
+.bl-discussion-toggle {
+  display: none; /* hidden on mobile */
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  z-index: 2;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.bl-discussion-toggle:hover,
+.bl-discussion-toggle.active {
+  background: var(--bg);
+  color: var(--accent, #2563EB);
+  border-color: var(--accent, #2563EB);
+}
+@media (min-width: 769px) {
+  .bl-discussion-toggle { display: flex; }
+  #bl-lesson-phase { position: relative; }
+}
+
 /* ── Chat Area — right panel on desktop ── */
 .bl-chat-area {
   flex-shrink: 0;
@@ -1923,7 +1952,29 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: width 0.2s ease;
 }
+.bl-chat-area.collapsed {
+  width: 0;
+  border-left: none;
+  overflow: hidden;
+}
+
+/* Discussion header */
+.bl-chat-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  background: var(--bg);
+}
+.bl-chat-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
 .bl-chat-advisor-row {
   padding: 8px 14px;
   display: flex;
@@ -5745,8 +5796,12 @@ body.dark-mode .bl-topic-btn,
 body.dark-mode .bl-topic-content,
 body.dark-mode .bl-book-card { background: #1a1d27; border-color: #2a2d3a; }
 body.dark-mode .bl-chat-area,
+body.dark-mode .bl-chat-header,
 body.dark-mode .bl-chat-advisor-row,
 body.dark-mode .bl-chat-input-row { background: #0f1117; border-color: #2a2d3a; }
+body.dark-mode .bl-discussion-toggle { background: #1a1d27; border-color: #2a2d3a; color: var(--text-2); }
+body.dark-mode .bl-discussion-toggle:hover,
+body.dark-mode .bl-discussion-toggle.active { background: #22263a; color: #3b9eff; border-color: #3b9eff; }
 body.dark-mode .bl-chat-input { background: #1a1d27; border-color: #2a2d3a; color: var(--text-1); }
 body.dark-mode .bl-chat-bubble.advisor { background: #1a1d27; border-color: #2a2d3a; }
 body.dark-mode .bl-adv-pill { background: var(--surface); border-color: #2a2d3a; color: var(--text-2); }
