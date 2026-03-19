@@ -2995,10 +2995,12 @@ suggestedTopics: 6 practical topics or questions the reader can explore (e.g. "H
     blRenderTopics();
     blUpdateProgress();
 
-    // Greeting from Guide
-    blAppendMessage('advisor',
-      `I've loaded **${blConfirmedBook.title}**. Click any topic above to explore it, or ask me anything about the book.`,
-      'guide');
+    // Greeting from Guide — only on first load (no saved discussion yet)
+    if (blChatMessages.length === 0) {
+      blAppendMessage('advisor',
+        `I've loaded **${blConfirmedBook.title}**. Click any topic above to explore it, or ask me anything about the book.`,
+        'guide');
+    }
 
   } catch (err) {
     document.getElementById('bl-overview-content').innerHTML =
@@ -3590,9 +3592,12 @@ topics: 6 practical topics or questions to explore (e.g. for Identity: "How iden
     clRenderTopics();
     clUpdateProgress();
 
-    clAppendMessage('advisor',
-      `I've loaded **${clCurrentLesson.title}**. Click any topic above to explore it, or ask me anything about this lesson.`,
-      'guide');
+    // Greeting from Guide — only on first load (no saved discussion yet)
+    if (clChatMessages.length === 0) {
+      clAppendMessage('advisor',
+        `I've loaded **${clCurrentLesson.title}**. Click any topic above to explore it, or ask me anything about this lesson.`,
+        'guide');
+    }
   } catch (err) {
     document.getElementById('cl-overview-content').innerHTML =
       `<span class="advisor-error-text">${esc(String(err))}</span>`;
