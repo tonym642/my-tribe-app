@@ -3346,7 +3346,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 
 .campfire-step-panel {
   width: 100%;
-  max-width: 640px;
+  max-width: 760px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -3528,15 +3528,16 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 4px;
-  padding: 18px 16px;
+  padding: 22px 16px;
   background: var(--surface);
   border: 2px solid var(--border);
   border-radius: 14px;
   cursor: pointer;
   font-family: var(--font);
   transition: border-color 0.15s, background 0.15s;
-  text-align: left;
+  text-align: center;
 }
 .cf-format-card:hover { border-color: var(--text-3); }
 .cf-format-card.active { border-color: #3b9eff; background: rgba(59,158,255,0.06); }
