@@ -421,10 +421,20 @@
             </div>
             <h1 class="welcome-title">The Tribe is Listening</h1>
   
-            <div class="welcome-prompts">
-              <button class="welcome-prompt onboard-pill" id="btn-guide-chat">How to chat with the tribe</button>
-              <button class="welcome-prompt onboard-pill" id="btn-guide-sessions">Explore tribe sessions</button>
-              <button class="welcome-prompt onboard-pill" id="btn-guide-stories">Discover tribe stories</button>
+            <!-- Utility Menu -->
+            <div class="advice-util-menu">
+              <button class="advice-util-link" id="btn-advice-help">Help</button>
+              <span class="advice-util-sep">|</span>
+              <button class="advice-util-link" id="btn-advice-history">History</button>
+              <span class="advice-util-sep">|</span>
+              <button class="advice-util-link" id="btn-advice-favorites">Favorites</button>
+            </div>
+
+            <!-- Suggestions Slider -->
+            <div class="suggestions-section">
+              <div class="suggestions-label">Suggestions</div>
+              <div class="suggestions-track" id="suggestions-track"></div>
+              <div class="suggestions-dots" id="suggestions-dots"></div>
             </div>
           </div>
         </div>
@@ -1565,6 +1575,21 @@
     </div>
 
   </div><!-- #advisors-page -->
+
+  <!-- Help Modal -->
+  <div class="modal-overlay" id="help-overlay">
+    <div class="modal help-modal">
+      <div class="modal-header">
+        <h3>Help</h3>
+        <button class="modal-close" id="help-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="help-content" class="help-content"></div>
+      </div>
+    </div>
+  </div>
 
   <script src="./help.js"></script>
   <script src="./app.js"></script>

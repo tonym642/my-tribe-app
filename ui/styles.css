@@ -339,6 +339,124 @@ html, body {
   text-align: center;
 }
 
+/* ── Advice Utility Menu ────────────────────────────────────────── */
+
+.advice-util-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  margin-bottom: 4px;
+}
+
+.advice-util-link {
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  padding: 2px 0;
+  transition: color 0.12s;
+}
+
+.advice-util-link:hover {
+  color: var(--text-1);
+}
+
+.advice-util-sep {
+  font-size: 13px;
+  color: var(--border);
+  user-select: none;
+}
+
+/* ── Suggestions Slider ─────────────────────────────────────────── */
+
+.suggestions-section {
+  margin-top: 24px;
+  text-align: left;
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.suggestions-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+
+.suggestions-track {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 4px 8px;
+  scrollbar-width: none;
+}
+
+.suggestions-track::-webkit-scrollbar {
+  display: none;
+}
+
+.suggestion-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  max-width: 240px;
+  white-space: normal;
+  text-align: left;
+  line-height: 1.4;
+}
+
+.suggestion-card:hover {
+  background: var(--bg);
+  color: var(--text-1);
+  border-color: #3b9eff;
+}
+
+.suggestions-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.suggestion-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.15s;
+}
+
+.suggestion-dot.active {
+  background: #3b9eff;
+}
+
+/* ── Help Modal ─────────────────────────────────────────────────── */
+
+.help-modal {
+  max-width: 520px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
 /* ── Guide modals ────────────────────────────────────────────────── */
 
 .guide-modal {
@@ -5290,6 +5408,18 @@ body.dark-mode .voting-option-input:focus { border-color: #555e72; background: #
 /* Welcome section */
 body.dark-mode .welcome-prompt { background: #1a1d27; color: var(--text-2); border-color: #2a2d3a; }
 body.dark-mode .welcome-prompt:hover { background: #22263a; border-color: #555e72; color: var(--text-1); }
+
+/* Advice utility menu */
+body.dark-mode .advice-util-link { color: var(--text-2); }
+body.dark-mode .advice-util-link:hover { color: var(--text-1); }
+body.dark-mode .advice-util-sep { color: #3a3e50; }
+
+/* Suggestions */
+body.dark-mode .suggestion-card { background: #1a1d27; border-color: #2a2d3a; color: var(--text-2); }
+body.dark-mode .suggestion-card:hover { background: #22263a; border-color: #3b9eff; color: var(--text-1); }
+body.dark-mode .suggestions-label { color: var(--text-3, #666); }
+body.dark-mode .suggestion-dot { background: #3a3e50; }
+body.dark-mode .suggestion-dot.active { background: #3b9eff; }
 
 /* Mode pills */
 body.dark-mode .mode-pill { background: #1a1d27; border-color: #2a2d3a; color: var(--text-2); }

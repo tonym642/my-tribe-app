@@ -343,16 +343,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     btn.addEventListener('mouseleave', () => $tooltip.classList.remove('visible'));
   });
 
-  // Onboarding guide pills
-  document.getElementById('btn-guide-chat').addEventListener('click', () => openGuide('chat-guide-overlay'));
-  document.getElementById('btn-guide-sessions').addEventListener('click', () => openGuide('sessions-guide-overlay'));
-  document.getElementById('btn-guide-stories').addEventListener('click', () => openGuide('stories-guide-overlay'));
+  // Onboarding guide pills (guarded — some may be removed from DOM)
+  const _guideChat = document.getElementById('btn-guide-chat');
+  if (_guideChat) _guideChat.addEventListener('click', () => openGuide('chat-guide-overlay'));
+  const _guideSessions = document.getElementById('btn-guide-sessions');
+  if (_guideSessions) _guideSessions.addEventListener('click', () => openGuide('sessions-guide-overlay'));
+  const _guideStories = document.getElementById('btn-guide-stories');
+  if (_guideStories) _guideStories.addEventListener('click', () => openGuide('stories-guide-overlay'));
   document.getElementById('chat-guide-close').addEventListener('click', () => closeGuide('chat-guide-overlay'));
   document.getElementById('sessions-guide-close').addEventListener('click', () => closeGuide('sessions-guide-overlay'));
   document.getElementById('stories-guide-close').addEventListener('click', () => closeGuide('stories-guide-overlay'));
   ['chat-guide-overlay','sessions-guide-overlay','stories-guide-overlay'].forEach(id => {
     document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) closeGuide(id); });
   });
+
+  // Advice page — utility menu
+  document.getElementById('btn-advice-help').addEventListener('click', openAdviceHelp);
+  document.getElementById('btn-advice-history').addEventListener('click', openHistoryPanel);
+  document.getElementById('btn-advice-favorites').addEventListener('click', () => showNotice('Favorites coming soon.'));
+
+  // Help modal close
+  document.getElementById('help-close').addEventListener('click', closeAdviceHelp);
+  document.getElementById('help-overlay').addEventListener('click', e => { if (e.target.id === 'help-overlay') closeAdviceHelp(); });
+
+  // Suggestions
+  renderSuggestions();
 
   // Conversations — New Chat
   ['btn-new-chat', 'm-btn-new-chat'].forEach(id => {
@@ -838,6 +853,65 @@ function autoGrow() {
 
 // ── Mode switching ────────────────────────────────────────────────
 
+// ── Suggestions ───────────────────────────────────────────────────
+
+const SUGGESTIONS = [
+  'How do I make better decisions?',
+  'Should I take this opportunity?',
+  'How to improve my relationship?',
+  'How to handle stress?',
+  'What should I prioritize right now?',
+  'How do I deal with a difficult person?',
+  'Am I on the right path?',
+  'How do I find more balance in my life?',
+];
+
+function renderSuggestions() {
+  const track = document.getElementById('suggestions-track');
+  const dots  = document.getElementById('suggestions-dots');
+  if (!track || !dots) return;
+
+  track.innerHTML = SUGGESTIONS.map(s =>
+    `<button class="suggestion-card">${s}</button>`
+  ).join('');
+
+  track.querySelectorAll('.suggestion-card').forEach(card => {
+    card.addEventListener('click', () => {
+      $input.value = card.textContent;
+      $input.focus();
+      onInputChange();
+    });
+  });
+
+  // Dot pagination — update active dot on scroll
+  dots.innerHTML = SUGGESTIONS.map((_, i) =>
+    `<span class="suggestion-dot${i === 0 ? ' active' : ''}" data-i="${i}"></span>`
+  ).join('');
+
+  track.addEventListener('scroll', () => {
+    const card = track.querySelector('.suggestion-card');
+    if (!card) return;
+    const cardW = card.offsetWidth + 12; // gap
+    const active = Math.min(Math.round(track.scrollLeft / cardW), SUGGESTIONS.length - 1);
+    dots.querySelectorAll('.suggestion-dot').forEach((d, i) =>
+      d.classList.toggle('active', i === active)
+    );
+  }, { passive: true });
+}
+
+// ── Advice Help Modal ─────────────────────────────────────────────
+
+function openAdviceHelp() {
+  const overlay = document.getElementById('help-overlay');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  renderHelpContent('advice', document.getElementById('help-content'));
+}
+
+function closeAdviceHelp() {
+  document.getElementById('help-overlay')?.classList.remove('open');
+}
+
 function setMode(mode) {
   const prev = state.mode;
   state.mode = mode;
@@ -866,13 +940,12 @@ function applyModeUI(mode, prev) {
   const chips = document.querySelectorAll('.advisor-chip');
 
   if (mode === 'tribe') {
-    state.selectedAdvisors = new Set(TRIBE);
+    state.selectedAdvisors = new Set();
     chips.forEach(chip => {
-      const id = chip.dataset.advisor;
-      chip.classList.toggle('active', TRIBE.includes(id));
-      chip.classList.toggle('dim',    id === 'guide');
-      chip.style.cursor = 'default';
+      chip.classList.remove('active', 'dim');
+      chip.style.cursor = 'pointer';
     });
+    syncChipHighlights();
 
   } else if (mode === 'guide') {
     state.selectedAdvisors = new Set(['guide']);
@@ -927,14 +1000,21 @@ function renderBvmIdentity() {
 }
 
 function toggleAdvisor(id) {
-  if (state.mode === 'tribe' || state.mode === 'guide' || state.mode === 'bvm') return;
+  if (state.mode === 'guide' || state.mode === 'bvm') return;
   hideAdvisorWarning();
 
   if (state.mode === 'parable') {
     // Single-select
     state.selectedAdvisors = new Set([id]);
   } else if (state.mode === 'member') {
-    // Multi-toggle — allow deselecting to zero (validated at send)
+    // Single-select — clicking the active one deselects
+    if (state.selectedAdvisors.has(id)) {
+      state.selectedAdvisors = new Set();
+    } else {
+      state.selectedAdvisors = new Set([id]);
+    }
+  } else if (state.mode === 'tribe') {
+    // Multi-toggle — user picks freely
     if (state.selectedAdvisors.has(id)) {
       state.selectedAdvisors.delete(id);
     } else {
@@ -1026,7 +1106,7 @@ async function handleSend() {
   const rawText = $input.value.trim();
   if (!rawText || state.isLoading) return;
 
-  if (state.mode === 'member' && state.selectedAdvisors.size === 0) {
+  if ((state.mode === 'member' || state.mode === 'tribe') && state.selectedAdvisors.size === 0) {
     showAdvisorWarning();
     return;
   }
