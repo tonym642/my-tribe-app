@@ -5878,26 +5878,26 @@ body.dark-mode .campfire-discussion-feed::-webkit-scrollbar-thumb { background: 
     pointer-events: all;
   }
 
-  /* Chat area becomes a left-side drawer (95% width) */
+  /* Chat area becomes a bottom drawer */
   #bl-lesson-phase { flex-direction: row; }
   .bl-chat-area {
     position: fixed;
-    top: 0;
     bottom: 0;
     left: 0;
-    width: 95% !important;
-    height: 100% !important;
+    right: 0;
+    width: 100% !important;
+    height: 75vh;
     border-left: none;
-    border-right: 1px solid var(--border);
-    border-radius: 0 16px 16px 0;
+    border-top: 1px solid var(--border);
+    border-radius: 16px 16px 0 0;
     z-index: 140;
-    transform: translateX(-100%);
+    transform: translateY(100%);
     transition: transform 0.3s ease;
-    box-shadow: 4px 0 24px rgba(0,0,0,0.18);
+    box-shadow: 0 -4px 24px rgba(0,0,0,0.18);
     background: var(--surface);
   }
   .bl-chat-area.drawer-open {
-    transform: translateX(0);
+    transform: translateY(0);
   }
   /* Hide desktop toggle on mobile */
   .bl-discussion-toggle { display: none !important; }
