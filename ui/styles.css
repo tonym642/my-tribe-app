@@ -3494,7 +3494,6 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   border-radius: 12px;
   padding: 16px 18px;
   width: 100%;
-  text-align: left;
 }
 
 .cf-guide-title {
@@ -3507,8 +3506,10 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 }
 
 .cf-guide-list {
-  margin: 0;
+  margin: 0 auto;
   padding-left: 18px;
+  width: fit-content;
+  text-align: left;
   display: flex;
   flex-direction: column;
   gap: 5px;
