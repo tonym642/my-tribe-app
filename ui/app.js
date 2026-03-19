@@ -384,6 +384,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-bl-util-help').addEventListener('click', () => openPageHelp('book-lessons'));
   document.getElementById('btn-bl-util-history').addEventListener('click', blOpenHistory);
   document.getElementById('btn-bl-util-favorites').addEventListener('click', blOpenFavorites);
+  document.getElementById('btn-bl-util-search').addEventListener('click', () => blShowPhase('bl-search-phase'));
 
   // Help modal close
   document.getElementById('help-close').addEventListener('click', closeAdviceHelp);
@@ -2985,10 +2986,12 @@ function blSaveBook() {
 function blOpenLibraryModal(tab) {
   const overlay = document.getElementById('bl-library-overlay');
   if (!overlay) return;
-  // Set active filter tab
+  // Set active filter tab and modal title
   overlay.querySelectorAll('.history-filter-btn').forEach(btn =>
     btn.classList.toggle('active', btn.dataset.blFilter === tab)
   );
+  document.getElementById('bl-library-modal-title').textContent =
+    tab === 'favorites' ? 'My Library' : 'Book History';
   overlay.classList.add('open');
   blRenderLibrary(tab);
 }

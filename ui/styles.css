@@ -432,7 +432,7 @@ html, body {
   border: none;
   padding: 4px;
   cursor: pointer;
-  color: var(--text-3, #bbb);
+  color: var(--text-2);
   transition: color 0.12s, transform 0.12s;
   display: flex;
   align-items: center;
@@ -3033,13 +3033,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 .history-item-actions {
   display: flex;
   gap: 2px;
-  opacity: 0;
-  transition: opacity 0.12s;
   flex-shrink: 0;
-}
-
-.history-item:hover .history-item-actions {
-  opacity: 1;
 }
 
 .history-action {
