@@ -392,6 +392,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  // Feature page utility menus — Campfire
+  document.getElementById('btn-campfire-util-help').addEventListener('click', () => openPageHelp('campfire'));
+  document.getElementById('btn-campfire-util-history').addEventListener('click', () => openCampfireHistory(false));
+  document.getElementById('btn-campfire-util-favorites').addEventListener('click', () => openCampfireHistory(true));
+  document.getElementById('campfire-history-close').addEventListener('click', closeCampfireHistory);
+  document.getElementById('campfire-history-overlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeCampfireHistory();
+  });
+  document.getElementById('campfire-history-overlay').querySelectorAll('.history-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => openCampfireHistory(btn.dataset.cfFilter === 'favorites'));
+  });
+
   // Feature page utility menus — Book Lessons
   document.getElementById('btn-bl-util-help').addEventListener('click', () => openPageHelp('book-lessons'));
   document.getElementById('btn-bl-util-history').addEventListener('click', blOpenHistory);
@@ -492,8 +504,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-campfire').addEventListener('click', openCampfire);
   document.getElementById('m-btn-campfire').addEventListener('click', () => { closeMobileNav(); openCampfire(); });
 
-  // Campfire — exit buttons
-  document.getElementById('campfire-exit-btn').addEventListener('click', closeCampfire);
+  // Campfire — exit button (session view)
   document.getElementById('cf-exit-session-btn').addEventListener('click', closeCampfire);
 
   // Campfire — storyteller selection
@@ -3586,10 +3597,81 @@ function saveCampfireStory() {
     pillar: cfPillar,
     format: cfFormat,
     storyteller: cfStoryteller === 'you' ? 'You' : (ADVISORS[cfAdvisorId]?.name || 'Advisor'),
-    savedAt: new Date().toISOString()
+    savedAt: new Date().toISOString(),
+    favorite: false
   });
   localStorage.setItem('tribe_story_library', JSON.stringify(library));
   showNotice('Story saved to your library.');
+}
+
+let _campfireHistoryFavOnly = false;
+
+function openCampfireHistory(favoritesOnly = false) {
+  _campfireHistoryFavOnly = favoritesOnly;
+  const overlay = document.getElementById('campfire-history-overlay');
+  overlay.querySelectorAll('.history-filter-btn').forEach(btn =>
+    btn.classList.toggle('active', favoritesOnly
+      ? btn.dataset.cfFilter === 'favorites'
+      : btn.dataset.cfFilter === 'all')
+  );
+  document.getElementById('campfire-history-modal-title').textContent =
+    favoritesOnly ? 'Favorites' : 'Story History';
+
+  const all = getStoryLibrary();
+  const stories = favoritesOnly ? all.filter(s => s.favorite) : all;
+  const $list = document.getElementById('campfire-history-list');
+
+  if (stories.length === 0) {
+    $list.innerHTML = `<p class="history-empty">${favoritesOnly ? 'No favorites yet.' : 'No stories saved yet.'}</p>`;
+  } else {
+    $list.innerHTML = stories.map(s => {
+      const title = esc(s.title || 'Untitled Story');
+      const date  = formatRelativeDate(s.savedAt);
+      const meta  = [s.storyteller, s.pillar].filter(Boolean).map(esc).join(' · ');
+      const isFav = !!s.favorite;
+      return `
+        <div class="history-item" data-id="${s.id}">
+          <div class="history-item-info">
+            <div class="history-item-title">${title}</div>
+            <div class="history-item-meta">${date}${meta ? ' · ' + meta : ''}</div>
+          </div>
+          <div class="history-item-actions">
+            <button class="history-heart-btn${isFav ? ' active' : ''}" data-action="fav" data-id="${s.id}" title="${isFav ? 'Remove favorite' : 'Add to favorites'}">${isFav ? HEART_FILLED : HEART_OUTLINE}</button>
+            <button class="history-action history-delete" data-action="delete" data-id="${s.id}" title="Delete">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
+          </div>
+        </div>`;
+    }).join('');
+
+    $list.querySelectorAll('[data-action="fav"]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        toggleCampfireStoryFavorite(btn.dataset.id);
+        openCampfireHistory(favoritesOnly);
+      });
+    });
+    $list.querySelectorAll('[data-action="delete"]').forEach(btn => {
+      btn.addEventListener('click', e => { e.stopPropagation(); deleteCampfireStory(btn.dataset.id); });
+    });
+  }
+
+  overlay.classList.add('open');
+}
+
+function closeCampfireHistory() {
+  document.getElementById('campfire-history-overlay').classList.remove('open');
+}
+
+function toggleCampfireStoryFavorite(id) {
+  const stories = getStoryLibrary();
+  const s = stories.find(x => x.id === id);
+  if (s) { s.favorite = !s.favorite; saveStoryLibraryData(stories); }
+}
+
+function deleteCampfireStory(id) {
+  saveStoryLibraryData(getStoryLibrary().filter(s => s.id !== id));
+  openCampfireHistory(_campfireHistoryFavOnly);
 }
 
 // ── Voting Mode ───────────────────────────────────────────────────

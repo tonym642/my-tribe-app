@@ -765,13 +765,22 @@
   <!-- ── Campfire Page (full-page, replaces main layout when open) ── -->
   <div id="campfire-page" data-help-key="campfire" style="display:none">
 
+    <!-- Centered title -->
+    <div class="bl-page-header">
+      <h1 class="bl-page-title">Campfire</h1>
+    </div>
+
+    <!-- Utility Menu -->
+    <div class="page-util-menu">
+      <button class="page-util-link" id="btn-campfire-util-help">Help</button>
+      <span class="page-util-sep">|</span>
+      <button class="page-util-link" id="btn-campfire-util-history">History</button>
+      <span class="page-util-sep">|</span>
+      <button class="page-util-link" id="btn-campfire-util-favorites">Favorites</button>
+    </div>
+
     <!-- SETUP FLOW -->
     <div class="campfire-setup" id="campfire-setup">
-      <div class="campfire-setup-topbar">
-        <button class="campfire-exit-btn" id="campfire-exit-btn">← Back</button>
-        <div class="campfire-setup-brand">Campfire</div>
-        <div style="width:80px"></div>
-      </div>
 
       <div class="campfire-setup-body">
 
@@ -948,6 +957,23 @@
 
       </div><!-- .campfire-session-body -->
     </div><!-- .campfire-session -->
+
+  <!-- Campfire History / Favorites Modal -->
+  <div class="modal-overlay" id="campfire-history-overlay">
+    <div class="modal history-modal">
+      <div class="modal-header">
+        <h3 id="campfire-history-modal-title">Story History</h3>
+        <button class="modal-close" id="campfire-history-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="history-filter-row">
+        <button class="history-filter-btn active" data-cf-filter="all">History</button>
+        <button class="history-filter-btn" data-cf-filter="favorites">Favorites</button>
+      </div>
+      <div class="history-list" id="campfire-history-list"></div>
+    </div>
+  </div>
 
   </div><!-- #campfire-page -->
 
