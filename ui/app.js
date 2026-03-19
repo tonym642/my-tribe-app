@@ -3916,6 +3916,71 @@ async function runVoting() {
 
 let debateRunning = false;
 
+// VS Arena — picked once per page load, never reshuffled on re-open
+const DEBATE_VS_POOL = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'frank'];
+let debateVSPair = null; // [leftId, rightId]
+
+function pickDebateVSPair() {
+  const pool = [...DEBATE_VS_POOL];
+  const li = Math.floor(Math.random() * pool.length);
+  const leftId = pool.splice(li, 1)[0];
+  const ri = Math.floor(Math.random() * pool.length);
+  const rightId = pool[ri];
+  return [leftId, rightId];
+}
+
+function renderDebateArena(forceReshuffle) {
+  if (!debateVSPair || forceReshuffle) debateVSPair = pickDebateVSPair();
+  const [leftId, rightId] = debateVSPair;
+
+  function sideHTML(id) {
+    const a = ADVISORS[id];
+    const customNames = JSON.parse(localStorage.getItem('tribe_advisor_names') || '{}');
+    const name = customNames[id] || a.name;
+    return `
+      <div class="debate-vs-side" data-vs-advisor="${id}" title="Click to address ${name}">
+        <div class="debate-vs-avatar" style="--av-color:${a.color}">
+          <span>${a.initial}</span>
+        </div>
+        <div class="debate-vs-name">${name}</div>
+        <div class="debate-vs-title">${a.title}</div>
+      </div>`;
+  }
+
+  const arena = document.getElementById('debate-vs-arena');
+  if (!arena) return;
+  arena.innerHTML = `
+    ${sideHTML(leftId)}
+    <div class="debate-vs-middle">
+      <div class="debate-vs-text">VS</div>
+      <button class="debate-vs-reshuffle" id="debate-vs-reshuffle" title="Reshuffle matchup">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+      </button>
+    </div>
+    ${sideHTML(rightId)}`;
+
+  // Reshuffle
+  document.getElementById('debate-vs-reshuffle').addEventListener('click', () => {
+    renderDebateArena(true);
+  });
+
+  // Click avatar → pre-fill @mention
+  arena.querySelectorAll('.debate-vs-side').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.vsAdvisor;
+      const customNames = JSON.parse(localStorage.getItem('tribe_advisor_names') || '{}');
+      const name = customNames[id] || ADVISORS[id].name;
+      const input = document.getElementById('debate-input');
+      input.value = `@${name} `;
+      input.focus();
+      input.dispatchEvent(new Event('input'));
+    });
+  });
+}
+
 // Advisors used in debate rounds (fixed 4-person council)
 const DEBATE_COUNCIL = ['marcus', 'emma', 'frank', 'seth'];
 
@@ -3931,6 +3996,7 @@ function openDebate() {
   document.getElementById('main-layout').style.display = 'none';
   resetDebate();
   renderDebateSuggestions();
+  renderDebateArena(false);
   setTimeout(() => document.getElementById('debate-input').focus(), 100);
 }
 

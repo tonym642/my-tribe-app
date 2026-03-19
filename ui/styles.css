@@ -5273,6 +5273,105 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   padding: 16px 24px 8px;
 }
 
+/* ── Debate VS Arena ─────────────────────────────────────────────── */
+.debate-vs-arena {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 36px 24px 28px;
+}
+
+.debate-vs-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: transform 0.15s;
+}
+
+.debate-vs-side:hover { transform: translateY(-3px); }
+
+.debate-vs-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--av-color, #7C3AED);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--av-color, #7C3AED) 20%, transparent),
+              0 6px 20px color-mix(in srgb, var(--av-color, #7C3AED) 30%, transparent);
+  animation: vs-pulse 3s ease-in-out infinite;
+}
+
+@keyframes vs-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--av-color, #7C3AED) 20%, transparent), 0 6px 20px color-mix(in srgb, var(--av-color, #7C3AED) 30%, transparent); }
+  50%       { box-shadow: 0 0 0 7px color-mix(in srgb, var(--av-color, #7C3AED) 15%, transparent), 0 8px 28px color-mix(in srgb, var(--av-color, #7C3AED) 40%, transparent); }
+}
+
+.debate-vs-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.debate-vs-title {
+  font-size: 11px;
+  color: var(--text-3);
+  text-align: center;
+  max-width: 110px;
+  line-height: 1.3;
+}
+
+.debate-vs-middle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.debate-vs-text {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 2px;
+}
+
+.debate-vs-reshuffle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-3);
+  transition: color 0.15s, border-color 0.15s, transform 0.3s;
+  padding: 0;
+}
+
+.debate-vs-reshuffle:hover {
+  color: var(--text-1);
+  border-color: var(--text-3);
+  transform: rotate(180deg);
+}
+
+@media (max-width: 480px) {
+  .debate-vs-arena { gap: 16px; padding: 24px 12px 20px; }
+  .debate-vs-avatar { width: 58px; height: 58px; font-size: 20px; }
+  .debate-vs-text { font-size: 18px; }
+  .debate-vs-title { max-width: 80px; font-size: 10px; }
+}
+
 /* Thread */
 .debate-thread {
   display: flex;
