@@ -5305,9 +5305,17 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   font-size: 26px;
   font-weight: 700;
   color: #fff;
+  overflow: hidden;
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--av-color, #7C3AED) 20%, transparent),
               0 6px 20px color-mix(in srgb, var(--av-color, #7C3AED) 30%, transparent);
   animation: vs-pulse 3s ease-in-out infinite;
+}
+
+.debate-vs-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 @keyframes vs-pulse {

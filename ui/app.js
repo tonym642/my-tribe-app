@@ -3961,10 +3961,14 @@ function renderDebateArena(forceReshuffle) {
     const a = ADVISORS[id];
     const customNames = JSON.parse(localStorage.getItem('tribe_advisor_names') || '{}');
     const name = customNames[id] || a.name;
+    const src = ADVISOR_AVATAR[id];
+    const avatarInner = src
+      ? `<img src="${src}" alt="${name}" class="debate-vs-avatar-img">`
+      : `<span>${a.initial}</span>`;
     return `
       <div class="debate-vs-side" data-vs-advisor="${id}" title="Click to address ${name}">
         <div class="debate-vs-avatar" style="--av-color:${a.color}">
-          <span>${a.initial}</span>
+          ${avatarInner}
         </div>
         <div class="debate-vs-name">${name}</div>
         <div class="debate-vs-title">${a.title}</div>
