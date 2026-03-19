@@ -1156,11 +1156,16 @@ function blRenderBookSuggestions() {
   const dots  = document.getElementById('bl-suggestions-dots');
   if (!track || !dots) return;
 
-  track.innerHTML = BL_SUGGESTIONS.map(b =>
-    `<button class="suggestion-card"><strong>${esc(b.title)}</strong><br><small>${esc(b.author)}</small></button>`
-  ).join('');
+  track.innerHTML = BL_SUGGESTIONS.map(b => {
+    const initials = b.author.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    return `<button class="bl-book-suggestion-card">
+      <div class="bl-book-sug-avatar">${initials}</div>
+      <div class="bl-book-sug-title">${esc(b.title)}</div>
+      <div class="bl-book-sug-author">${esc(b.author)}</div>
+    </button>`;
+  }).join('');
 
-  track.querySelectorAll('.suggestion-card').forEach((card, i) => {
+  track.querySelectorAll('.bl-book-suggestion-card').forEach((card, i) => {
     card.addEventListener('click', () => {
       document.getElementById('bl-book-input').value = BL_SUGGESTIONS[i].title;
       document.getElementById('bl-book-input').focus();
@@ -1172,7 +1177,7 @@ function blRenderBookSuggestions() {
   ).join('');
 
   track.addEventListener('scroll', () => {
-    const card = track.querySelector('.suggestion-card');
+    const card = track.querySelector('.bl-book-suggestion-card');
     if (!card) return;
     const cardW = card.offsetWidth + 12;
     const active = Math.min(Math.round(track.scrollLeft / cardW), BL_SUGGESTIONS.length - 1);
@@ -1182,7 +1187,7 @@ function blRenderBookSuggestions() {
   }, { passive: true });
 
   function scrollByCard(dir) {
-    const card = track.querySelector('.suggestion-card');
+    const card = track.querySelector('.bl-book-suggestion-card');
     if (!card) return;
     track.scrollBy({ left: dir * (card.offsetWidth + 12), behavior: 'smooth' });
   }
