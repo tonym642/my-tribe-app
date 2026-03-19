@@ -588,13 +588,7 @@
 
       <!-- Header -->
       <div class="bl-page-header">
-        <h2 class="bl-page-title">Book Lessons</h2>
-        <div class="bl-header-actions">
-          <button class="bl-my-books-btn" id="bl-my-books-btn">My Books</button>
-          <button class="bl-page-close" id="book-lessons-close">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-          </button>
-        </div>
+        <h1 class="bl-page-title">Book Lessons</h1>
       </div>
 
       <!-- Utility Menu -->
@@ -609,6 +603,18 @@
       <!-- Search Phase -->
       <div id="bl-search-phase" class="bl-phase">
         <div class="bl-search-container">
+
+          <!-- Book Suggestions Carousel -->
+          <div class="suggestions-section bl-suggestions-section">
+            <div class="suggestions-label">Popular Books</div>
+            <div class="suggestions-track" id="bl-suggestions-track"></div>
+            <div class="suggestions-dots" id="bl-suggestions-dots"></div>
+            <div class="suggestions-nav">
+              <button class="suggestions-arrow" id="bl-suggestions-prev" aria-label="Previous">&#8249;</button>
+              <button class="suggestions-arrow" id="bl-suggestions-next" aria-label="Next">&#8250;</button>
+            </div>
+          </div>
+
           <p class="bl-intro">Enter a book title to start an interactive lesson with your Guide.</p>
           <div class="bl-search-row">
             <input type="text" class="form-input" id="bl-book-input"
@@ -709,15 +715,18 @@
 
       </div><!-- /#bl-lesson-phase -->
 
-      <!-- My Books Library Phase -->
+      <!-- Library Phase (Favorites + History) -->
       <div id="bl-library-phase" class="bl-phase" style="display:none">
         <div class="bl-library-header">
-          <h3 class="bl-library-title">My Books</h3>
-          <button class="bl-back-btn" id="bl-library-back">← Back to Search</button>
+          <div class="bl-library-tabs">
+            <button class="bl-lib-tab active" data-tab="favorites">Favorites</button>
+            <button class="bl-lib-tab" data-tab="history">History</button>
+          </div>
+          <button class="bl-back-btn" id="bl-library-back">← Back</button>
         </div>
         <div id="bl-books-list" class="bl-books-list"></div>
         <div id="bl-no-books" class="bl-no-books" style="display:none">
-          <p>No books saved yet. Complete a lesson and save your first book.</p>
+          <p id="bl-no-books-msg">No books saved yet.</p>
         </div>
       </div>
 

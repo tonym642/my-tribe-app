@@ -382,8 +382,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Feature page utility menus — Book Lessons
   document.getElementById('btn-bl-util-help').addEventListener('click', () => openPageHelp('book-lessons'));
-  document.getElementById('btn-bl-util-history').addEventListener('click', openHistoryPanel);
-  document.getElementById('btn-bl-util-favorites').addEventListener('click', () => openHistoryPanel(true));
+  document.getElementById('btn-bl-util-history').addEventListener('click', blOpenHistory);
+  document.getElementById('btn-bl-util-favorites').addEventListener('click', blOpenFavorites);
 
   // Help modal close
   document.getElementById('help-close').addEventListener('click', closeAdviceHelp);
@@ -647,9 +647,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('m-btn-book-lessons').addEventListener('click', () => { closeMobileNav(); openBookLessons(); });
 
   // Book Lessons — page controls
-  document.getElementById('book-lessons-close').addEventListener('click', closeBookLessons);
-  document.getElementById('bl-my-books-btn').addEventListener('click', blOpenMyBooks);
   document.getElementById('bl-library-back').addEventListener('click', () => blShowPhase('bl-search-phase'));
+  // Library tabs
+  document.querySelectorAll('.bl-lib-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.bl-lib-tab').forEach(t => t.classList.toggle('active', t === tab));
+      blRenderLibrary(tab.dataset.tab);
+    });
+  });
 
   // Book Lessons — search
   document.getElementById('bl-search-btn').addEventListener('click', blSearchBook);
@@ -929,6 +934,58 @@ function renderSuggestions() {
   }
   document.getElementById('suggestions-prev')?.addEventListener('click', () => scrollByCard(-1));
   document.getElementById('suggestions-next')?.addEventListener('click', () => scrollByCard(1));
+}
+
+// ── Book Suggestions ──────────────────────────────────────────────
+
+const BL_SUGGESTIONS = [
+  { title: 'Atomic Habits',           author: 'James Clear' },
+  { title: 'The 7 Habits of Highly Effective People', author: 'Stephen Covey' },
+  { title: 'Think and Grow Rich',     author: 'Napoleon Hill' },
+  { title: 'The Power of Now',        author: 'Eckhart Tolle' },
+  { title: 'Mindset',                 author: 'Carol Dweck' },
+  { title: 'How to Win Friends and Influence People', author: 'Dale Carnegie' },
+  { title: 'The Alchemist',           author: 'Paulo Coelho' },
+  { title: 'Man\'s Search for Meaning', author: 'Viktor Frankl' },
+];
+
+function blRenderBookSuggestions() {
+  const track = document.getElementById('bl-suggestions-track');
+  const dots  = document.getElementById('bl-suggestions-dots');
+  if (!track || !dots) return;
+
+  track.innerHTML = BL_SUGGESTIONS.map(b =>
+    `<button class="suggestion-card"><strong>${esc(b.title)}</strong><br><small>${esc(b.author)}</small></button>`
+  ).join('');
+
+  track.querySelectorAll('.suggestion-card').forEach((card, i) => {
+    card.addEventListener('click', () => {
+      document.getElementById('bl-book-input').value = BL_SUGGESTIONS[i].title;
+      document.getElementById('bl-book-input').focus();
+    });
+  });
+
+  dots.innerHTML = BL_SUGGESTIONS.map((_, i) =>
+    `<span class="suggestion-dot${i === 0 ? ' active' : ''}" data-i="${i}"></span>`
+  ).join('');
+
+  track.addEventListener('scroll', () => {
+    const card = track.querySelector('.suggestion-card');
+    if (!card) return;
+    const cardW = card.offsetWidth + 12;
+    const active = Math.min(Math.round(track.scrollLeft / cardW), BL_SUGGESTIONS.length - 1);
+    dots.querySelectorAll('.suggestion-dot').forEach((d, i) =>
+      d.classList.toggle('active', i === active)
+    );
+  }, { passive: true });
+
+  function scrollByCard(dir) {
+    const card = track.querySelector('.suggestion-card');
+    if (!card) return;
+    track.scrollBy({ left: dir * (card.offsetWidth + 12), behavior: 'smooth' });
+  }
+  document.getElementById('bl-suggestions-prev')?.addEventListener('click', () => scrollByCard(-1));
+  document.getElementById('bl-suggestions-next')?.addEventListener('click', () => scrollByCard(1));
 }
 
 // ── Advice Help Modal ─────────────────────────────────────────────
@@ -2508,6 +2565,26 @@ function getSavedBooks() {
 function saveBooksData(books) {
   localStorage.setItem('tribe_books', JSON.stringify(books));
 }
+function getViewedBooks() {
+  try { return JSON.parse(localStorage.getItem('tribe_books_viewed') || '[]'); }
+  catch { return []; }
+}
+function saveViewedBooks(books) {
+  localStorage.setItem('tribe_books_viewed', JSON.stringify(books));
+}
+function blRecordView() {
+  if (!blConfirmedBook) return;
+  const viewed = getViewedBooks();
+  // Move to top if already present, else add new entry
+  const filtered = viewed.filter(b => b.title !== blConfirmedBook.title);
+  filtered.unshift({
+    title: blConfirmedBook.title,
+    author: blConfirmedBook.author,
+    tagline: blConfirmedBook.tagline || '',
+    viewedAt: Date.now()
+  });
+  saveViewedBooks(filtered.slice(0, 50)); // cap at 50
+}
 
 function blShowPhase(phaseId) {
   ['bl-search-phase', 'bl-confirm-phase', 'bl-lesson-phase', 'bl-library-phase']
@@ -2536,6 +2613,7 @@ function openBookLessons() {
   document.getElementById('bl-active-advisor-name').textContent =
     ADVISORS.guide?.name || 'Guide';
   blShowPhase('bl-search-phase');
+  blRenderBookSuggestions();
   document.getElementById('main-layout').style.display = 'none';
   document.getElementById('book-lessons-page').style.display = 'flex';
   setTimeout(() => document.getElementById('bl-book-input').focus(), 100);
@@ -2591,6 +2669,7 @@ async function blSearchBook() {
 
 async function blStartLesson() {
   if (!blConfirmedBook) return;
+  blRecordView();
   blChatMessages    = [];
   blCompletedTopics = new Set();
   blCurrentLesson   = null;
@@ -2899,26 +2978,68 @@ function blSaveBook() {
   document.getElementById('bl-saved-badge').style.display = '';
 }
 
-function blOpenMyBooks() {
+function blOpenFavorites() {
+  document.querySelectorAll('.bl-lib-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.tab === 'favorites')
+  );
   blShowPhase('bl-library-phase');
-  const books = getSavedBooks();
+  blRenderLibrary('favorites');
+}
+
+function blOpenHistory() {
+  document.querySelectorAll('.bl-lib-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.tab === 'history')
+  );
+  blShowPhase('bl-library-phase');
+  blRenderLibrary('history');
+}
+
+function blRenderLibrary(tab) {
   const list  = document.getElementById('bl-books-list');
   const empty = document.getElementById('bl-no-books');
-  if (books.length === 0) {
-    list.innerHTML = '';
-    empty.style.display = '';
-  } else {
+  const msg   = document.getElementById('bl-no-books-msg');
+
+  if (tab === 'favorites') {
+    const books = getSavedBooks();
+    if (books.length === 0) {
+      list.innerHTML = '';
+      msg.textContent = 'No saved books yet. Start a lesson and save your first book.';
+      empty.style.display = '';
+      return;
+    }
     empty.style.display = 'none';
     list.innerHTML = books.map((b, i) =>
-      `<div class="bl-book-card" data-idx="${i}">
+      `<div class="bl-book-card" data-idx="${i}" data-source="saved">
         <div class="bl-book-card-title">${esc(b.title)}</div>
         <div class="bl-book-card-author">by ${esc(b.author)}</div>
       </div>`
     ).join('');
     list.querySelectorAll('.bl-book-card').forEach(card => {
-      const idx = parseInt(card.dataset.idx);
       card.addEventListener('click', () => {
-        blConfirmedBook = books[idx];
+        blConfirmedBook = books[parseInt(card.dataset.idx)];
+        blStartLesson();
+      });
+    });
+
+  } else {
+    const viewed = getViewedBooks();
+    if (viewed.length === 0) {
+      list.innerHTML = '';
+      msg.textContent = 'No books viewed yet. Start a lesson to build your history.';
+      empty.style.display = '';
+      return;
+    }
+    empty.style.display = 'none';
+    list.innerHTML = viewed.map((b, i) =>
+      `<div class="bl-viewed-card" data-idx="${i}">
+        <div class="bl-viewed-card-title">${esc(b.title)}</div>
+        <div class="bl-viewed-card-author">by ${esc(b.author)}</div>
+        <div class="bl-viewed-card-meta">${formatRelativeDate(b.viewedAt)}</div>
+      </div>`
+    ).join('');
+    list.querySelectorAll('.bl-viewed-card').forEach(card => {
+      card.addEventListener('click', () => {
+        blConfirmedBook = viewed[parseInt(card.dataset.idx)];
         blStartLesson();
       });
     });
