@@ -580,6 +580,26 @@
     </div>
   </div>
 
+  <!-- Core Lessons Library Modal -->
+  <div class="modal-overlay" id="cl-library-overlay">
+    <div class="modal history-modal">
+      <div class="modal-header">
+        <h3 id="cl-library-modal-title">Lesson History</h3>
+        <button class="modal-close" id="cl-library-modal-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="history-filter-row">
+        <button class="history-filter-btn active" data-cl-filter="history">History</button>
+        <button class="history-filter-btn" data-cl-filter="favorites">My Library</button>
+      </div>
+      <div class="history-list" id="cl-library-list"></div>
+    </div>
+  </div>
+
   <!-- Book Library Modal -->
   <div class="modal-overlay" id="bl-library-overlay">
     <div class="modal history-modal">
@@ -757,6 +777,136 @@
           <p id="bl-no-books-msg">No books saved yet.</p>
         </div>
       </div>
+
+    </div>
+  </div>
+
+
+  <!-- Core Lessons Page -->
+  <div id="core-lessons-page" data-help-key="core-lessons" style="display:none">
+    <div class="bl-page-layout">
+
+      <!-- Header -->
+      <div class="bl-page-header">
+        <h1 class="bl-page-title">Core Lessons</h1>
+      </div>
+
+      <!-- Utility Menu -->
+      <div class="page-util-menu">
+        <button class="page-util-link" id="btn-cl-util-help">Help</button>
+        <span class="page-util-sep">|</span>
+        <button class="page-util-link" id="btn-cl-util-history">History</button>
+        <span class="page-util-sep">|</span>
+        <button class="page-util-link" id="btn-cl-util-favorites">My Library</button>
+        <span class="page-util-sep">|</span>
+        <button class="page-util-link" id="btn-cl-util-search">Search</button>
+      </div>
+
+      <!-- Search Phase -->
+      <div id="cl-search-phase" class="bl-phase">
+        <div class="bl-search-container">
+
+          <!-- Lesson Suggestions Carousel -->
+          <div class="suggestions-section bl-suggestions-section">
+            <div class="suggestions-label">Featured Lessons</div>
+            <div class="suggestions-track" id="cl-suggestions-track"></div>
+            <div class="suggestions-dots" id="cl-suggestions-dots"></div>
+            <div class="suggestions-nav">
+              <button class="suggestions-arrow" id="cl-suggestions-prev" aria-label="Previous">&#8249;</button>
+              <button class="suggestions-arrow" id="cl-suggestions-next" aria-label="Next">&#8250;</button>
+            </div>
+          </div>
+
+          <p class="bl-intro">Enter a lesson title to start an interactive lesson with your Guide.</p>
+          <div class="bl-search-row">
+            <input type="text" class="form-input" id="cl-lesson-input"
+              placeholder="Identity, Needs, Wounds, Relationships..." />
+            <button class="btn-primary" id="cl-search-btn">Search</button>
+          </div>
+          <div id="cl-no-results" class="cl-no-results" style="display:none">No lessons found. Try a different title or keyword.</div>
+        </div>
+      </div>
+
+      <!-- Lesson Phase -->
+      <div id="cl-lesson-phase" class="bl-phase" style="display:none">
+
+        <!-- Discussion toggle (desktop only) -->
+        <button class="bl-discussion-toggle" id="cl-discussion-toggle" title="Toggle Discussion">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <span class="bl-dt-label">Discussion</span>
+        </button>
+
+        <div class="bl-lesson-body">
+
+          <!-- Lesson Header -->
+          <div class="bl-book-header" id="cl-lesson-header"></div>
+
+          <!-- Overview -->
+          <div class="bl-section" id="cl-overview-section">
+            <div class="bl-section-title">Overview</div>
+            <div class="bl-section-body" id="cl-overview-content"></div>
+          </div>
+
+          <!-- Key Concepts -->
+          <div class="bl-section" id="cl-key-concepts-section">
+            <div class="bl-section-title">Key Concepts</div>
+            <div class="bl-key-concepts-list" id="cl-key-concepts-list"></div>
+          </div>
+
+          <!-- Suggested Topics -->
+          <div class="bl-section" id="cl-topics-section">
+            <div class="bl-section-title">Suggested Topics</div>
+            <div class="bl-topics-list" id="cl-topics-list"></div>
+          </div>
+
+          <!-- Progress Tracker -->
+          <div class="bl-section" id="cl-progress-section">
+            <div class="bl-section-title">Progress</div>
+            <div class="bl-progress-bar"><div class="bl-progress-fill" id="cl-progress-fill"></div></div>
+            <div class="bl-progress-label" id="cl-progress-label">0 of 0 topics completed</div>
+          </div>
+
+          <!-- Topic Detail (shown when a topic is clicked) -->
+          <div id="cl-topic-detail" style="display:none">
+            <button class="bl-back-to-topics" id="cl-back-to-topics">← Back to Topics</button>
+            <div id="cl-topic-content" class="bl-topic-content"></div>
+          </div>
+
+          <!-- Save Lesson -->
+          <div class="bl-save-row">
+            <button class="bl-save-btn" id="cl-save-btn">Save to My Library</button>
+          </div>
+
+        </div><!-- /.bl-lesson-body -->
+
+        <!-- Mobile drawer open button (mobile only) -->
+        <button class="bl-drawer-open-btn" id="cl-drawer-open-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          Discussion
+        </button>
+
+        <!-- Drawer backdrop (mobile only) -->
+        <div class="bl-drawer-backdrop" id="cl-drawer-backdrop"></div>
+
+        <!-- Chat Area -->
+        <div class="bl-chat-area" id="cl-chat-area">
+          <div class="bl-chat-header">
+            <span class="bl-chat-title">Discussion</span>
+            <button class="bl-chat-close" id="cl-chat-close" title="Close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="bl-chat-messages" id="cl-chat-messages"></div>
+          <div class="bl-chat-input-row">
+            <input type="text" class="bl-chat-input" id="cl-chat-input"
+              placeholder="@Guide, @Seth, @Marcus…" />
+            <button class="bl-chat-send" id="cl-chat-send">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+          </div>
+        </div><!-- /.cl-chat-area -->
+
+      </div><!-- /#cl-lesson-phase -->
 
     </div>
   </div>

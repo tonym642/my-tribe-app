@@ -438,9 +438,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Navigation — coming soon items (desktop + mobile)
   const comingSoon = [
-    'btn-core-lessons',
     'btn-onboarding',
-    'm-btn-core-lessons',
     'm-btn-onboarding',
     'btn-spiritual-lessons',
     'm-btn-spiritual-lessons'
@@ -456,6 +454,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeDebate();
     closeCampfire();
     closeBookLessons();
+    closeCoreLessons();
   }
   document.getElementById('btn-advice').addEventListener('click', goToAdvice);
   document.getElementById('m-btn-advice').addEventListener('click', () => { closeMobileNav(); goToAdvice(); });
@@ -671,6 +670,53 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (aboutCurrentIndex < ABOUT_KEYS.length - 1) { aboutCurrentIndex++; renderAboutFrame(); }
   });
 
+  // Core Lessons — nav buttons (desktop + mobile)
+  document.getElementById('btn-core-lessons').addEventListener('click', openCoreLessons);
+  document.getElementById('m-btn-core-lessons').addEventListener('click', () => { closeMobileNav(); openCoreLessons(); });
+
+  // Core Lessons — library modal
+  document.getElementById('cl-library-modal-close').addEventListener('click', clCloseLibraryModal);
+  document.getElementById('cl-library-overlay').addEventListener('click', e => {
+    if (e.target.id === 'cl-library-overlay') clCloseLibraryModal();
+  });
+  document.getElementById('cl-library-overlay').querySelectorAll('.history-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('cl-library-overlay').querySelectorAll('.history-filter-btn')
+        .forEach(b => b.classList.toggle('active', b === btn));
+      clRenderLibrary(btn.dataset.clFilter);
+    });
+  });
+
+  // Core Lessons — search
+  document.getElementById('cl-search-btn').addEventListener('click', clSearch);
+  document.getElementById('cl-lesson-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') clSearch();
+  });
+
+  // Core Lessons — util menu
+  document.getElementById('btn-cl-util-help').addEventListener('click', () => openPageHelp('core-lessons'));
+  document.getElementById('btn-cl-util-history').addEventListener('click', () => clOpenLibraryModal('history'));
+  document.getElementById('btn-cl-util-favorites').addEventListener('click', () => clOpenLibraryModal('favorites'));
+  document.getElementById('btn-cl-util-search').addEventListener('click', () => { clShowPhase('cl-search-phase'); setTimeout(() => document.getElementById('cl-lesson-input').focus(), 50); });
+
+  // Core Lessons — back to topics
+  document.getElementById('cl-back-to-topics').addEventListener('click', clBackToTopics);
+
+  // Core Lessons — save lesson
+  document.getElementById('cl-save-btn').addEventListener('click', clSaveLesson);
+
+  // Core Lessons — chat
+  document.getElementById('cl-chat-send').addEventListener('click', clSendChat);
+  document.getElementById('cl-chat-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') clSendChat();
+  });
+
+  // Core Lessons — Discussion panel toggle (desktop) + drawer (mobile)
+  document.getElementById('cl-discussion-toggle').addEventListener('click', clToggleDiscussion);
+  document.getElementById('cl-drawer-open-btn').addEventListener('click', clOpenDrawer);
+  document.getElementById('cl-chat-close').addEventListener('click', clCloseDrawer);
+  document.getElementById('cl-drawer-backdrop').addEventListener('click', clCloseDrawer);
+
   // Book Lessons — nav buttons (desktop + mobile)
   document.getElementById('btn-book-lessons').addEventListener('click', openBookLessons);
   document.getElementById('m-btn-book-lessons').addEventListener('click', () => { closeMobileNav(); openBookLessons(); });
@@ -815,6 +861,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeAdvisorsPage();
     closeVoting();
     closeBookLessons();
+    closeCoreLessons();
     closeCampfire();
     startNewChat();
     setMode('member');
@@ -1671,6 +1718,7 @@ function switchAdvisorTab(tabId) {
 
 function openAdvisorsPage() {
   closeBookLessons();
+  closeCoreLessons();
   // Update tab labels with current names
   const names = getAdvisorNames();
   [...TRIBE_IDS, 'guide'].forEach(id => {
@@ -2662,6 +2710,7 @@ function blShowPhase(phaseId) {
 }
 
 function openBookLessons() {
+  closeCoreLessons();
   blCurrentBook     = '';
   blConfirmedBook   = null;
   blCurrentLesson   = null;
@@ -3186,6 +3235,558 @@ function blRenderLibrary(tab) {
   });
 }
 
+// ── Core Lessons ─────────────────────────────────────────────────
+
+const CL_SUGGESTIONS = [
+  { title: 'Identity',      category: 'Self' },
+  { title: 'Stages',        category: 'Growth' },
+  { title: 'Principles',    category: 'Character' },
+  { title: 'Needs',         category: 'Psychology' },
+  { title: 'Paradigms',     category: 'Mindset' },
+  { title: 'Discovery',     category: 'Journey' },
+  { title: 'Execution',     category: 'Action' },
+  { title: 'Wounds',        category: 'Healing' },
+  { title: 'Tribes',        category: 'Community' },
+  { title: 'Relationships', category: 'Connection' },
+  { title: 'Happiness',     category: 'Wellbeing' },
+  { title: 'Struggles',     category: 'Resilience' },
+  { title: 'Roots',         category: 'Foundation' },
+  { title: 'Stories',       category: 'Narrative' },
+];
+
+let clCurrentLesson   = null;  // { title, category }
+let clLessonContent   = null;  // { overview, keyConcepts[], topics[] }
+let clChatMessages    = [];
+let clCompletedTopics = new Set();
+let clActiveAdvisor   = 'guide';
+
+// ── Persistence ──────────────────────────────────────────────────
+
+function clGetSavedLessons() {
+  try { return JSON.parse(localStorage.getItem('tribe_cl_lessons') || '[]'); } catch { return []; }
+}
+function clSaveLessonsData(lessons) {
+  localStorage.setItem('tribe_cl_lessons', JSON.stringify(lessons));
+}
+function clGetViewedLessons() {
+  try { return JSON.parse(localStorage.getItem('tribe_cl_viewed') || '[]'); } catch { return []; }
+}
+function clSaveViewedLessons(lessons) {
+  localStorage.setItem('tribe_cl_viewed', JSON.stringify(lessons));
+}
+function clGetDiscussion(title) {
+  try {
+    const all = JSON.parse(localStorage.getItem('tribe_cl_discussions') || '{}');
+    return all[title] || [];
+  } catch { return []; }
+}
+function clSaveDiscussion(title, messages) {
+  try {
+    const all = JSON.parse(localStorage.getItem('tribe_cl_discussions') || '{}');
+    all[title] = messages;
+    localStorage.setItem('tribe_cl_discussions', JSON.stringify(all));
+  } catch {}
+}
+function clRecordView() {
+  if (!clCurrentLesson) return;
+  const viewed = clGetViewedLessons();
+  const filtered = viewed.filter(l => l.title !== clCurrentLesson.title);
+  filtered.unshift({ title: clCurrentLesson.title, category: clCurrentLesson.category, viewedAt: Date.now() });
+  clSaveViewedLessons(filtered.slice(0, 50));
+}
+
+// ── Page open / close ─────────────────────────────────────────────
+
+function clShowPhase(phaseId) {
+  ['cl-search-phase', 'cl-lesson-phase'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.style.display = (id === phaseId) ? (id === 'cl-lesson-phase' ? 'flex' : '') : 'none';
+  });
+}
+
+function openCoreLessons() {
+  closeBookLessons();
+  closeCampfire();
+  closeVoting();
+  closeDebate();
+  clCurrentLesson   = null;
+  clLessonContent   = null;
+  clChatMessages    = [];
+  clCompletedTopics = new Set();
+  clActiveAdvisor   = 'guide';
+  document.getElementById('cl-lesson-input').value = '';
+  document.getElementById('cl-no-results').style.display = 'none';
+  clShowPhase('cl-search-phase');
+  clRenderSuggestions();
+  document.getElementById('main-layout').style.display = 'none';
+  document.getElementById('core-lessons-page').style.display = 'flex';
+  setTimeout(() => document.getElementById('cl-lesson-input').focus(), 100);
+}
+
+function closeCoreLessons() {
+  document.getElementById('core-lessons-page').style.display = 'none';
+  document.getElementById('main-layout').style.display = '';
+}
+
+// ── Carousel ──────────────────────────────────────────────────────
+
+function clRenderSuggestions() {
+  const track = document.getElementById('cl-suggestions-track');
+  const dots  = document.getElementById('cl-suggestions-dots');
+  if (!track || !dots) return;
+
+  track.innerHTML = CL_SUGGESTIONS.map(l =>
+    `<button class="suggestion-card"><strong>${esc(l.title)}</strong><br><small>${esc(l.category)}</small></button>`
+  ).join('');
+
+  track.querySelectorAll('.suggestion-card').forEach((card, i) => {
+    card.addEventListener('click', () => {
+      clCurrentLesson = CL_SUGGESTIONS[i];
+      clLoadLesson();
+    });
+  });
+
+  dots.innerHTML = CL_SUGGESTIONS.map((_, i) =>
+    `<span class="suggestion-dot${i === 0 ? ' active' : ''}" data-i="${i}"></span>`
+  ).join('');
+
+  track.addEventListener('scroll', () => {
+    const card = track.querySelector('.suggestion-card');
+    if (!card) return;
+    const cardW  = card.offsetWidth + 12;
+    const active = Math.min(Math.round(track.scrollLeft / cardW), CL_SUGGESTIONS.length - 1);
+    dots.querySelectorAll('.suggestion-dot').forEach((d, i) =>
+      d.classList.toggle('active', i === active)
+    );
+  }, { passive: true });
+
+  document.getElementById('cl-suggestions-prev')?.addEventListener('click', () => {
+    const card = track.querySelector('.suggestion-card');
+    if (card) track.scrollBy({ left: -(card.offsetWidth + 12), behavior: 'smooth' });
+  });
+  document.getElementById('cl-suggestions-next')?.addEventListener('click', () => {
+    const card = track.querySelector('.suggestion-card');
+    if (card) track.scrollBy({ left: card.offsetWidth + 12, behavior: 'smooth' });
+  });
+}
+
+// ── Search ────────────────────────────────────────────────────────
+
+function clSearch() {
+  const query = document.getElementById('cl-lesson-input').value.trim();
+  if (!query) { document.getElementById('cl-lesson-input').focus(); return; }
+
+  const q     = query.toLowerCase();
+  const match = CL_SUGGESTIONS.find(l => l.title.toLowerCase().includes(q));
+  if (match) {
+    document.getElementById('cl-no-results').style.display = 'none';
+    clCurrentLesson = match;
+    clLoadLesson();
+  } else {
+    document.getElementById('cl-no-results').style.display = '';
+  }
+}
+
+// ── Load lesson ───────────────────────────────────────────────────
+
+async function clLoadLesson() {
+  if (!clCurrentLesson) return;
+  clRecordView();
+  clChatMessages    = clGetDiscussion(clCurrentLesson.title);
+  clCompletedTopics = new Set();
+  clLessonContent   = null;
+  clShowPhase('cl-lesson-phase');
+
+  document.getElementById('cl-lesson-header').innerHTML = `
+    <div class="bl-book-header-title">${esc(clCurrentLesson.title)}</div>
+    <div class="bl-book-header-author">${esc(clCurrentLesson.category)}</div>
+  `;
+
+  ['cl-overview-section','cl-key-concepts-section','cl-topics-section','cl-progress-section']
+    .forEach(id => document.getElementById(id).style.display = '');
+  document.getElementById('cl-topic-detail').style.display = 'none';
+
+  document.getElementById('cl-overview-content').innerHTML =
+    `<div class="bl-loading"><div class="typing-dots"><span></span><span></span><span></span></div> Loading lesson…</div>`;
+  document.getElementById('cl-key-concepts-list').innerHTML = '';
+  document.getElementById('cl-topics-list').innerHTML = '';
+  document.getElementById('cl-chat-messages').innerHTML = '';
+
+  if (clChatMessages.length) {
+    clChatMessages.forEach(m => clRenderMessage(m.role, m.content, m.advisorId));
+  }
+  clUpdateProgress();
+
+  const saved = clGetSavedLessons().find(l => l.title === clCurrentLesson.title);
+  document.getElementById('cl-save-btn').textContent = saved ? 'Saved' : 'Save to My Library';
+
+  await clFetchLesson();
+}
+
+async function clFetchLesson() {
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 1400,
+        system: `You generate structured life lessons for the My Tribe app. Return ONLY a valid JSON object. No extra text, no markdown code fences.`,
+        messages: [{
+          role: 'user',
+          content: `Generate a lesson on the topic "${clCurrentLesson.title}" (category: ${clCurrentLesson.category}).
+
+Return this exact JSON:
+{
+  "overview": "2-3 sentence overview of this life lesson and its core message",
+  "keyConcepts": ["Concept 1", "Concept 2", "Concept 3", "Concept 4", "Concept 5"],
+  "topics": ["Topic or learning question 1", "Topic 2", "Topic 3", "Topic 4", "Topic 5", "Topic 6"]
+}
+
+keyConcepts: core ideas or principles within this lesson.
+topics: 6 practical topics or questions to explore (e.g. for Identity: "How identity shapes your decisions", "The role of beliefs in identity formation").`
+        }]
+      })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const raw  = data.content[0].text.trim()
+      .replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
+    clLessonContent = JSON.parse(raw);
+
+    document.getElementById('cl-overview-content').textContent = clLessonContent.overview;
+    document.getElementById('cl-key-concepts-list').innerHTML =
+      clLessonContent.keyConcepts.map(c => `<div class="bl-concept-chip">${esc(c)}</div>`).join('');
+
+    clRenderTopics();
+    clUpdateProgress();
+
+    clAppendMessage('advisor',
+      `I've loaded **${clCurrentLesson.title}**. Click any topic above to explore it, or ask me anything about this lesson.`,
+      'guide');
+  } catch (err) {
+    document.getElementById('cl-overview-content').innerHTML =
+      `<span class="advisor-error-text">${esc(String(err))}</span>`;
+  }
+}
+
+// ── Topics ────────────────────────────────────────────────────────
+
+function clRenderTopics() {
+  if (!clLessonContent) return;
+  const list = document.getElementById('cl-topics-list');
+  list.innerHTML = clLessonContent.topics.map((topic, i) => {
+    const done = clCompletedTopics.has(i);
+    return `<button class="bl-topic-btn${done ? ' completed' : ''}" data-topic="${i}">
+      <span class="bl-topic-check">${done ? '✓' : ''}</span>
+      <span>${esc(topic)}</span>
+    </button>`;
+  }).join('');
+  list.querySelectorAll('.bl-topic-btn').forEach(btn =>
+    btn.addEventListener('click', () => clClickTopic(parseInt(btn.dataset.topic)))
+  );
+}
+
+async function clClickTopic(index) {
+  if (!clLessonContent) return;
+  const topic = clLessonContent.topics[index];
+
+  ['cl-overview-section','cl-key-concepts-section','cl-topics-section','cl-progress-section']
+    .forEach(id => document.getElementById(id).style.display = 'none');
+  const detail  = document.getElementById('cl-topic-detail');
+  const content = document.getElementById('cl-topic-content');
+  detail.style.display = '';
+  content.innerHTML = `<div class="bl-loading"><div class="typing-dots"><span></span><span></span><span></span></div> Loading topic…</div>`;
+  const lessonBody = document.querySelector('#core-lessons-page .bl-lesson-body');
+  if (lessonBody) lessonBody.scrollTop = 0;
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 700,
+        system: `You are a learning guide for the My Tribe app. Explain life lesson topics clearly, practically, and with a personal-growth focus.`,
+        messages: [{
+          role: 'user',
+          content: `Lesson: "${clCurrentLesson.title}" (${clCurrentLesson.category})
+Topic: "${topic}"
+
+Respond with exactly three labeled sections using this format:
+
+**Concept Explanation**
+[2-3 sentences explaining this concept]
+
+**Real Life Application**
+[2-3 sentences on how to apply this in real life]
+
+**Reflection Question**
+[One thoughtful question for the reader to consider]`
+        }]
+      })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    content.innerHTML = clFormatTopicContent(data.content[0].text, topic);
+    clCompletedTopics.add(index);
+    clUpdateProgress();
+  } catch (err) {
+    content.innerHTML = `<span class="advisor-error-text">${esc(String(err))}</span>`;
+  }
+}
+
+function clFormatTopicContent(text, topicTitle) {
+  let html = `<div class="bl-topic-title">${esc(topicTitle)}</div>`;
+  const formatted = text
+    .replace(/\*\*([^*]+)\*\*/g, (_, label) =>
+      `</p><div class="bl-topic-section-label">${esc(label)}</div><p>`)
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, ' ');
+  html += `<p>${formatted}</p>`;
+  html = html.replace(/<p>\s*<\/p>/g, '');
+  return html;
+}
+
+function clBackToTopics() {
+  document.getElementById('cl-topic-detail').style.display = 'none';
+  ['cl-overview-section','cl-key-concepts-section','cl-topics-section','cl-progress-section']
+    .forEach(id => document.getElementById(id).style.display = '');
+  clRenderTopics();
+}
+
+function clUpdateProgress() {
+  const total = clLessonContent ? clLessonContent.topics.length : 0;
+  const done  = clCompletedTopics.size;
+  const pct   = total > 0 ? (done / total) * 100 : 0;
+  document.getElementById('cl-progress-fill').style.width = pct + '%';
+  document.getElementById('cl-progress-label').textContent = `${done} of ${total} topics completed`;
+}
+
+// ── Save ──────────────────────────────────────────────────────────
+
+function clSaveLesson() {
+  if (!clCurrentLesson) return;
+  const lessons = clGetSavedLessons();
+  if (!lessons.find(l => l.title === clCurrentLesson.title)) {
+    lessons.unshift({ title: clCurrentLesson.title, category: clCurrentLesson.category, savedAt: new Date().toISOString() });
+    clSaveLessonsData(lessons);
+  }
+  document.getElementById('cl-save-btn').textContent = 'Saved';
+}
+
+function clToggleSavedLesson(title) {
+  const lessons = clGetSavedLessons();
+  const idx     = lessons.findIndex(l => l.title === title);
+  if (idx === -1) {
+    const viewed = clGetViewedLessons();
+    const found  = viewed.find(v => v.title === title) || CL_SUGGESTIONS.find(s => s.title === title) || { title, category: '' };
+    lessons.unshift({ title: found.title, category: found.category, savedAt: new Date().toISOString() });
+  } else {
+    lessons.splice(idx, 1);
+  }
+  clSaveLessonsData(lessons);
+}
+
+// ── Library modal ─────────────────────────────────────────────────
+
+function clOpenLibraryModal(tab) {
+  const overlay = document.getElementById('cl-library-overlay');
+  if (!overlay) return;
+  overlay.querySelectorAll('.history-filter-btn').forEach(btn =>
+    btn.classList.toggle('active', btn.dataset.clFilter === tab)
+  );
+  document.getElementById('cl-library-modal-title').textContent =
+    tab === 'favorites' ? 'My Library' : 'Lesson History';
+  overlay.classList.add('open');
+  clRenderLibrary(tab);
+}
+
+function clCloseLibraryModal() {
+  document.getElementById('cl-library-overlay')?.classList.remove('open');
+}
+
+function clRenderLibrary(tab) {
+  const list = document.getElementById('cl-library-list');
+  if (!list) return;
+
+  if (tab === 'favorites') {
+    const lessons = clGetSavedLessons();
+    if (lessons.length === 0) {
+      list.innerHTML = '<p class="history-empty">No saved lessons yet. Start a lesson and save it to your library.</p>';
+      return;
+    }
+    list.innerHTML = lessons.map((l, i) =>
+      `<div class="history-item cl-lib-item" data-idx="${i}" data-tab="favorites">
+        <div class="history-item-info">
+          <div class="history-item-title">${esc(l.title)}</div>
+          <div class="history-item-meta">${esc(l.category)}</div>
+        </div>
+        <div class="history-item-actions">
+          <button class="history-heart-btn active" data-action="cl-fav" data-title="${esc(l.title)}" title="Remove from library">${HEART_FILLED}</button>
+        </div>
+      </div>`
+    ).join('');
+  } else {
+    const viewed = clGetViewedLessons();
+    if (viewed.length === 0) {
+      list.innerHTML = '<p class="history-empty">No lessons viewed yet. Start a lesson to build your history.</p>';
+      return;
+    }
+    const saved = clGetSavedLessons();
+    list.innerHTML = viewed.map((l, i) => {
+      const isSaved = saved.some(s => s.title === l.title);
+      return `<div class="history-item cl-lib-item" data-idx="${i}" data-tab="history">
+        <div class="history-item-info">
+          <div class="history-item-title">${esc(l.title)}</div>
+          <div class="history-item-meta">${esc(l.category)} &middot; ${formatRelativeDate(l.viewedAt)}</div>
+        </div>
+        <div class="history-item-actions">
+          <button class="history-heart-btn${isSaved ? ' active' : ''}" data-action="cl-fav" data-title="${esc(l.title)}" title="${isSaved ? 'Remove from library' : 'Save to library'}">${isSaved ? HEART_FILLED : HEART_OUTLINE}</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  list.querySelectorAll('.cl-lib-item').forEach(item => {
+    item.querySelector('.history-item-info').addEventListener('click', () => {
+      const idx    = parseInt(item.dataset.idx);
+      const t      = item.dataset.tab;
+      const source = t === 'favorites' ? clGetSavedLessons() : clGetViewedLessons();
+      const entry  = source[idx];
+      clCurrentLesson = { title: entry.title, category: entry.category };
+      clCloseLibraryModal();
+      clLoadLesson();
+    });
+    item.querySelector('[data-action="cl-fav"]').addEventListener('click', e => {
+      clToggleSavedLesson(e.currentTarget.dataset.title);
+      clRenderLibrary(tab);
+    });
+  });
+}
+
+// ── Discussion ────────────────────────────────────────────────────
+
+function clRenderMessage(role, content, advisorId) {
+  const msgs = document.getElementById('cl-chat-messages');
+  const div  = document.createElement('div');
+
+  if (role === 'user') {
+    div.className = 'advisor-card msg-user-thread';
+    div.innerHTML = `
+      <div class="advisor-thread-avatar user-avatar-circle">You</div>
+      <div class="advisor-meta">
+        <div class="advisor-header"><span class="advisor-name">You</span></div>
+        <div class="advisor-text">${esc(content)}</div>
+      </div>`;
+  } else {
+    const a         = ADVISORS[advisorId] || ADVISORS.guide;
+    const avatarSrc = `../assets/avatars/${advisorId}.png`;
+    const parsed    = typeof marked !== 'undefined' ? marked.parse(content) : esc(content);
+    div.className   = 'advisor-card';
+    div.style.setProperty('--advisor-color', a.color);
+    div.innerHTML = `
+      <img class="advisor-thread-avatar" src="${avatarSrc}" alt="${a.name}"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="advisor-avatar" style="background:${a.color};display:none">${a.initial}</div>
+      <div class="advisor-meta">
+        <div class="advisor-header"><span class="advisor-name">${esc(a.name)}</span></div>
+        <div class="advisor-text">${parsed}</div>
+      </div>`;
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function clAppendMessage(role, content, advisorId) {
+  clChatMessages.push({ role, content, advisorId });
+  if (clCurrentLesson) clSaveDiscussion(clCurrentLesson.title, clChatMessages);
+  clRenderMessage(role, content, advisorId);
+}
+
+function clResolveAdvisor(text) {
+  const mention = extractMentions(text)[0];
+  if (!mention) return clActiveAdvisor || 'guide';
+  const ids = Object.keys(ADVISORS);
+  return ids.find(id => id === mention) || ids.find(id => id.startsWith(mention)) || 'guide';
+}
+
+async function clSendChat() {
+  const input  = document.getElementById('cl-chat-input');
+  const rawMsg = input.value.trim();
+  if (!rawMsg) return;
+  input.value = '';
+
+  const advisorId = clResolveAdvisor(rawMsg);
+  clActiveAdvisor = advisorId;
+  const aiMsg = removeMentions(rawMsg);
+
+  clAppendMessage('user', rawMsg, null);
+
+  const msgs       = document.getElementById('cl-chat-messages');
+  const loadingDiv = document.createElement('div');
+  const a          = ADVISORS[advisorId] || ADVISORS.guide;
+  const avatarSrc  = `../assets/avatars/${advisorId}.png`;
+  loadingDiv.className = 'advisor-card';
+  loadingDiv.style.setProperty('--advisor-color', a.color);
+  loadingDiv.innerHTML = `
+    <img class="advisor-thread-avatar" src="${avatarSrc}" alt="${a.name}"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="advisor-avatar" style="background:${a.color};display:none">${a.initial}</div>
+    <div class="advisor-meta">
+      <div class="advisor-header"><span class="advisor-name">${esc(a.name)}</span></div>
+      <div class="advisor-text"><span class="advisor-thinking">${esc(a.name)} is thinking<div class="typing-dots" style="height:auto"><span></span><span></span><span></span></div></span></div>
+    </div>`;
+  msgs.appendChild(loadingDiv);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    const lessonCtx  = clCurrentLesson ? `"${clCurrentLesson.title}" (${clCurrentLesson.category})` : 'a life lesson';
+    const baseSystem = a.system || `You are a wise learning guide. Keep responses concise and practical.`;
+    const sysPrompt  = `${baseSystem}\n\nYou are helping the user explore the lesson ${lessonCtx} from the My Tribe system. Keep answers relevant to the lesson's themes and their real-life application. Be concise (3-5 sentences).`;
+
+    const history     = clChatMessages.slice(-12)
+      .filter(m => m.role === 'user' || m.role === 'advisor')
+      .map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }));
+    const apiMessages = history.slice(0, -1);
+    apiMessages.push({ role: 'user', content: aiMsg || rawMsg });
+
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: MODEL, max_tokens: 500, system: sysPrompt, messages: apiMessages })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    loadingDiv.remove();
+    clAppendMessage('advisor', data.content[0].text, advisorId);
+  } catch (err) {
+    loadingDiv.remove();
+    clAppendMessage('advisor', `Sorry, something went wrong. ${String(err)}`, advisorId);
+  }
+}
+
+// ── Discussion panel controls ─────────────────────────────────────
+
+function clToggleDiscussion() {
+  const area   = document.getElementById('cl-chat-area');
+  const toggle = document.getElementById('cl-discussion-toggle');
+  const hidden = area.classList.toggle('collapsed');
+  toggle.classList.toggle('active', !hidden);
+}
+
+function clOpenDrawer() {
+  document.getElementById('cl-chat-area').classList.add('drawer-open');
+  document.getElementById('cl-drawer-backdrop').classList.add('visible');
+  setTimeout(() => document.getElementById('cl-chat-input').focus(), 300);
+}
+
+function clCloseDrawer() {
+  document.getElementById('cl-chat-area').classList.remove('drawer-open');
+  document.getElementById('cl-drawer-backdrop').classList.remove('visible');
+}
+
 // ── Campfire (Storytelling Experience) ───────────────────────────
 
 let cfRunning     = false;
@@ -3218,6 +3819,7 @@ const CF_MOD_OPENINGS = {
 
 function openCampfire() {
   closeBookLessons();
+  closeCoreLessons();
   resetCampfireSetup();
   document.getElementById('campfire-setup').style.display = '';
   document.getElementById('campfire-session').style.display = 'none';
@@ -3754,6 +4356,7 @@ const VOTING_ALL_ADVISORS = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'fran
 
 function openVoting() {
   closeBookLessons();
+  closeCoreLessons();
   closeCampfire();
   votingRunning     = false;
   votingType        = 'yes-no';
@@ -4435,6 +5038,7 @@ const DEBATE_REPLIES = [
 
 function openDebate() {
   closeBookLessons();
+  closeCoreLessons();
   closeCampfire();
   document.getElementById('debate-page').style.display = 'flex';
   document.getElementById('main-layout').style.display = 'none';

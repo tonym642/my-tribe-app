@@ -1517,7 +1517,8 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 
 /* ── Book Lessons ────────────────────────────────────────────────── */
 
-#book-lessons-page {
+#book-lessons-page,
+#core-lessons-page {
   position: fixed;
   top: var(--topbar-h);
   left: 0;
@@ -1616,6 +1617,11 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 }
 .bl-search-row .form-input { flex: 1; min-width: 0; }
 .bl-search-row .btn-primary { flex: 0 0 auto; width: 80px; padding-left: 0; padding-right: 0; }
+.cl-no-results {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-3);
+}
 
 /* ── Confirm Phase ── */
 .bl-confirm-card {
@@ -1670,7 +1676,8 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 .btn-secondary:hover { background: var(--bg); color: var(--text-1); }
 
 /* ── Lesson Phase — two-column on desktop ── */
-#bl-lesson-phase {
+#bl-lesson-phase,
+#cl-lesson-phase {
   flex: 1;
   display: flex;
   flex-direction: row;
@@ -1943,7 +1950,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 }
 @media (min-width: 769px) {
   .bl-discussion-toggle { display: flex; }
-  #bl-lesson-phase { position: relative; }
+  #bl-lesson-phase, #cl-lesson-phase { position: relative; }
 }
 
 /* ── Chat Area — right panel on desktop ── */
@@ -6053,7 +6060,7 @@ body.dark-mode .campfire-discussion-feed::-webkit-scrollbar-thumb { background: 
   }
 
   /* Chat area becomes a bottom drawer */
-  #bl-lesson-phase { flex-direction: row; }
+  #bl-lesson-phase, #cl-lesson-phase { flex-direction: row; }
   .bl-chat-area {
     position: fixed;
     bottom: 0;

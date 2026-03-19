@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/styles.css", "destination": "/ui/styles.css" },
     { "source": "/app.js",     "destination": "/ui/app.js"     },
+    { "source": "/help.js",    "destination": "/ui/help.js"    },
     { "source": "/",           "destination": "/ui/chat.html"  }
   ]
 }
