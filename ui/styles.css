@@ -5380,6 +5380,16 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   .debate-vs-title { max-width: 80px; font-size: 10px; }
 }
 
+/* Debate AI-generated title header */
+.debate-title-header {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+  padding: 16px 0 4px;
+}
+
 /* Thread */
 .debate-thread {
   display: flex;

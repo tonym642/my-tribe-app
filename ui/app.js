@@ -1918,6 +1918,27 @@ function generateTitle(text) {
   return text.trim().split(/\s+/).slice(0, 5).join(' ');
 }
 
+async function generateDebateTitleAI(topic) {
+  try {
+    const system = 'You create short, punchy debate titles. Reply with only the title — no quotes, no trailing punctuation, no explanation. 3 to 5 words. Start with a capital letter.';
+    const raw = await callDebateAPI(system, `Debate topic: "${topic}"`);
+    return raw.trim().replace(/^[a-z]/, c => c.toUpperCase()).replace(/[".!?]+$/, '');
+  } catch {
+    const fallback = generateTitle(topic);
+    return fallback.charAt(0).toUpperCase() + fallback.slice(1);
+  }
+}
+
+function showDebateTitleHeader(title) {
+  const thread = document.getElementById('debate-thread');
+  const existing = thread.querySelector('.debate-title-header');
+  if (existing) { existing.textContent = title; return; }
+  const el = document.createElement('div');
+  el.className = 'debate-title-header';
+  el.textContent = title;
+  thread.insertBefore(el, thread.firstChild);
+}
+
 function formatRelativeDate(ts) {
   const diff = Date.now() - ts;
   const mins  = Math.floor(diff / 60000);
@@ -4298,7 +4319,16 @@ async function runDebate(topic) {
   debateBtnSend(true);
 
   // Save to history only if debate completed (not stopped mid-way with nothing)
-  if (messages.length > 0) saveDebate(topic, messages);
+  if (messages.length > 0) {
+    saveDebate(topic, messages);
+    // Generate AI title async, then update stored debate + header
+    generateDebateTitleAI(topic).then(aiTitle => {
+      const debates = getDebates();
+      const d = debates[0];
+      if (d) { d.title = aiTitle; saveDebates(debates); }
+      showDebateTitleHeader(aiTitle);
+    });
+  }
 }
 
 // ── Debate Suggestions Carousel ───────────────────────────────────
@@ -4470,7 +4500,8 @@ function loadDebate(id) {
   document.getElementById('debate-send-btn').disabled = false;
   document.getElementById('debate-page-stream').scrollTop = 0;
 
-  // User bubble for topic
+  // Title header + user bubble
+  if (debate.title) showDebateTitleHeader(debate.title);
   document.getElementById('debate-thread').appendChild(createUserBubble(debate.topic));
 
   // Reconstruct advisor messages
