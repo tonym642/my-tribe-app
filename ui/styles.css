@@ -452,6 +452,7 @@ html, body {
 .suggestions-section {
   margin-top: 24px;
   text-align: center;
+  width: 100%;
   max-width: 720px;
   margin-left: auto;
   margin-right: auto;
@@ -4695,16 +4696,24 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
 }
 
 .voting-page-inner {
-  max-width: 680px;
+  max-width: 560px;
   margin: 0 auto;
   padding: 16px 32px 48px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* All direct children of the setup/results phases fill the width */
+.voting-phase > *,
+#voting-options-area > * {
+  width: 100%;
 }
 
 /* keep legacy class in case referenced elsewhere */
 .voting-page-layout {
-  max-width: 680px;
+  max-width: 560px;
   margin: 0 auto;
   padding: 32px 32px 48px;
   display: flex;
@@ -4789,6 +4798,7 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 8px;
+  text-align: center;
 }
 
 .voting-field-sub {
@@ -4831,6 +4841,7 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   display: flex;
   gap: 10px;
   margin-bottom: 4px;
+  justify-content: center;
 }
 
 .voting-yn-pill {
