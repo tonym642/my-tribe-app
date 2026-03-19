@@ -966,6 +966,8 @@
       <button class="page-util-link" id="btn-polls-util-history">History</button>
       <span class="page-util-sep">|</span>
       <button class="page-util-link" id="btn-polls-util-favorites">Favorites</button>
+      <span class="page-util-sep" id="polls-new-sep" style="display:none">|</span>
+      <button class="page-util-link" id="btn-polls-util-new" style="display:none">New</button>
     </div>
 
     <div class="voting-page-stream">
@@ -1006,10 +1008,11 @@
         <div id="voting-results-phase" class="voting-phase" style="display:none">
           <div class="voting-results-scroll">
 
-            <div class="voting-question-display" id="voting-question-display"></div>
+            <!-- Question banner -->
+            <div class="voting-question-banner" id="voting-question-display"></div>
 
-            <!-- Final result card (shown after all votes) -->
-            <div class="voting-result-card" id="voting-result-card" style="display:none">
+            <!-- Council verdict card -->
+            <div class="voting-verdict-card" id="voting-result-card" style="display:none">
               <div class="vrc-majority-label" id="vrc-label"></div>
               <div class="vrc-winner" id="vrc-winner"></div>
               <div class="vrc-count" id="vrc-count"></div>
@@ -1028,10 +1031,6 @@
                 <div class="vgs-title">Guide Summary</div>
               </div>
               <div class="vgs-text" id="voting-summary-text"></div>
-            </div>
-
-            <div class="voting-footer-row">
-              <button class="voting-new-btn" id="voting-new-btn">Start New Poll</button>
             </div>
 
           </div>

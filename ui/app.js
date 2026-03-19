@@ -379,6 +379,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-polls-util-help').addEventListener('click', () => openPageHelp('polls'));
   document.getElementById('btn-polls-util-history').addEventListener('click', () => openPollsHistory(false));
   document.getElementById('btn-polls-util-favorites').addEventListener('click', () => openPollsHistory(true));
+  document.getElementById('btn-polls-util-new').addEventListener('click', resetVoting);
   document.getElementById('polls-history-close').addEventListener('click', closePollsHistory);
   document.getElementById('polls-history-overlay').addEventListener('click', e => {
     if (e.target === e.currentTarget) closePollsHistory();
@@ -589,11 +590,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // Voting — new vote
-  document.getElementById('voting-new-btn').addEventListener('click', () => {
-    document.getElementById('voting-results-phase').style.display = 'none';
-    document.getElementById('voting-setup-phase').style.display = '';
-    setTimeout(() => document.getElementById('voting-question').focus(), 50);
-  });
+  // voting-new-btn removed from HTML; New is in util menu (btn-polls-util-new → resetVoting)
 
   // Stories — bell toggles panel
   // Stories — bell toggle
@@ -3613,6 +3610,8 @@ function openVoting() {
   document.getElementById('voting-question').value = '';
   document.getElementById('voting-setup-phase').style.display = '';
   document.getElementById('voting-results-phase').style.display = 'none';
+  document.getElementById('btn-polls-util-new').style.display = 'none';
+  document.getElementById('polls-new-sep').style.display = 'none';
   renderVotingOptionsArea();
   renderPollSuggestions();
   document.getElementById('main-layout').style.display = 'none';
@@ -3849,6 +3848,8 @@ async function runVoting() {
   // Switch to results phase
   document.getElementById('voting-setup-phase').style.display = 'none';
   document.getElementById('voting-results-phase').style.display = '';
+  document.getElementById('btn-polls-util-new').style.display = '';
+  document.getElementById('polls-new-sep').style.display = '';
   document.getElementById('voting-question-display').textContent = `"${question}"`;
   document.getElementById('voting-result-card').style.display = 'none';
   document.getElementById('voting-tally').innerHTML = '';
@@ -3949,7 +3950,8 @@ async function runVoting() {
     document.getElementById('voting-summary-text').textContent = 'Unable to generate summary.';
   }
 
-  savePoll(question, votingType, options, votes, result);
+  const summaryText = document.getElementById('voting-summary-text').textContent;
+  savePoll(question, votingType, options, votes, result, summaryText);
   votingRunning = false;
 }
 
@@ -4021,16 +4023,83 @@ function savePolls(polls) {
   localStorage.setItem('tribe_polls', JSON.stringify(polls));
 }
 
-function savePoll(question, type, options, votes, result) {
+function savePoll(question, type, options, votes, result, summaryText) {
   const polls = getPolls();
   polls.unshift({
     id: 'poll_' + Date.now(),
     title: question,
-    type, options, votes, result,
+    type, options, votes, result, summaryText: summaryText || '',
     favorite: false,
     created_at: Date.now(),
   });
   savePolls(polls);
+}
+
+function resetVoting() {
+  votingRunning = false;
+  votingType = 'yes-no';
+  votingAdvisorMode = 'all';
+  document.querySelectorAll('.voting-type-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.vtype === 'yes-no'));
+  document.getElementById('voting-question').value = '';
+  document.getElementById('voting-setup-phase').style.display = '';
+  document.getElementById('voting-results-phase').style.display = 'none';
+  document.getElementById('btn-polls-util-new').style.display = 'none';
+  document.getElementById('polls-new-sep').style.display = 'none';
+  renderVotingOptionsArea();
+  document.querySelector('.voting-page-stream').scrollTop = 0;
+  setTimeout(() => document.getElementById('voting-question').focus(), 50);
+}
+
+function loadPoll(id) {
+  const poll = getPolls().find(p => p.id === id);
+  if (!poll) return;
+
+  document.getElementById('voting-setup-phase').style.display = 'none';
+  document.getElementById('voting-results-phase').style.display = '';
+  document.getElementById('btn-polls-util-new').style.display = '';
+  document.getElementById('polls-new-sep').style.display = '';
+
+  document.getElementById('voting-question-display').textContent = `"${poll.title}"`;
+  document.getElementById('voting-tally').innerHTML = '';
+  document.getElementById('voting-cards').innerHTML = '';
+
+  if (poll.result) {
+    const rc = document.getElementById('voting-result-card');
+    rc.style.display = '';
+    document.getElementById('vrc-label').textContent = MAJORITY_LABELS[poll.result.majorityType] || 'Council Decision';
+    document.getElementById('vrc-winner').textContent = poll.result.winningOption || 'Split Council';
+    document.getElementById('vrc-count').textContent = poll.result.winningOption
+      ? `${poll.result.tally[poll.result.winningOption]} of ${poll.result.total} votes`
+      : 'No majority reached';
+    renderVotingTally(poll.result.tally, poll.result.total);
+  }
+
+  if (poll.votes) {
+    for (const vote of poll.votes) {
+      appendVoteCard(vote.advisorId, false);
+      const badge  = document.getElementById(`vbadge-${vote.advisorId}`);
+      const reason = document.getElementById(`vreason-${vote.advisorId}`);
+      if (badge)  { badge.textContent = vote.selectedOption; badge.classList.remove('vote-badge-loading'); }
+      if (reason) reason.textContent = vote.reasoning;
+    }
+  }
+
+  const summaryEl = document.getElementById('voting-summary');
+  if (poll.summaryText) {
+    summaryEl.style.display = '';
+    document.getElementById('voting-summary-text').textContent = poll.summaryText;
+    const guideAvatar = ADVISOR_AVATAR['guide'];
+    const wrapEl = document.getElementById('vgs-avatar-wrap');
+    wrapEl.innerHTML = guideAvatar
+      ? `<img src="${guideAvatar}" alt="Guide" class="vgs-avatar-img">`
+      : `<div class="vgs-avatar-initial">G</div>`;
+  } else {
+    summaryEl.style.display = 'none';
+  }
+
+  document.querySelector('.voting-page-stream').scrollTop = 0;
+  closePollsHistory();
 }
 
 function togglePollFavorite(id) {
@@ -4085,6 +4154,9 @@ function openPollsHistory(favoritesOnly = false) {
         </div>`;
     }).join('');
 
+    $list.querySelectorAll('.history-item-info').forEach(el => {
+      el.addEventListener('click', () => loadPoll(el.closest('.history-item').dataset.id));
+    });
     $list.querySelectorAll('[data-action="fav"]').forEach(btn => {
       btn.addEventListener('click', e => {
         e.stopPropagation();
