@@ -897,6 +897,15 @@ function renderSuggestions() {
       d.classList.toggle('active', i === active)
     );
   }, { passive: true });
+
+  // Desktop arrow navigation
+  function scrollByCard(dir) {
+    const card = track.querySelector('.suggestion-card');
+    if (!card) return;
+    track.scrollBy({ left: dir * (card.offsetWidth + 12), behavior: 'smooth' });
+  }
+  document.getElementById('suggestions-prev')?.addEventListener('click', () => scrollByCard(-1));
+  document.getElementById('suggestions-next')?.addEventListener('click', () => scrollByCard(1));
 }
 
 // ── Advice Help Modal ─────────────────────────────────────────────

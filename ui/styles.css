@@ -389,6 +389,7 @@ html, body {
   color: var(--text-2);
   margin-bottom: 10px;
   padding: 0 4px;
+  text-align: center;
 }
 
 .suggestions-track {
@@ -447,6 +448,49 @@ html, body {
 
 .suggestion-dot.active {
   background: #3b9eff;
+}
+
+/* Desktop: show arrows, hide dots */
+.suggestions-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.suggestions-arrow {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.suggestions-arrow:hover {
+  background: var(--bg);
+  color: var(--text-1);
+  border-color: #3b9eff;
+}
+
+/* Mobile: hide arrows, show dots */
+@media (max-width: 767px) {
+  .suggestions-nav  { display: none; }
+  .suggestions-dots { display: flex; }
+}
+
+/* Desktop: hide dots, show arrows */
+@media (min-width: 768px) {
+  .suggestions-dots { display: none; }
+  .suggestions-nav  { display: flex; }
 }
 
 /* ── Help Modal ─────────────────────────────────────────────────── */
@@ -5429,6 +5473,8 @@ body.dark-mode .suggestion-card:hover { background: #22263a; border-color: #3b9e
 body.dark-mode .suggestions-label { color: var(--text-3, #666); }
 body.dark-mode .suggestion-dot { background: #3a3e50; }
 body.dark-mode .suggestion-dot.active { background: #3b9eff; }
+body.dark-mode .suggestions-arrow { border-color: #2a2d3a; color: var(--text-2); }
+body.dark-mode .suggestions-arrow:hover { background: #22263a; color: var(--text-1); border-color: #3b9eff; }
 
 /* Mode pills */
 body.dark-mode .mode-pill { background: #1a1d27; border-color: #2a2d3a; color: var(--text-2); }
