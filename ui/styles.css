@@ -1999,16 +1999,15 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   flex-shrink: 0;
 }
 
-/* Override #cl-chat-area to allow tab to overflow left */
-#cl-chat-area {
-  overflow: visible;
-  position: relative;
-}
-#cl-chat-area.collapsed {
-  overflow: visible;
-}
-/* Hide empty header on desktop (title was moved to label below) */
+/* Override #cl-chat-area — desktop only (mobile uses fixed positioning from .bl-chat-area) */
 @media (min-width: 769px) {
+  #cl-chat-area {
+    overflow: visible;
+    position: relative;
+  }
+  #cl-chat-area.collapsed {
+    overflow: visible;
+  }
   #cl-chat-area .bl-chat-header { display: none; }
 }
 
