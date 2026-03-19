@@ -4684,9 +4684,24 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   background: var(--bg);
   z-index: 100;
   flex-direction: column;
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 
+.voting-page-stream {
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.voting-page-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 16px 32px 48px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* keep legacy class in case referenced elsewhere */
 .voting-page-layout {
   max-width: 680px;
   margin: 0 auto;
@@ -4730,15 +4745,6 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
 .voting-phase {
   display: flex;
   flex-direction: column;
-  flex: 1;
-}
-
-#voting-setup-phase {
-  overflow-y: auto;
-}
-
-#voting-results-phase {
-  overflow: hidden;
 }
 
 /* Type selector */
@@ -4949,12 +4955,9 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
 
 /* Results scroll container */
 .voting-results-scroll {
-  flex: 1;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding-right: 2px;
 }
 
 .voting-results-scroll::-webkit-scrollbar { width: 4px; }

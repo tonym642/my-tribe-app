@@ -377,8 +377,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Feature page utility menus — Polls
   document.getElementById('btn-polls-util-help').addEventListener('click', () => openPageHelp('polls'));
-  document.getElementById('btn-polls-util-history').addEventListener('click', openHistoryPanel);
-  document.getElementById('btn-polls-util-favorites').addEventListener('click', () => openHistoryPanel(true));
+  document.getElementById('btn-polls-util-history').addEventListener('click', () => openPollsHistory(false));
+  document.getElementById('btn-polls-util-favorites').addEventListener('click', () => openPollsHistory(true));
+  document.getElementById('polls-history-close').addEventListener('click', closePollsHistory);
+  document.getElementById('polls-history-overlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closePollsHistory();
+  });
+  document.getElementById('polls-history-overlay').querySelectorAll('.history-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('polls-history-overlay').querySelectorAll('.history-filter-btn')
+        .forEach(b => b.classList.toggle('active', b === btn));
+      openPollsHistory(btn.dataset.pollFilter === 'favorites');
+    });
+  });
 
   // Feature page utility menus — Book Lessons
   document.getElementById('btn-bl-util-help').addEventListener('click', () => openPageHelp('book-lessons'));
@@ -3603,6 +3614,7 @@ function openVoting() {
   document.getElementById('voting-setup-phase').style.display = '';
   document.getElementById('voting-results-phase').style.display = 'none';
   renderVotingOptionsArea();
+  renderPollSuggestions();
   document.getElementById('main-layout').style.display = 'none';
   document.getElementById('voting-page').style.display = 'flex';
   setTimeout(() => document.getElementById('voting-question').focus(), 100);
@@ -3937,7 +3949,159 @@ async function runVoting() {
     document.getElementById('voting-summary-text').textContent = 'Unable to generate summary.';
   }
 
+  savePoll(question, votingType, options, votes, result);
   votingRunning = false;
+}
+
+// ── Polls — suggestions, history, favorites ────────────────────────
+
+const POLL_SUGGESTIONS = [
+  { text: 'Should I change careers this year?',        type: 'yes-no' },
+  { text: 'Move to a new city or stay put?',           type: 'ab' },
+  { text: 'Start my own business?',                    type: 'yes-no' },
+  { text: 'Accept the promotion or not?',              type: 'yes-no' },
+  { text: 'Which habit should I build first?',         type: 'multiple' },
+  { text: 'Invest in stocks or real estate?',          type: 'ab' },
+  { text: 'Go back to school?',                        type: 'yes-no' },
+  { text: 'Cut ties with a toxic relationship?',       type: 'yes-no' },
+];
+
+function renderPollSuggestions() {
+  const track = document.getElementById('poll-suggestions-track');
+  const dotsEl = document.getElementById('poll-suggestions-dots');
+  if (!track) return;
+
+  track.innerHTML = POLL_SUGGESTIONS.map(s => `
+    <div class="suggestion-card" data-poll-q="${esc(s.text)}" data-poll-type="${s.type}">
+      <div class="suggestion-card-title">${esc(s.text)}</div>
+    </div>`).join('');
+
+  track.querySelectorAll('.suggestion-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const q    = card.dataset.pollQ;
+      const type = card.dataset.pollType;
+      document.getElementById('voting-question').value = q;
+      // Set voting type
+      votingType = type;
+      document.querySelectorAll('.voting-type-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.vtype === type));
+      renderVotingOptionsArea();
+      document.getElementById('voting-question').focus();
+    });
+  });
+
+  // Dots
+  if (dotsEl) {
+    dotsEl.innerHTML = POLL_SUGGESTIONS.map((_, i) =>
+      `<button class="suggestions-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></button>`
+    ).join('');
+    dotsEl.querySelectorAll('.suggestions-dot').forEach(dot => {
+      dot.addEventListener('click', () => {
+        const card = track.querySelectorAll('.suggestion-card')[+dot.dataset.idx];
+        if (card) card.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
+        dotsEl.querySelectorAll('.suggestions-dot').forEach(d => d.classList.toggle('active', d === dot));
+      });
+    });
+  }
+
+  // Arrow nav
+  document.getElementById('poll-suggestions-prev')?.addEventListener('click', () => {
+    track.scrollBy({ left: -220, behavior: 'smooth' });
+  });
+  document.getElementById('poll-suggestions-next')?.addEventListener('click', () => {
+    track.scrollBy({ left: 220, behavior: 'smooth' });
+  });
+}
+
+function getPolls() {
+  return JSON.parse(localStorage.getItem('tribe_polls') || '[]');
+}
+
+function savePolls(polls) {
+  localStorage.setItem('tribe_polls', JSON.stringify(polls));
+}
+
+function savePoll(question, type, options, votes, result) {
+  const polls = getPolls();
+  polls.unshift({
+    id: 'poll_' + Date.now(),
+    title: question,
+    type, options, votes, result,
+    favorite: false,
+    created_at: Date.now(),
+  });
+  savePolls(polls);
+}
+
+function togglePollFavorite(id) {
+  const polls = getPolls();
+  const p = polls.find(x => x.id === id);
+  if (p) { p.favorite = !p.favorite; savePolls(polls); }
+}
+
+function deletePoll(id) {
+  if (!confirm('Delete this poll?')) return;
+  savePolls(getPolls().filter(p => p.id !== id));
+  openPollsHistory(_pollsHistoryFavOnly);
+}
+
+let _pollsHistoryFavOnly = false;
+
+function openPollsHistory(favoritesOnly = false) {
+  _pollsHistoryFavOnly = favoritesOnly;
+  const overlay = document.getElementById('polls-history-overlay');
+  overlay.querySelectorAll('.history-filter-btn').forEach(btn =>
+    btn.classList.toggle('active', favoritesOnly
+      ? btn.dataset.pollFilter === 'favorites'
+      : btn.dataset.pollFilter === 'all')
+  );
+  document.getElementById('polls-history-modal-title').textContent =
+    favoritesOnly ? 'Favorites' : 'Poll History';
+
+  const all   = getPolls();
+  const polls = favoritesOnly ? all.filter(p => p.favorite) : all;
+  const $list = document.getElementById('polls-history-list');
+
+  if (polls.length === 0) {
+    $list.innerHTML = `<p class="history-empty">${favoritesOnly ? 'No favorites yet.' : 'No polls yet.'}</p>`;
+  } else {
+    $list.innerHTML = polls.map(poll => {
+      const title    = esc(poll.title);
+      const date     = formatRelativeDate(poll.created_at);
+      const outcome  = poll.result?.winningOption ? esc(poll.result.winningOption) : 'Split';
+      const isFav    = !!poll.favorite;
+      return `
+        <div class="history-item" data-id="${poll.id}">
+          <div class="history-item-info">
+            <div class="history-item-title">${title}</div>
+            <div class="history-item-meta">${date} · ${outcome}</div>
+          </div>
+          <div class="history-item-actions">
+            <button class="history-heart-btn${isFav ? ' active' : ''}" data-action="fav" data-id="${poll.id}" title="${isFav ? 'Remove favorite' : 'Add to favorites'}">${isFav ? HEART_FILLED : HEART_OUTLINE}</button>
+            <button class="history-action history-delete" data-action="delete" data-id="${poll.id}" title="Delete">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            </button>
+          </div>
+        </div>`;
+    }).join('');
+
+    $list.querySelectorAll('[data-action="fav"]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        togglePollFavorite(btn.dataset.id);
+        openPollsHistory(favoritesOnly);
+      });
+    });
+    $list.querySelectorAll('[data-action="delete"]').forEach(btn => {
+      btn.addEventListener('click', e => { e.stopPropagation(); deletePoll(btn.dataset.id); });
+    });
+  }
+
+  overlay.classList.add('open');
+}
+
+function closePollsHistory() {
+  document.getElementById('polls-history-overlay').classList.remove('open');
 }
 
 // ── Debate Mode ───────────────────────────────────────────────────

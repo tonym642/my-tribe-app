@@ -953,77 +953,108 @@
 
   <!-- Voting Page -->
   <div id="voting-page" data-help-key="polls" style="display:none">
-    <div class="voting-page-layout">
 
-      <div class="voting-page-header">
-        <h2 class="voting-page-title">Tribe Polls</h2>
-      </div>
+    <!-- Centered title -->
+    <div class="bl-page-header">
+      <h1 class="bl-page-title">Polls</h1>
+    </div>
 
-      <!-- Utility Menu -->
-      <div class="page-util-menu">
-        <button class="page-util-link" id="btn-polls-util-help">Help</button>
-        <span class="page-util-sep">|</span>
-        <button class="page-util-link" id="btn-polls-util-history">History</button>
-        <span class="page-util-sep">|</span>
-        <button class="page-util-link" id="btn-polls-util-favorites">Favorites</button>
-      </div>
+    <!-- Utility Menu -->
+    <div class="page-util-menu">
+      <button class="page-util-link" id="btn-polls-util-help">Help</button>
+      <span class="page-util-sep">|</span>
+      <button class="page-util-link" id="btn-polls-util-history">History</button>
+      <span class="page-util-sep">|</span>
+      <button class="page-util-link" id="btn-polls-util-favorites">Favorites</button>
+    </div>
 
-      <!-- Setup phase -->
-      <div id="voting-setup-phase" class="voting-phase">
-        <p class="voting-intro">Present a decision to your Tribe and see how the council votes.</p>
+    <div class="voting-page-stream">
+      <div class="voting-page-inner">
 
-        <!-- Vote type selector -->
-        <div class="voting-type-row">
-          <button class="voting-type-btn active" data-vtype="yes-no">Yes / No</button>
-          <button class="voting-type-btn" data-vtype="ab">A / B</button>
-          <button class="voting-type-btn" data-vtype="multiple">Multiple Choice</button>
-        </div>
+        <!-- Setup phase -->
+        <div id="voting-setup-phase" class="voting-phase">
 
-        <!-- Question -->
-        <div class="voting-field-label">Your question or decision</div>
-        <textarea id="voting-question" class="voting-textarea" placeholder="e.g. Should I change careers this year?" rows="2"></textarea>
-
-        <!-- Options area (dynamic) -->
-        <div id="voting-options-area"></div>
-
-        <button class="btn-primary voting-start-btn" id="voting-start-btn">Start Poll</button>
-      </div>
-
-      <!-- Results phase -->
-      <div id="voting-results-phase" class="voting-phase" style="display:none">
-        <div class="voting-results-scroll">
-
-          <div class="voting-question-display" id="voting-question-display"></div>
-
-          <!-- Final result card (shown after all votes) -->
-          <div class="voting-result-card" id="voting-result-card" style="display:none">
-            <div class="vrc-majority-label" id="vrc-label"></div>
-            <div class="vrc-winner" id="vrc-winner"></div>
-            <div class="vrc-count" id="vrc-count"></div>
-          </div>
-
-          <!-- Tally bars -->
-          <div class="voting-tally" id="voting-tally"></div>
-
-          <!-- Advisor vote cards -->
-          <div class="voting-cards-grid" id="voting-cards"></div>
-
-          <!-- Guide summary -->
-          <div class="voting-guide-summary" id="voting-summary" style="display:none">
-            <div class="vgs-header">
-              <div class="vgs-avatar-wrap" id="vgs-avatar-wrap"></div>
-              <div class="vgs-title">Guide Summary</div>
+          <!-- Suggestions carousel -->
+          <div class="suggestions-section">
+            <div class="suggestions-label">Popular Polls</div>
+            <div class="suggestions-track" id="poll-suggestions-track"></div>
+            <div class="suggestions-dots" id="poll-suggestions-dots"></div>
+            <div class="suggestions-nav">
+              <button class="suggestions-arrow" id="poll-suggestions-prev" aria-label="Previous">&#8249;</button>
+              <button class="suggestions-arrow" id="poll-suggestions-next" aria-label="Next">&#8250;</button>
             </div>
-            <div class="vgs-text" id="voting-summary-text"></div>
           </div>
 
-          <div class="voting-footer-row">
-            <button class="voting-new-btn" id="voting-new-btn">Start New Poll</button>
+          <!-- Vote type selector -->
+          <div class="voting-type-row">
+            <button class="voting-type-btn active" data-vtype="yes-no">Yes / No</button>
+            <button class="voting-type-btn" data-vtype="ab">A / B</button>
+            <button class="voting-type-btn" data-vtype="multiple">Multiple Choice</button>
           </div>
 
+          <!-- Question -->
+          <div class="voting-field-label">Your question or decision</div>
+          <textarea id="voting-question" class="voting-textarea" placeholder="e.g. Should I change careers this year?" rows="2"></textarea>
+
+          <!-- Options area (dynamic) -->
+          <div id="voting-options-area"></div>
+
+          <button class="btn-primary voting-start-btn" id="voting-start-btn">Start Poll</button>
         </div>
-      </div>
 
+        <!-- Results phase -->
+        <div id="voting-results-phase" class="voting-phase" style="display:none">
+          <div class="voting-results-scroll">
+
+            <div class="voting-question-display" id="voting-question-display"></div>
+
+            <!-- Final result card (shown after all votes) -->
+            <div class="voting-result-card" id="voting-result-card" style="display:none">
+              <div class="vrc-majority-label" id="vrc-label"></div>
+              <div class="vrc-winner" id="vrc-winner"></div>
+              <div class="vrc-count" id="vrc-count"></div>
+            </div>
+
+            <!-- Tally bars -->
+            <div class="voting-tally" id="voting-tally"></div>
+
+            <!-- Advisor vote cards -->
+            <div class="voting-cards-grid" id="voting-cards"></div>
+
+            <!-- Guide summary -->
+            <div class="voting-guide-summary" id="voting-summary" style="display:none">
+              <div class="vgs-header">
+                <div class="vgs-avatar-wrap" id="vgs-avatar-wrap"></div>
+                <div class="vgs-title">Guide Summary</div>
+              </div>
+              <div class="vgs-text" id="voting-summary-text"></div>
+            </div>
+
+            <div class="voting-footer-row">
+              <button class="voting-new-btn" id="voting-new-btn">Start New Poll</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Polls History / Favorites Modal -->
+  <div class="modal-overlay" id="polls-history-overlay">
+    <div class="modal history-modal">
+      <div class="modal-header">
+        <h3 id="polls-history-modal-title">Poll History</h3>
+        <button class="modal-close" id="polls-history-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="history-filter-row">
+        <button class="history-filter-btn active" data-poll-filter="all">History</button>
+        <button class="history-filter-btn" data-poll-filter="favorites">Favorites</button>
+      </div>
+      <div class="history-list" id="polls-history-list"></div>
     </div>
   </div>
 
