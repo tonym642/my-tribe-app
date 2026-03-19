@@ -4247,7 +4247,8 @@ function openCampfireHistory(favoritesOnly = false) {
   document.getElementById('campfire-history-modal-title').textContent =
     favoritesOnly ? 'Favorites' : 'Story History';
 
-  const all = getStoryLibrary();
+  // Only show campfire sessions (have id + format); exclude old Life Stories entries
+  const all = getStoryLibrary().filter(s => s.id && s.format);
   const stories = favoritesOnly ? all.filter(s => s.favorite) : all;
   const $list = document.getElementById('campfire-history-list');
 
