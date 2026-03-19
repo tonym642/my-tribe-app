@@ -286,8 +286,32 @@ function applyLanguage(code, save = true) {
 
 function selectLanguage(code) {
   applyLanguage(code);
+  triggerGoogleTranslate(code);
   closeLangDropdown();
   renderMobileLangOptions();
+}
+
+function triggerGoogleTranslate(langCode) {
+  // Google Translate uses a hidden <select> to switch languages.
+  // For English (the source language) we reset via the cookie instead.
+  if (langCode === 'en') {
+    // Clear the googtrans cookie and reload to revert to original text
+    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+    document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + location.hostname;
+    location.reload();
+    return;
+  }
+  // Give the widget up to 2 s to finish loading, then trigger
+  const attempt = (tries) => {
+    const select = document.querySelector('.goog-te-combo');
+    if (select) {
+      select.value = langCode;
+      select.dispatchEvent(new Event('change'));
+    } else if (tries > 0) {
+      setTimeout(() => attempt(tries - 1), 200);
+    }
+  };
+  attempt(10);
 }
 
 function openLangDropdown() {

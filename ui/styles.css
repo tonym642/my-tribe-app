@@ -6255,3 +6255,12 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 .topbar, .modal, .nav-menu, .nav-submenu, .mobile-nav,
 .msg-advisor-bubble, .msg-user-bubble, .input-field,
 .vote-card, .debate-msg, .cf-disc-comment { transition: background 0.25s ease, border-color 0.25s ease; }
+
+/* ── Google Translate — hide injected toolbar ────────────────────── */
+/* The widget div and Google's top-of-page bar are hidden;
+   translation is triggered programmatically via our flag selector.   */
+#google_translate_element { display: none !important; }
+.goog-te-banner-frame,
+.skiptranslate { display: none !important; }
+body { top: 0 !important; }
+.goog-te-menu-value:hover { text-decoration: none; }
