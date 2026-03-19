@@ -5472,6 +5472,31 @@ body.dark-mode .campfire-discussion-feed::-webkit-scrollbar-thumb { background: 
   .bl-chat-advisor-row { flex-direction: row; align-items: center; gap: 10px; }
 }
 
+/* ── Help Content ─────────────────────────────────────────────────────────── */
+.help-content {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text-primary);
+}
+.help-content h1, .help-content h2, .help-content h3 {
+  margin: 1.1em 0 0.4em;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.help-content h1 { font-size: 1.15rem; }
+.help-content h2 { font-size: 1.05rem; }
+.help-content h3 { font-size: 0.97rem; }
+.help-content p  { margin: 0 0 0.75em; }
+.help-content ul, .help-content ol { padding-left: 1.4em; margin: 0 0 0.75em; }
+.help-content li { margin-bottom: 0.25em; }
+.help-content strong { font-weight: 600; }
+.help-content em    { font-style: italic; }
+.help-loading, .help-unavailable {
+  font-size: 0.88rem;
+  color: var(--text-secondary, #888);
+  padding: 0.5rem 0;
+}
+
 /* Transition for smooth toggle */
 body { transition: background 0.25s ease, color 0.25s ease; }
 .topbar, .modal, .nav-menu, .nav-submenu, .mobile-nav,

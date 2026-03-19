@@ -140,7 +140,7 @@
           <span class="stories-bell-tooltip">Life Stories</span>
         </button>
         <!-- Stories dropdown panel -->
-        <div class="stories-panel" id="stories-panel">
+        <div class="stories-panel" id="stories-panel" data-help-key="life-stories">
           <div class="stories-panel-header">
             <span class="stories-panel-title">Life Stories</span>
             <button class="stories-library-btn" id="stories-library-btn">Library</button>
@@ -339,7 +339,7 @@
   </div>
 
   <!-- Debate Page (full-page, replaces main layout when open) -->
-  <div id="debate-page" style="display:none">
+  <div id="debate-page" data-help-key="debate" style="display:none">
 
     <!-- Sub-header -->
     <div class="debate-page-header">
@@ -409,7 +409,7 @@
   </div>
 
   <!-- Main Layout -->
-  <div class="layout" id="main-layout">
+  <div class="layout" id="main-layout" data-help-key="advice">
 
     <!-- Message Stream -->
     <div class="stream" id="stream">
@@ -582,7 +582,7 @@
   </div>
 
   <!-- Book Lessons Page -->
-  <div id="book-lessons-page" style="display:none">
+  <div id="book-lessons-page" data-help-key="book-lessons" style="display:none">
     <div class="bl-page-layout">
 
       <!-- Header -->
@@ -716,7 +716,7 @@
 
 
   <!-- ── Campfire Page (full-page, replaces main layout when open) ── -->
-  <div id="campfire-page" style="display:none">
+  <div id="campfire-page" data-help-key="campfire" style="display:none">
 
     <!-- SETUP FLOW -->
     <div class="campfire-setup" id="campfire-setup">
@@ -905,7 +905,7 @@
   </div><!-- #campfire-page -->
 
   <!-- Voting Page -->
-  <div id="voting-page" style="display:none">
+  <div id="voting-page" data-help-key="polls" style="display:none">
     <div class="voting-page-layout">
 
       <div class="voting-page-header">
@@ -1566,6 +1566,7 @@
 
   </div><!-- #advisors-page -->
 
+  <script src="./help.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
