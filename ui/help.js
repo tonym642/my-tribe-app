@@ -14,17 +14,22 @@ const HELP_MAP = {
 };
 
 // Returns rendered HTML string for a feature key, or null on failure.
-// Depends on fetchText() (app.js) and marked (CDN).
 async function loadHelpContent(key) {
   const path = HELP_MAP[key];
   if (!path) return null;
-  const raw = await fetchText(path);
-  if (!raw || !raw.trim()) return null;
-  return marked.parse(raw);
+  try {
+    const res = await fetch(path);
+    if (!res.ok) return null;
+    const raw = await res.text();
+    if (!raw || !raw.trim()) return null;
+    marked.use({ breaks: true, gfm: true });
+    return marked.parse(raw);
+  } catch {
+    return null;
+  }
 }
 
 // Renders help content into a container element.
-// Pass the feature key and the DOM element to populate.
 async function renderHelpContent(key, containerEl) {
   if (!containerEl) return;
   containerEl.innerHTML = '<p class="help-loading">Loading…</p>';
