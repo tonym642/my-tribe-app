@@ -646,13 +646,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-book-lessons').addEventListener('click', openBookLessons);
   document.getElementById('m-btn-book-lessons').addEventListener('click', () => { closeMobileNav(); openBookLessons(); });
 
-  // Book Lessons — page controls
-  document.getElementById('bl-library-back').addEventListener('click', () => blShowPhase('bl-search-phase'));
-  // Library tabs
-  document.querySelectorAll('.bl-lib-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.bl-lib-tab').forEach(t => t.classList.toggle('active', t === tab));
-      blRenderLibrary(tab.dataset.tab);
+  // Book Library modal — close button + backdrop
+  document.getElementById('bl-library-modal-close').addEventListener('click', blCloseLibraryModal);
+  document.getElementById('bl-library-overlay').addEventListener('click', e => {
+    if (e.target.id === 'bl-library-overlay') blCloseLibraryModal();
+  });
+  // Book Library modal — filter tabs
+  document.getElementById('bl-library-overlay').querySelectorAll('.history-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('bl-library-overlay').querySelectorAll('.history-filter-btn')
+        .forEach(b => b.classList.toggle('active', b === btn));
+      blRenderLibrary(btn.dataset.blFilter);
     });
   });
 
@@ -2978,72 +2982,96 @@ function blSaveBook() {
   document.getElementById('bl-saved-badge').style.display = '';
 }
 
-function blOpenFavorites() {
-  document.querySelectorAll('.bl-lib-tab').forEach(t =>
-    t.classList.toggle('active', t.dataset.tab === 'favorites')
+function blOpenLibraryModal(tab) {
+  const overlay = document.getElementById('bl-library-overlay');
+  if (!overlay) return;
+  // Set active filter tab
+  overlay.querySelectorAll('.history-filter-btn').forEach(btn =>
+    btn.classList.toggle('active', btn.dataset.blFilter === tab)
   );
-  blShowPhase('bl-library-phase');
-  blRenderLibrary('favorites');
+  overlay.classList.add('open');
+  blRenderLibrary(tab);
 }
 
-function blOpenHistory() {
-  document.querySelectorAll('.bl-lib-tab').forEach(t =>
-    t.classList.toggle('active', t.dataset.tab === 'history')
-  );
-  blShowPhase('bl-library-phase');
-  blRenderLibrary('history');
+function blOpenFavorites() { blOpenLibraryModal('favorites'); }
+function blOpenHistory()    { blOpenLibraryModal('history'); }
+
+function blCloseLibraryModal() {
+  document.getElementById('bl-library-overlay')?.classList.remove('open');
+}
+
+function blToggleSavedBook(title) {
+  const books = getSavedBooks();
+  const idx = books.findIndex(b => b.title === title);
+  if (idx === -1) {
+    // Find from viewed to get full info
+    const viewed = getViewedBooks();
+    const b = viewed.find(v => v.title === title) || { title, author: '', tagline: '' };
+    books.unshift({ title: b.title, author: b.author, tagline: b.tagline || '', savedAt: new Date().toISOString() });
+  } else {
+    books.splice(idx, 1);
+  }
+  saveBooksData(books);
 }
 
 function blRenderLibrary(tab) {
-  const list  = document.getElementById('bl-books-list');
-  const empty = document.getElementById('bl-no-books');
-  const msg   = document.getElementById('bl-no-books-msg');
+  const list = document.getElementById('bl-library-list');
+  if (!list) return;
 
   if (tab === 'favorites') {
     const books = getSavedBooks();
     if (books.length === 0) {
-      list.innerHTML = '';
-      msg.textContent = 'No saved books yet. Start a lesson and save your first book.';
-      empty.style.display = '';
+      list.innerHTML = '<p class="history-empty">No saved books yet. Start a lesson and save your first book.</p>';
       return;
     }
-    empty.style.display = 'none';
     list.innerHTML = books.map((b, i) =>
-      `<div class="bl-book-card" data-idx="${i}" data-source="saved">
-        <div class="bl-book-card-title">${esc(b.title)}</div>
-        <div class="bl-book-card-author">by ${esc(b.author)}</div>
+      `<div class="history-item bl-lib-item" data-idx="${i}" data-tab="favorites">
+        <div class="history-item-info">
+          <div class="history-item-title">${esc(b.title)}</div>
+          <div class="history-item-meta">by ${esc(b.author)}</div>
+        </div>
+        <div class="history-item-actions">
+          <button class="history-heart-btn active" data-action="bl-fav" data-title="${esc(b.title)}" title="Remove from favorites">${HEART_FILLED}</button>
+        </div>
       </div>`
     ).join('');
-    list.querySelectorAll('.bl-book-card').forEach(card => {
-      card.addEventListener('click', () => {
-        blConfirmedBook = books[parseInt(card.dataset.idx)];
-        blStartLesson();
-      });
-    });
 
   } else {
     const viewed = getViewedBooks();
     if (viewed.length === 0) {
-      list.innerHTML = '';
-      msg.textContent = 'No books viewed yet. Start a lesson to build your history.';
-      empty.style.display = '';
+      list.innerHTML = '<p class="history-empty">No books viewed yet. Start a lesson to build your history.</p>';
       return;
     }
-    empty.style.display = 'none';
-    list.innerHTML = viewed.map((b, i) =>
-      `<div class="bl-viewed-card" data-idx="${i}">
-        <div class="bl-viewed-card-title">${esc(b.title)}</div>
-        <div class="bl-viewed-card-author">by ${esc(b.author)}</div>
-        <div class="bl-viewed-card-meta">${formatRelativeDate(b.viewedAt)}</div>
-      </div>`
-    ).join('');
-    list.querySelectorAll('.bl-viewed-card').forEach(card => {
-      card.addEventListener('click', () => {
-        blConfirmedBook = viewed[parseInt(card.dataset.idx)];
-        blStartLesson();
-      });
-    });
+    const saved = getSavedBooks();
+    list.innerHTML = viewed.map((b, i) => {
+      const isSaved = saved.some(s => s.title === b.title);
+      return `<div class="history-item bl-lib-item" data-idx="${i}" data-tab="history">
+        <div class="history-item-info">
+          <div class="history-item-title">${esc(b.title)}</div>
+          <div class="history-item-meta">by ${esc(b.author)} &middot; ${formatRelativeDate(b.viewedAt)}</div>
+        </div>
+        <div class="history-item-actions">
+          <button class="history-heart-btn${isSaved ? ' active' : ''}" data-action="bl-fav" data-title="${esc(b.title)}" title="${isSaved ? 'Remove from favorites' : 'Save to favorites'}">${isSaved ? HEART_FILLED : HEART_OUTLINE}</button>
+        </div>
+      </div>`;
+    }).join('');
   }
+
+  // Click on item body → start lesson; click on heart → toggle save
+  list.querySelectorAll('.bl-lib-item').forEach(item => {
+    item.querySelector('.history-item-info').addEventListener('click', () => {
+      const idx = parseInt(item.dataset.idx);
+      const t = item.dataset.tab;
+      blConfirmedBook = t === 'favorites' ? getSavedBooks()[idx] : getViewedBooks()[idx];
+      blCloseLibraryModal();
+      blStartLesson();
+    });
+    item.querySelector('[data-action="bl-fav"]').addEventListener('click', e => {
+      const title = e.currentTarget.dataset.title;
+      blToggleSavedBook(title);
+      blRenderLibrary(tab); // re-render
+    });
+  });
 }
 
 // ── Campfire (Storytelling Experience) ───────────────────────────

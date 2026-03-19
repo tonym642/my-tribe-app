@@ -582,6 +582,26 @@
     </div>
   </div>
 
+  <!-- Book Library Modal -->
+  <div class="modal-overlay" id="bl-library-overlay">
+    <div class="modal history-modal">
+      <div class="modal-header">
+        <h3 id="bl-library-modal-title">Book History</h3>
+        <button class="modal-close" id="bl-library-modal-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="history-filter-row">
+        <button class="history-filter-btn active" data-bl-filter="history">History</button>
+        <button class="history-filter-btn" data-bl-filter="favorites">Favorites</button>
+      </div>
+      <div class="history-list" id="bl-library-list"></div>
+    </div>
+  </div>
+
   <!-- Book Lessons Page -->
   <div id="book-lessons-page" data-help-key="book-lessons" style="display:none">
     <div class="bl-page-layout">

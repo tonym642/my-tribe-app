@@ -3008,9 +3008,11 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   background: var(--bg);
 }
 
-.history-item-main {
+.history-item-main,
+.history-item-info {
   flex: 1;
   min-width: 0;
+  cursor: pointer;
 }
 
 .history-item-title {
