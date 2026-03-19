@@ -33,17 +33,21 @@
         </div>
       </div>
 
-      <!-- Sessions -->
+      <!-- Chats -->
       <div class="nav-dropdown">
-        <button class="nav-btn">Sessions</button>
+        <button class="nav-btn">Chats</button>
         <div class="nav-menu">
+          <button class="nav-item" id="btn-advice">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+            Advice
+          </button>
           <button class="nav-item" id="btn-debate">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             Debate
           </button>
           <button class="nav-item" id="btn-voting">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-            Voting
+            Polls
           </button>
           <button class="nav-item" id="btn-campfire">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
@@ -52,9 +56,9 @@
         </div>
       </div>
 
-      <!-- Coaching -->
+      <!-- Education -->
       <div class="nav-dropdown">
-        <button class="nav-btn">Coaching</button>
+        <button class="nav-btn">Education</button>
         <div class="nav-menu">
           <button class="nav-item" id="btn-core-lessons">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
@@ -185,14 +189,18 @@
       </button>
     </div>
     <div class="mobile-nav-section">
-      <div class="mobile-nav-heading">Sessions</div>
+      <div class="mobile-nav-heading">Chats</div>
+      <button class="mobile-nav-item" id="m-btn-advice">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+        Advice
+      </button>
       <button class="mobile-nav-item" id="m-btn-debate">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Debate
       </button>
       <button class="mobile-nav-item" id="m-btn-voting">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        Voting
+        Polls
       </button>
       <button class="mobile-nav-item" id="m-btn-campfire">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
@@ -200,7 +208,7 @@
       </button>
     </div>
     <div class="mobile-nav-section">
-      <div class="mobile-nav-heading">Coaching</div>
+      <div class="mobile-nav-heading">Education</div>
       <button class="mobile-nav-item" id="m-btn-core-lessons">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
         Core Lessons
@@ -893,7 +901,7 @@
     <div class="voting-page-layout">
 
       <div class="voting-page-header">
-        <h2 class="voting-page-title">Tribe Voting</h2>
+        <h2 class="voting-page-title">Tribe Polls</h2>
       </div>
 
       <!-- Setup phase -->
@@ -914,7 +922,7 @@
         <!-- Options area (dynamic) -->
         <div id="voting-options-area"></div>
 
-        <button class="btn-primary voting-start-btn" id="voting-start-btn">Start Voting</button>
+        <button class="btn-primary voting-start-btn" id="voting-start-btn">Start Poll</button>
       </div>
 
       <!-- Results phase -->
@@ -946,7 +954,7 @@
           </div>
 
           <div class="voting-footer-row">
-            <button class="voting-new-btn" id="voting-new-btn">Start New Vote</button>
+            <button class="voting-new-btn" id="voting-new-btn">Start New Poll</button>
           </div>
 
         </div>
@@ -990,7 +998,7 @@
   <div class="modal-overlay" id="sessions-guide-overlay">
     <div class="modal guide-modal">
       <div class="modal-header">
-        <h3>Sessions Guide</h3>
+        <h3>Chats Guide</h3>
         <button class="modal-close" id="sessions-guide-close">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
@@ -1001,7 +1009,7 @@
           <div class="guide-item-desc">Pose a question or dilemma and watch your Tribe argue it from all sides. Each advisor defends their position, then a closing summary is generated. Best for decisions where you want to see every angle challenged.</div>
         </div>
         <div class="guide-item">
-          <div class="guide-item-label">Voting</div>
+          <div class="guide-item-label">Polls</div>
           <div class="guide-item-desc">Give the council a choice and ask them to vote. Each advisor casts their vote and explains their reasoning. The result shows a tally, the winning option, and a guide summary. Best for binary or multi-option decisions.</div>
         </div>
         <div class="guide-item">

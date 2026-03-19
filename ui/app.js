@@ -387,6 +387,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (el) el.addEventListener('click', () => { closeMobileNav(); showNotice('Coming soon.'); });
   });
 
+  // Advice — nav buttons (desktop + mobile)
+  function goToAdvice() {
+    closeVoting();
+    closeDebate();
+    closeCampfire();
+  }
+  document.getElementById('btn-advice').addEventListener('click', goToAdvice);
+  document.getElementById('m-btn-advice').addEventListener('click', () => { closeMobileNav(); goToAdvice(); });
+
   // Debate — nav buttons (desktop + mobile)
   document.getElementById('btn-debate').addEventListener('click', openDebate);
   document.getElementById('m-btn-debate').addEventListener('click', () => { closeMobileNav(); openDebate(); });
