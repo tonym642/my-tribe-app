@@ -1625,7 +1625,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 
 /* ── Confirm Phase ── */
 .bl-confirm-card {
-  max-width: 500px;
+  max-width: 640px;
   margin: 32px auto 20px;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -1651,7 +1651,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   padding-left: 12px;
 }
 .bl-confirm-actions {
-  max-width: 500px;
+  max-width: 640px;
   margin: 0 auto;
   display: flex;
   gap: 10px;
