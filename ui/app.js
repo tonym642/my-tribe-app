@@ -431,6 +431,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeVoting();
     closeDebate();
     closeCampfire();
+    closeBookLessons();
   }
   document.getElementById('btn-advice').addEventListener('click', goToAdvice);
   document.getElementById('m-btn-advice').addEventListener('click', () => { closeMobileNav(); goToAdvice(); });
@@ -1643,6 +1644,7 @@ function switchAdvisorTab(tabId) {
 }
 
 function openAdvisorsPage() {
+  closeBookLessons();
   // Update tab labels with current names
   const names = getAdvisorNames();
   [...TRIBE_IDS, 'guide'].forEach(id => {
@@ -3172,6 +3174,7 @@ const CF_MOD_OPENINGS = {
 };
 
 function openCampfire() {
+  closeBookLessons();
   resetCampfireSetup();
   document.getElementById('campfire-setup').style.display = '';
   document.getElementById('campfire-session').style.display = 'none';
@@ -3590,6 +3593,7 @@ let votingRunning     = false;
 const VOTING_ALL_ADVISORS = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'frank'];
 
 function openVoting() {
+  closeBookLessons();
   votingRunning     = false;
   votingType        = 'yes-no';
   votingAdvisorMode = 'all';
@@ -4041,6 +4045,7 @@ const DEBATE_REPLIES = [
 ];
 
 function openDebate() {
+  closeBookLessons();
   document.getElementById('debate-page').style.display = 'flex';
   document.getElementById('main-layout').style.display = 'none';
   resetDebate();
