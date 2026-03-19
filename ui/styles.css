@@ -5785,12 +5785,12 @@ body.dark-mode .campfire-discussion-feed::-webkit-scrollbar-thumb { background: 
 .help-content {
   font-size: 0.92rem;
   line-height: 1.65;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 .help-content h1, .help-content h2, .help-content h3 {
   margin: 1.1em 0 0.4em;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-1);
 }
 .help-content h1 { font-size: 1.15rem; }
 .help-content h2 { font-size: 1.05rem; }
