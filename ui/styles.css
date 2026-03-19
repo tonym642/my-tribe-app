@@ -4696,18 +4696,33 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
 }
 
 .voting-page-inner {
-  max-width: 560px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 16px 32px 48px;
+  padding: 16px 24px 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
 }
 
-/* All direct children of the setup/results phases fill the width */
-.voting-phase > *,
+/* Setup phase stays narrow and centered */
+#voting-setup-phase {
+  max-width: 520px;
+  width: 100%;
+}
+
+/* All direct children of setup fill the phase width */
+#voting-setup-phase > *,
 #voting-options-area > * {
+  width: 100%;
+}
+
+/* Narrow results content stays centered */
+.voting-question-banner,
+.voting-verdict-card,
+.voting-tally,
+.voting-guide-summary {
+  max-width: 520px;
   width: 100%;
 }
 
@@ -5066,11 +5081,12 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   text-align: right;
 }
 
-/* Vote cards grid */
+/* Vote cards grid — wider than the narrow results content */
 .voting-cards-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 12px;
+  width: 100%;
 }
 
 @media (max-width: 640px) {
