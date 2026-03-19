@@ -360,7 +360,30 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Advice page — utility menu
   document.getElementById('btn-advice-help').addEventListener('click', openAdviceHelp);
   document.getElementById('btn-advice-history').addEventListener('click', openHistoryPanel);
-  document.getElementById('btn-advice-favorites').addEventListener('click', () => showNotice('Favorites coming soon.'));
+  document.getElementById('btn-advice-favorites').addEventListener('click', () => openHistoryPanel(true));
+
+  // History filter tabs (inside history modal)
+  document.querySelectorAll('.history-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.history-filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+      renderHistoryList(btn.dataset.filter === 'favorites');
+    });
+  });
+
+  // Feature page utility menus — Debate
+  document.getElementById('btn-debate-util-help').addEventListener('click', () => openPageHelp('debate'));
+  document.getElementById('btn-debate-util-history').addEventListener('click', openHistoryPanel);
+  document.getElementById('btn-debate-util-favorites').addEventListener('click', () => openHistoryPanel(true));
+
+  // Feature page utility menus — Polls
+  document.getElementById('btn-polls-util-help').addEventListener('click', () => openPageHelp('polls'));
+  document.getElementById('btn-polls-util-history').addEventListener('click', openHistoryPanel);
+  document.getElementById('btn-polls-util-favorites').addEventListener('click', () => openHistoryPanel(true));
+
+  // Feature page utility menus — Book Lessons
+  document.getElementById('btn-bl-util-help').addEventListener('click', () => openPageHelp('book-lessons'));
+  document.getElementById('btn-bl-util-history').addEventListener('click', openHistoryPanel);
+  document.getElementById('btn-bl-util-favorites').addEventListener('click', () => openHistoryPanel(true));
 
   // Help modal close
   document.getElementById('help-close').addEventListener('click', closeAdviceHelp);
@@ -911,10 +934,14 @@ function renderSuggestions() {
 // ── Advice Help Modal ─────────────────────────────────────────────
 
 function openAdviceHelp() {
+  openPageHelp('advice');
+}
+
+function openPageHelp(key) {
   const overlay = document.getElementById('help-overlay');
   if (!overlay) return;
   overlay.classList.add('open');
-  renderHelpContent('advice', document.getElementById('help-content'));
+  renderHelpContent(key, document.getElementById('help-content'));
 }
 
 function closeAdviceHelp() {
@@ -1893,47 +1920,83 @@ function addMsgToConv(msg) {
   saveConversations(convs);
 }
 
-function openHistoryPanel() {
-  const convs = getConversations().filter(c => c.messages.length > 0);
+// Heart SVGs
+const HEART_FILLED  = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+const HEART_OUTLINE = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+
+function toggleFavorite(id) {
+  const convs = getConversations();
+  const conv  = convs.find(c => c.id === id);
+  if (!conv) return;
+  conv.favorite = !conv.favorite;
+  saveConversations(convs);
+}
+
+function openHistoryPanel(favoritesOnly = false) {
+  // Set active filter tab
+  document.querySelectorAll('.history-filter-btn').forEach(btn => {
+    btn.classList.toggle('active', favoritesOnly ? btn.dataset.filter === 'favorites' : btn.dataset.filter === 'all');
+  });
+
+  renderHistoryList(favoritesOnly);
+  document.getElementById('history-overlay').classList.add('open');
+}
+
+function renderHistoryList(favoritesOnly = false) {
+  let convs = getConversations().filter(c => c.messages.length > 0);
+  if (favoritesOnly) convs = convs.filter(c => c.favorite);
+
   const $list = document.getElementById('history-list');
 
   if (convs.length === 0) {
-    $list.innerHTML = '<p class="history-empty">No conversations yet.</p>';
-  } else {
-    $list.innerHTML = convs.map(conv => {
-      const title      = esc(conv.title || 'Untitled Chat');
-      const date       = formatRelativeDate(conv.updated_at);
-      const msgCount   = conv.messages.filter(m => m.type === 'user').length;
-      const countLabel = msgCount === 1 ? '1 message' : `${msgCount} messages`;
-      return `
-        <div class="history-item" data-id="${conv.id}">
-          <div class="history-item-main">
-            <div class="history-item-title">${title}</div>
-            <div class="history-item-meta">${date} · ${countLabel}</div>
-          </div>
-          <div class="history-item-actions">
-            <button class="history-action" data-action="rename" data-id="${conv.id}" title="Rename">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </button>
-            <button class="history-action history-delete" data-action="delete" data-id="${conv.id}" title="Delete">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-            </button>
-          </div>
-        </div>`;
-    }).join('');
-
-    $list.querySelectorAll('.history-item-main').forEach(el => {
-      el.addEventListener('click', () => loadConversation(el.closest('.history-item').dataset.id));
-    });
-    $list.querySelectorAll('[data-action="rename"]').forEach(btn => {
-      btn.addEventListener('click', e => { e.stopPropagation(); renameConversation(btn.dataset.id); });
-    });
-    $list.querySelectorAll('[data-action="delete"]').forEach(btn => {
-      btn.addEventListener('click', e => { e.stopPropagation(); deleteConversation(btn.dataset.id); });
-    });
+    $list.innerHTML = `<p class="history-empty">${favoritesOnly ? 'No favorites yet.' : 'No conversations yet.'}</p>`;
+    return;
   }
 
-  document.getElementById('history-overlay').classList.add('open');
+  $list.innerHTML = convs.map(conv => {
+    const title      = esc(conv.title || 'Untitled Chat');
+    const date       = formatRelativeDate(conv.updated_at);
+    const msgCount   = conv.messages.filter(m => m.type === 'user').length;
+    const countLabel = msgCount === 1 ? '1 message' : `${msgCount} messages`;
+    const isFav      = !!conv.favorite;
+    return `
+      <div class="history-item" data-id="${conv.id}">
+        <div class="history-item-main">
+          <div class="history-item-title">${title}</div>
+          <div class="history-item-meta">${date} · ${countLabel}</div>
+        </div>
+        <div class="history-item-actions">
+          <button class="history-heart-btn${isFav ? ' active' : ''}" data-action="favorite" data-id="${conv.id}" title="${isFav ? 'Remove from favorites' : 'Add to favorites'}">
+            ${isFav ? HEART_FILLED : HEART_OUTLINE}
+          </button>
+          <button class="history-action" data-action="rename" data-id="${conv.id}" title="Rename">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="history-action history-delete" data-action="delete" data-id="${conv.id}" title="Delete">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+
+  $list.querySelectorAll('.history-item-main').forEach(el => {
+    el.addEventListener('click', () => loadConversation(el.closest('.history-item').dataset.id));
+  });
+  $list.querySelectorAll('[data-action="favorite"]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      toggleFavorite(btn.dataset.id);
+      // Re-render staying in current filter
+      const isFilteringFavs = document.querySelector('.history-filter-btn.active')?.dataset.filter === 'favorites';
+      renderHistoryList(isFilteringFavs);
+    });
+  });
+  $list.querySelectorAll('[data-action="rename"]').forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); renameConversation(btn.dataset.id); });
+  });
+  $list.querySelectorAll('[data-action="delete"]').forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); deleteConversation(btn.dataset.id); });
+  });
 }
 
 function closeHistoryPanel() {
@@ -1979,13 +2042,13 @@ function renameConversation(id) {
   if (newTitle === null) return;
   conv.title = newTitle.trim() || conv.title;
   saveConversations(convs);
-  openHistoryPanel();
+  renderHistoryList(document.querySelector('.history-filter-btn.active')?.dataset.filter === 'favorites');
 }
 
 function deleteConversation(id) {
   saveConversations(getConversations().filter(c => c.id !== id));
   if (state.currentConvId === id) startNewChat();
-  openHistoryPanel();
+  renderHistoryList(document.querySelector('.history-filter-btn.active')?.dataset.filter === 'favorites');
 }
 
 // ── Book Lessons ──────────────────────────────────────────────────

@@ -361,14 +361,89 @@ html, body {
   transition: color 0.12s;
 }
 
-.advice-util-link:hover {
-  color: var(--text-1);
+.advice-util-link:hover,
+.page-util-link:hover {
+  color: #3b9eff;
 }
 
-.advice-util-sep {
+.advice-util-sep,
+.page-util-sep {
   font-size: 13px;
   color: var(--border);
   user-select: none;
+}
+
+/* Shared utility menu used on all feature pages */
+.page-util-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0 4px;
+}
+
+.page-util-link {
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  padding: 2px 0;
+  transition: color 0.12s;
+}
+
+/* ── History filter tabs ─────────────────────────────────────────── */
+
+.history-filter-row {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  padding: 0 22px;
+}
+
+.history-filter-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  padding: 10px 14px 9px;
+  margin-bottom: -1px;
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.history-filter-btn:hover {
+  color: var(--text-1);
+}
+
+.history-filter-btn.active {
+  color: #3b9eff;
+  border-bottom-color: #3b9eff;
+}
+
+/* ── History heart button ────────────────────────────────────────── */
+
+.history-heart-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--text-3, #bbb);
+  transition: color 0.12s, transform 0.12s;
+  display: flex;
+  align-items: center;
+}
+
+.history-heart-btn:hover {
+  transform: scale(1.15);
+}
+
+.history-heart-btn.active {
+  color: #e05555;
 }
 
 /* ── Suggestions Slider ─────────────────────────────────────────── */
@@ -5462,10 +5537,21 @@ body.dark-mode .voting-option-input:focus { border-color: #555e72; background: #
 body.dark-mode .welcome-prompt { background: #1a1d27; color: var(--text-2); border-color: #2a2d3a; }
 body.dark-mode .welcome-prompt:hover { background: #22263a; border-color: #555e72; color: var(--text-1); }
 
-/* Advice utility menu */
-body.dark-mode .advice-util-link { color: var(--text-2); }
-body.dark-mode .advice-util-link:hover { color: var(--text-1); }
-body.dark-mode .advice-util-sep { color: #3a3e50; }
+/* Advice + page utility menus */
+body.dark-mode .advice-util-link,
+body.dark-mode .page-util-link { color: var(--text-2); }
+body.dark-mode .advice-util-link:hover,
+body.dark-mode .page-util-link:hover { color: #3b9eff; }
+body.dark-mode .advice-util-sep,
+body.dark-mode .page-util-sep { color: #3a3e50; }
+
+/* History filter + heart */
+body.dark-mode .history-filter-row { border-color: #2a2d3a; }
+body.dark-mode .history-filter-btn { color: var(--text-2); }
+body.dark-mode .history-filter-btn:hover { color: var(--text-1); }
+body.dark-mode .history-filter-btn.active { color: #3b9eff; border-bottom-color: #3b9eff; }
+body.dark-mode .history-heart-btn { color: #555; }
+body.dark-mode .history-heart-btn.active { color: #e05555; }
 
 /* Suggestions */
 body.dark-mode .suggestion-card { background: #1a1d27; border-color: #2a2d3a; color: var(--text-2); }
