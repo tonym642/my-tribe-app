@@ -1953,6 +1953,65 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   #bl-lesson-phase, #cl-lesson-phase { position: relative; }
 }
 
+/* ── Core Lessons — tab pull button (desktop only) ── */
+.cl-chat-tab {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translate(-100%, -50%);
+  width: 38px;
+  height: 54px;
+  background: #F59E0B;
+  color: #fff;
+  border: none;
+  border-radius: 10px 0 0 10px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  box-shadow: -3px 2px 10px rgba(0,0,0,0.18);
+  transition: background 0.15s;
+}
+.cl-chat-tab:hover { background: #D97706; }
+@media (min-width: 769px) {
+  .cl-chat-tab { display: flex; }
+}
+
+/* Core Lessons — inner content wrapper (handles clipping) */
+.cl-chat-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Core Lessons — "Discussion" label above messages */
+.cl-discussion-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-2);
+  text-transform: uppercase;
+  padding: 10px 14px 6px;
+  flex-shrink: 0;
+}
+
+/* Override #cl-chat-area to allow tab to overflow left */
+#cl-chat-area {
+  overflow: visible;
+  position: relative;
+}
+#cl-chat-area.collapsed {
+  overflow: visible;
+}
+/* Hide empty header on desktop (title was moved to label below) */
+@media (min-width: 769px) {
+  #cl-chat-area .bl-chat-header { display: none; }
+}
+
 /* ── Chat Area — right panel on desktop ── */
 .bl-chat-area {
   flex-shrink: 0;
@@ -6128,6 +6187,8 @@ body.dark-mode .bl-chat-input-row { background: #0f1117; border-color: #2a2d3a; 
 body.dark-mode .bl-discussion-toggle { background: #1a1d27; border-color: #2a2d3a; color: var(--text-2); }
 body.dark-mode .bl-discussion-toggle:hover,
 body.dark-mode .bl-discussion-toggle.active { background: #22263a; color: #3b9eff; border-color: #3b9eff; }
+body.dark-mode .cl-chat-tab { background: #D97706; }
+body.dark-mode .cl-chat-tab:hover { background: #B45309; }
 body.dark-mode .bl-chat-area { background: #0f1117; }
 body.dark-mode .bl-chat-close { color: var(--text-2); }
 body.dark-mode .bl-chat-input { background: #1a1d27; border-color: #2a2d3a; color: var(--text-1); }
