@@ -815,6 +815,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     closeAdvisorsPage();
     closeVoting();
     closeBookLessons();
+    closeCampfire();
     startNewChat();
     setMode('member');
   });
@@ -3435,6 +3436,7 @@ async function startCampfireSession() {
   document.getElementById('campfire-session').style.display = 'flex';
   document.getElementById('btn-campfire-util-new').style.display = '';
   document.getElementById('campfire-new-sep').style.display = '';
+  document.getElementById('cf-save-story-btn').style.display = '';
   document.getElementById('campfire-story-content').innerHTML = '';
   document.getElementById('campfire-discussion-feed').innerHTML = '';
   document.getElementById('campfire-user-story-input').style.display = 'none';
@@ -3670,6 +3672,14 @@ function openCampfireHistory(favoritesOnly = false) {
         </div>`;
     }).join('');
 
+    $list.querySelectorAll('.history-item-info').forEach(info => {
+      info.style.cursor = 'pointer';
+      info.addEventListener('click', () => {
+        const id    = info.closest('.history-item').dataset.id;
+        const story = getStoryLibrary().find(s => s.id === id);
+        if (story) loadCampfireStoryFromHistory(story);
+      });
+    });
     $list.querySelectorAll('[data-action="fav"]').forEach(btn => {
       btn.addEventListener('click', e => {
         e.stopPropagation();
@@ -3687,6 +3697,40 @@ function openCampfireHistory(favoritesOnly = false) {
 
 function closeCampfireHistory() {
   document.getElementById('campfire-history-overlay').classList.remove('open');
+}
+
+function loadCampfireStoryFromHistory(story) {
+  closeCampfireHistory();
+
+  // Show session view
+  document.getElementById('campfire-setup').style.display = 'none';
+  document.getElementById('campfire-session').style.display = 'flex';
+  document.getElementById('btn-campfire-util-new').style.display = '';
+  document.getElementById('campfire-new-sep').style.display = '';
+
+  // Topbar
+  document.getElementById('cf-session-title').textContent = story.title || 'Untitled Story';
+  const byline = [story.storyteller, CF_FORMATS[story.format]?.label, story.pillar].filter(Boolean).join(' · ');
+  document.getElementById('cf-session-byline').textContent = byline;
+  document.getElementById('cf-session-avatar').innerHTML = '';
+  document.getElementById('cf-save-story-btn').style.display = 'none';
+
+  // Clear feeds
+  document.getElementById('campfire-discussion-feed').innerHTML = '';
+  document.getElementById('campfire-user-story-input').style.display = 'none';
+
+  // Render saved story text
+  const contentEl = document.getElementById('campfire-story-content');
+  const sections = (story.text || '').split('\n\n').filter(Boolean);
+  contentEl.innerHTML = sections.map(s => {
+    const colonIdx = s.indexOf(':');
+    if (colonIdx > 0 && colonIdx < 50) {
+      const label = esc(s.slice(0, colonIdx).trim());
+      const text  = cfEscape(s.slice(colonIdx + 1).trim());
+      return `<div class="cf-story-section"><div class="cf-story-section-label">${label}</div><div class="cf-story-section-text">${text}</div></div>`;
+    }
+    return `<div class="cf-story-section"><div class="cf-story-section-text">${cfEscape(s)}</div></div>`;
+  }).join('');
 }
 
 function toggleCampfireStoryFavorite(id) {
@@ -3710,6 +3754,7 @@ const VOTING_ALL_ADVISORS = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'fran
 
 function openVoting() {
   closeBookLessons();
+  closeCampfire();
   votingRunning     = false;
   votingType        = 'yes-no';
   votingAdvisorMode = 'all';
@@ -4390,6 +4435,7 @@ const DEBATE_REPLIES = [
 
 function openDebate() {
   closeBookLessons();
+  closeCampfire();
   document.getElementById('debate-page').style.display = 'flex';
   document.getElementById('main-layout').style.display = 'none';
   resetDebate();
