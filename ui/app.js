@@ -2567,6 +2567,19 @@ function getViewedBooks() {
   try { return JSON.parse(localStorage.getItem('tribe_books_viewed') || '[]'); }
   catch { return []; }
 }
+function getBookDiscussion(title) {
+  try {
+    const all = JSON.parse(localStorage.getItem('tribe_bl_discussions') || '{}');
+    return all[title] || [];
+  } catch { return []; }
+}
+function saveBookDiscussion(title, messages) {
+  try {
+    const all = JSON.parse(localStorage.getItem('tribe_bl_discussions') || '{}');
+    all[title] = messages;
+    localStorage.setItem('tribe_bl_discussions', JSON.stringify(all));
+  } catch {}
+}
 function saveViewedBooks(books) {
   localStorage.setItem('tribe_books_viewed', JSON.stringify(books));
 }
@@ -2663,7 +2676,7 @@ async function blSearchBook() {
 async function blStartLesson() {
   if (!blConfirmedBook) return;
   blRecordView();
-  blChatMessages    = [];
+  blChatMessages    = getBookDiscussion(blConfirmedBook.title);
   blCompletedTopics = new Set();
   blCurrentLesson   = null;
   blShowPhase('bl-lesson-phase');
@@ -2688,6 +2701,10 @@ async function blStartLesson() {
   document.getElementById('bl-chapters-content').innerHTML = '';
   document.getElementById('bl-topics-list').innerHTML = '';
   document.getElementById('bl-chat-messages').innerHTML = '';
+  // Restore saved discussion messages (render without re-saving)
+  if (blChatMessages.length) {
+    blChatMessages.forEach(m => blRenderMessage(m.role, m.content, m.advisorId));
+  }
   blUpdateProgress();
 
   // Save / saved state
@@ -2862,8 +2879,8 @@ function blUpdateProgress() {
 
 // ── Chat ──────────────────────────────────────────────────────────
 
-function blAppendMessage(role, content, advisorId) {
-  blChatMessages.push({ role, content, advisorId });
+// Renders a single message into the chat panel (no save side-effect).
+function blRenderMessage(role, content, advisorId) {
   const msgs = document.getElementById('bl-chat-messages');
   const div  = document.createElement('div');
 
@@ -2876,24 +2893,29 @@ function blAppendMessage(role, content, advisorId) {
         <div class="advisor-text">${esc(content)}</div>
       </div>`;
   } else {
-    const a          = ADVISORS[advisorId] || ADVISORS.guide;
-    const avatarSrc  = `../assets/avatars/${advisorId}.png`;
-    const parsed     = typeof marked !== 'undefined' ? marked.parse(content) : esc(content);
-    div.className    = 'advisor-card';
+    const a         = ADVISORS[advisorId] || ADVISORS.guide;
+    const avatarSrc = `../assets/avatars/${advisorId}.png`;
+    const parsed    = typeof marked !== 'undefined' ? marked.parse(content) : esc(content);
+    div.className   = 'advisor-card';
     div.style.setProperty('--advisor-color', a.color);
     div.innerHTML = `
       <img class="advisor-thread-avatar" src="${avatarSrc}" alt="${a.name}"
            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
       <div class="advisor-avatar" style="background:${a.color};display:none">${a.initial}</div>
       <div class="advisor-meta">
-        <div class="advisor-header">
-          <span class="advisor-name">${esc(a.name)}</span>
-        </div>
+        <div class="advisor-header"><span class="advisor-name">${esc(a.name)}</span></div>
         <div class="advisor-text">${parsed}</div>
       </div>`;
   }
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
+}
+
+// Appends a message, saves to localStorage, and renders it.
+function blAppendMessage(role, content, advisorId) {
+  blChatMessages.push({ role, content, advisorId });
+  if (blConfirmedBook) saveBookDiscussion(blConfirmedBook.title, blChatMessages);
+  blRenderMessage(role, content, advisorId);
 }
 
 // Resolve @mention to an advisor ID for book lessons
