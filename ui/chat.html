@@ -777,6 +777,8 @@
       <button class="page-util-link" id="btn-campfire-util-history">History</button>
       <span class="page-util-sep">|</span>
       <button class="page-util-link" id="btn-campfire-util-favorites">Favorites</button>
+      <span class="page-util-sep" id="campfire-new-sep" style="display:none">|</span>
+      <button class="page-util-link" id="btn-campfire-util-new" style="display:none">New Session</button>
     </div>
 
     <!-- SETUP FLOW -->
@@ -919,13 +921,18 @@
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             Save Story
           </button>
-          <button class="cf-new-session-btn" id="cf-new-session-btn">New Session</button>
           <button class="cf-exit-session-btn" id="cf-exit-session-btn">✕</button>
         </div>
       </div>
 
       <!-- Two-column body: story (left) + discussion (right) -->
       <div class="campfire-session-body">
+
+        <!-- Discussion toggle (desktop only) -->
+        <button class="cf-discussion-toggle" id="cf-discussion-toggle" title="Toggle Discussion">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <span class="cf-dt-label">Around the Fire</span>
+        </button>
 
         <!-- Left: Story area -->
         <div class="campfire-story-col">
@@ -941,8 +948,13 @@
         </div>
 
         <!-- Right: Discussion area -->
-        <div class="campfire-discussion-col">
-          <div class="campfire-discussion-header">Around the Fire</div>
+        <div class="campfire-discussion-col" id="campfire-discussion-col">
+          <div class="campfire-discussion-header">
+            <span>Around the Fire</span>
+            <button class="cf-discussion-close" id="cf-discussion-close" title="Close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
           <div class="campfire-discussion-feed" id="campfire-discussion-feed"></div>
           <div class="campfire-comment-composer">
             <textarea class="campfire-comment-input" id="campfire-comment-input" rows="2" placeholder="Add your reflection…"></textarea>
@@ -953,6 +965,14 @@
         </div>
 
       </div><!-- .campfire-session-body -->
+
+      <!-- Mobile drawer button + backdrop -->
+      <button class="cf-drawer-open-btn" id="cf-drawer-open-btn">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        Around the Fire
+      </button>
+      <div class="cf-drawer-backdrop" id="cf-drawer-backdrop"></div>
+
     </div><!-- .campfire-session -->
 
   </div><!-- #campfire-page -->

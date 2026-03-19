@@ -554,12 +554,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Campfire — start session
   document.getElementById('campfire-start-btn').addEventListener('click', startCampfireSession);
 
-  // Campfire — new session
-  document.getElementById('cf-new-session-btn').addEventListener('click', () => {
+  // Campfire — new session (util menu link)
+  document.getElementById('btn-campfire-util-new').addEventListener('click', () => {
     resetCampfireSetup();
     document.getElementById('campfire-session').style.display = 'none';
     document.getElementById('campfire-setup').style.display = '';
   });
+
+  // Campfire — discussion toggle / drawer
+  document.getElementById('cf-discussion-toggle').addEventListener('click', cfToggleDiscussion);
+  document.getElementById('cf-drawer-open-btn').addEventListener('click', cfOpenDrawer);
+  document.getElementById('cf-discussion-close').addEventListener('click', cfCloseDrawer);
+  document.getElementById('cf-drawer-backdrop').addEventListener('click', cfCloseDrawer);
 
   // Campfire — save story
   document.getElementById('cf-save-story-btn').addEventListener('click', saveCampfireStory);
@@ -2991,6 +2997,23 @@ function blCloseDrawer() {
   document.getElementById('bl-drawer-backdrop').classList.remove('visible');
 }
 
+function cfToggleDiscussion() {
+  const col    = document.getElementById('campfire-discussion-col');
+  const toggle = document.getElementById('cf-discussion-toggle');
+  const hidden = col.classList.toggle('collapsed');
+  toggle.classList.toggle('active', !hidden);
+}
+
+function cfOpenDrawer() {
+  document.getElementById('campfire-discussion-col').classList.add('drawer-open');
+  document.getElementById('cf-drawer-backdrop').classList.add('visible');
+}
+
+function cfCloseDrawer() {
+  document.getElementById('campfire-discussion-col').classList.remove('drawer-open');
+  document.getElementById('cf-drawer-backdrop').classList.remove('visible');
+}
+
 async function blSendChat() {
   const input    = document.getElementById('bl-chat-input');
   const rawMsg   = input.value.trim();
@@ -3218,6 +3241,8 @@ function resetCampfireSetup() {
   document.getElementById('cf-step1-next').disabled = true;
   document.getElementById('cf-step2-next').disabled = true;
   document.getElementById('campfire-start-btn').disabled = true;
+  document.getElementById('btn-campfire-util-new').style.display = 'none';
+  document.getElementById('campfire-new-sep').style.display = 'none';
 }
 
 function cfGoToStep(n) {
@@ -3408,6 +3433,8 @@ async function startCampfireSession() {
 
   document.getElementById('campfire-setup').style.display = 'none';
   document.getElementById('campfire-session').style.display = 'flex';
+  document.getElementById('btn-campfire-util-new').style.display = '';
+  document.getElementById('campfire-new-sep').style.display = '';
   document.getElementById('campfire-story-content').innerHTML = '';
   document.getElementById('campfire-discussion-feed').innerHTML = '';
   document.getElementById('campfire-user-story-input').style.display = 'none';
