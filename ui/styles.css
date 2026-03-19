@@ -79,9 +79,9 @@ html, body {
 }
 
 .brand-logo {
-  height: 86px;
-  width: 86px;
-  border-radius: 12px;
+  height: 52px;
+  width: 52px;
+  border-radius: 10px;
   object-fit: cover;
 }
 
@@ -251,7 +251,7 @@ html, body {
 
 .welcome {
   text-align: center;
-  padding: 80px 24px 40px;
+  padding: 24px 24px 40px;
 }
 
 .welcome-mark {
