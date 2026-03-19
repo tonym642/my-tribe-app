@@ -455,12 +455,21 @@ html, body {
   max-width: 520px;
   max-height: 70vh;
   overflow-y: auto;
+  scrollbar-width: none;
+}
+.help-modal::-webkit-scrollbar {
+  display: none;
 }
 
 /* ── Guide modals ────────────────────────────────────────────────── */
 
 .guide-modal {
   max-width: 480px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.guide-modal::-webkit-scrollbar {
+  display: none;
 }
 
 .guide-body {
