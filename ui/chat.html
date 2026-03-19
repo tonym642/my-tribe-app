@@ -699,12 +699,6 @@
       <!-- Lesson Phase -->
       <div id="bl-lesson-phase" class="bl-phase" style="display:none">
 
-        <!-- Discussion toggle (desktop only) -->
-        <button class="bl-discussion-toggle" id="bl-discussion-toggle" title="Toggle Discussion">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-          <span class="bl-dt-label">Discussion</span>
-        </button>
-
         <div class="bl-lesson-body">
 
           <!-- Book Header -->
@@ -768,20 +762,30 @@
 
         <!-- Chat Area -->
         <div class="bl-chat-area" id="bl-chat-area">
-          <div class="bl-chat-header">
-            <span class="bl-chat-title">Discussion</span>
-            <button class="bl-chat-close" id="bl-chat-close" title="Close">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-          </div>
-          <div class="bl-chat-messages" id="bl-chat-messages"></div>
-          <div class="bl-chat-input-row">
-            <input type="text" class="bl-chat-input" id="bl-chat-input"
-              placeholder="@Guide, @Seth, @Marcus…" />
-            <button class="bl-chat-send" id="bl-chat-send">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-            </button>
-          </div>
+
+          <!-- Tab button — sticks out to the left, desktop only -->
+          <button class="cl-chat-tab" id="bl-discussion-toggle" title="Toggle Discussion">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </button>
+
+          <!-- Inner content (clipped when drawer collapses) -->
+          <div class="cl-chat-inner">
+            <div class="bl-chat-header">
+              <button class="bl-chat-close" id="bl-chat-close" title="Close">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            <div class="cl-discussion-label">Discussion</div>
+            <div class="bl-chat-messages" id="bl-chat-messages"></div>
+            <div class="bl-chat-input-row">
+              <input type="text" class="bl-chat-input" id="bl-chat-input"
+                placeholder="@Guide, @Seth, @Marcus…" />
+              <button class="bl-chat-send" id="bl-chat-send">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+            </div>
+          </div><!-- /.cl-chat-inner -->
+
         </div><!-- /.bl-chat-area -->
 
       </div><!-- /#bl-lesson-phase -->
@@ -1105,12 +1109,6 @@
       <!-- Two-column body: story (left) + discussion (right) -->
       <div class="campfire-session-body">
 
-        <!-- Discussion toggle (desktop only) -->
-        <button class="cf-discussion-toggle" id="cf-discussion-toggle" title="Toggle Discussion">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-          <span class="cf-dt-label">Around the Fire</span>
-        </button>
-
         <!-- Left: Story area -->
         <div class="campfire-story-col">
           <div class="campfire-story-content" id="campfire-story-content"></div>
@@ -1126,19 +1124,29 @@
 
         <!-- Right: Discussion area -->
         <div class="campfire-discussion-col" id="campfire-discussion-col">
-          <div class="campfire-discussion-header">
-            <span>Around the Fire</span>
-            <button class="cf-discussion-close" id="cf-discussion-close" title="Close">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-          </div>
-          <div class="campfire-discussion-feed" id="campfire-discussion-feed"></div>
-          <div class="campfire-comment-composer">
-            <textarea class="campfire-comment-input" id="campfire-comment-input" rows="2" placeholder="Add your reflection…"></textarea>
-            <button class="campfire-comment-send" id="campfire-comment-send">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            </button>
-          </div>
+
+          <!-- Tab button — sticks out to the left, desktop only -->
+          <button class="cl-chat-tab" id="cf-discussion-toggle" title="Toggle Discussion">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </button>
+
+          <!-- Inner content (clipped when drawer collapses) -->
+          <div class="cl-chat-inner">
+            <div class="campfire-discussion-header">
+              <button class="cf-discussion-close" id="cf-discussion-close" title="Close">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            <div class="cl-discussion-label">Around the Fire</div>
+            <div class="campfire-discussion-feed" id="campfire-discussion-feed"></div>
+            <div class="campfire-comment-composer">
+              <textarea class="campfire-comment-input" id="campfire-comment-input" rows="2" placeholder="Add your reflection…"></textarea>
+              <button class="campfire-comment-send" id="campfire-comment-send">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+          </div><!-- /.cl-chat-inner -->
+
         </div>
 
       </div><!-- .campfire-session-body -->

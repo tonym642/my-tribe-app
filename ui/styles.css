@@ -1999,16 +1999,22 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   flex-shrink: 0;
 }
 
-/* Override #cl-chat-area — desktop only (mobile uses fixed positioning from .bl-chat-area) */
+/* Override discussion panels — desktop only (mobile uses fixed positioning) */
 @media (min-width: 769px) {
-  #cl-chat-area {
+  #cl-chat-area,
+  #bl-chat-area,
+  #campfire-discussion-col {
     overflow: visible;
     position: relative;
   }
-  #cl-chat-area.collapsed {
+  #cl-chat-area.collapsed,
+  #bl-chat-area.collapsed,
+  #campfire-discussion-col.collapsed {
     overflow: visible;
   }
-  #cl-chat-area .bl-chat-header { display: none; }
+  #cl-chat-area .bl-chat-header,
+  #bl-chat-area .bl-chat-header { display: none; }
+  #campfire-discussion-col .campfire-discussion-header { display: none; }
 }
 
 /* ── Chat Area — right panel on desktop ── */
