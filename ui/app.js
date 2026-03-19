@@ -256,6 +256,96 @@ function buildSystemPrompt(advisor) {
   return parts.filter(Boolean).join('\n\n---\n\n');
 }
 
+// ── Language System ───────────────────────────────────────────────
+
+const LANGUAGES = [
+  { code: 'en', label: 'English',    flag: '🇺🇸', dir: 'ltr' },
+  { code: 'es', label: 'Spanish',    flag: '🇪🇸', dir: 'ltr' },
+  { code: 'vi', label: 'Vietnamese', flag: '🇻🇳', dir: 'ltr' },
+  { code: 'tl', label: 'Tagalog',    flag: '🇵🇭', dir: 'ltr' },
+];
+
+let currentLang = 'en';
+
+function loadLanguage() {
+  const saved = localStorage.getItem('tribe_lang');
+  const found = LANGUAGES.find(l => l.code === saved);
+  currentLang = found ? found.code : 'en';
+  applyLanguage(currentLang, false);
+}
+
+function applyLanguage(code, save = true) {
+  const lang = LANGUAGES.find(l => l.code === code) || LANGUAGES[0];
+  currentLang = lang.code;
+  document.documentElement.setAttribute('lang', lang.code);
+  document.documentElement.setAttribute('dir', lang.dir);
+  const triggerFlag = document.getElementById('lang-trigger-flag');
+  if (triggerFlag) triggerFlag.textContent = lang.flag;
+  if (save) localStorage.setItem('tribe_lang', lang.code);
+}
+
+function selectLanguage(code) {
+  applyLanguage(code);
+  closeLangDropdown();
+  renderMobileLangOptions();
+}
+
+function openLangDropdown() {
+  const dropdown = document.getElementById('lang-dropdown');
+  const trigger  = document.getElementById('lang-trigger');
+  if (!dropdown) return;
+  renderLangDropdownOptions();
+  dropdown.style.display = '';
+  trigger?.setAttribute('aria-expanded', 'true');
+  // Focus first option
+  setTimeout(() => dropdown.querySelector('.lang-option')?.focus(), 50);
+}
+
+function closeLangDropdown() {
+  const dropdown = document.getElementById('lang-dropdown');
+  const trigger  = document.getElementById('lang-trigger');
+  if (dropdown) dropdown.style.display = 'none';
+  trigger?.setAttribute('aria-expanded', 'false');
+}
+
+function toggleLangDropdown() {
+  const dropdown = document.getElementById('lang-dropdown');
+  if (!dropdown) return;
+  (dropdown.style.display === 'none' || !dropdown.style.display)
+    ? openLangDropdown() : closeLangDropdown();
+}
+
+function renderLangDropdownOptions() {
+  const dropdown = document.getElementById('lang-dropdown');
+  if (!dropdown) return;
+  dropdown.innerHTML = LANGUAGES.map(l =>
+    `<button class="lang-option${l.code === currentLang ? ' active' : ''}"
+       data-lang="${l.code}"
+       role="option"
+       aria-selected="${l.code === currentLang}">
+      <span class="lang-option-flag" aria-hidden="true">${l.flag}</span>
+      <span class="lang-option-label">${esc(l.label)}</span>
+    </button>`
+  ).join('');
+  dropdown.querySelectorAll('.lang-option').forEach(btn =>
+    btn.addEventListener('click', () => selectLanguage(btn.dataset.lang))
+  );
+}
+
+function renderMobileLangOptions() {
+  const container = document.getElementById('mobile-lang-options');
+  if (!container) return;
+  container.innerHTML = LANGUAGES.map(l =>
+    `<button class="mobile-lang-option${l.code === currentLang ? ' active' : ''}" data-lang="${l.code}">
+      <span class="mobile-lang-option-flag" aria-hidden="true">${l.flag}</span>
+      <span>${esc(l.label)}</span>
+    </button>`
+  ).join('');
+  container.querySelectorAll('.mobile-lang-option').forEach(btn =>
+    btn.addEventListener('click', () => { closeMobileNav(); selectLanguage(btn.dataset.lang); })
+  );
+}
+
 // ── State ────────────────────────────────────────────────────────
 
 const state = {
@@ -284,6 +374,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   $input   = document.getElementById('input-field');
   $sendBtn = document.getElementById('send-btn');
   $welcome = document.getElementById('welcome');
+
+  // Language selector — init
+  loadLanguage();
+  renderMobileLangOptions();
+  document.getElementById('lang-trigger').addEventListener('click', e => {
+    e.stopPropagation();
+    toggleLangDropdown();
+  });
+  document.addEventListener('click', e => {
+    if (!document.getElementById('lang-selector')?.contains(e.target)) closeLangDropdown();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLangDropdown();
+  });
 
   // Input
   $input.addEventListener('input', onInputChange);

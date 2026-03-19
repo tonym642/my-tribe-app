@@ -136,6 +136,14 @@
         </div>
       </div>
 
+      <!-- Language Selector -->
+      <div class="lang-selector" id="lang-selector">
+        <button class="lang-trigger" id="lang-trigger" aria-label="Select language" aria-haspopup="listbox" aria-expanded="false">
+          <span class="lang-flag-circle" id="lang-trigger-flag">🇺🇸</span>
+        </button>
+        <div class="lang-dropdown" id="lang-dropdown" role="listbox" aria-label="Select language" style="display:none"></div>
+      </div>
+
       <!-- Dark Mode toggle -->
       <button class="dark-mode-toggle" id="btn-dark-mode" aria-label="Toggle dark mode" title="Dark Mode">
         <!-- Moon (shown in light mode) -->
@@ -237,6 +245,10 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         Disclaimers
       </button>
+    </div>
+    <div class="mobile-nav-section">
+      <div class="mobile-nav-heading">Language</div>
+      <div id="mobile-lang-options"></div>
     </div>
     <div class="mobile-nav-section">
       <button class="mobile-nav-item" id="m-btn-dark-mode">
