@@ -2693,7 +2693,6 @@ async function blStartLesson() {
   // Save / saved state
   const saved = getSavedBooks().find(b => b.title === blConfirmedBook.title);
   document.getElementById('bl-save-btn').textContent = saved ? 'Saved' : 'Save to My Books';
-  document.getElementById('bl-saved-badge').style.display = saved ? '' : 'none';
 
   // Collapse chapters
   document.getElementById('bl-chapters-content').style.display = 'none';
@@ -3001,7 +3000,6 @@ function blSaveBook() {
     saveBooksData(books);
   }
   document.getElementById('bl-save-btn').textContent = 'Saved';
-  document.getElementById('bl-saved-badge').style.display = '';
 }
 
 function blOpenLibraryModal(tab) {
