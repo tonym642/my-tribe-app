@@ -4752,6 +4752,7 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
 .voting-type-row {
   display: flex;
   gap: 6px;
+  margin-top: 32px;
   margin-bottom: 18px;
 }
 
@@ -5057,8 +5058,12 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
 /* Vote cards grid */
 .voting-cards-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .voting-cards-grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 480px) {
