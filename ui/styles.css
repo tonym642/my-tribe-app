@@ -3494,6 +3494,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   border-radius: 12px;
   padding: 16px 18px;
   width: 100%;
+  text-align: left;
 }
 
 .cf-guide-title {
