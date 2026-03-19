@@ -315,16 +315,9 @@
   <!-- Debate Page (full-page, replaces main layout when open) -->
   <div id="debate-page" data-help-key="debate" style="display:none">
 
-    <!-- Sub-header -->
-    <div class="debate-page-header">
-      <div class="debate-page-header-inner">
-        <button class="debate-back-btn" id="debate-back-btn" style="visibility:hidden"></button>
-        <button class="debate-history-btn debate-history-center" id="debate-history-btn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          History
-        </button>
-        <button class="debate-new-btn" id="debate-new-btn" style="visibility:hidden">New Debate</button>
-      </div>
+    <!-- Title -->
+    <div class="bl-page-header">
+      <h1 class="bl-page-title">Debate</h1>
     </div>
 
     <!-- Utility Menu -->
@@ -340,21 +333,22 @@
     <div class="debate-page-stream" id="debate-page-stream">
       <div class="debate-page-inner">
 
-        <!-- Empty state -->
+        <!-- Suggestions carousel (shown when no debate running) -->
         <div class="debate-empty" id="debate-empty">
-          <h3 class="debate-empty-title">Tribe Debate</h3>
-          <p class="debate-empty-desc">Ask one question and let your advisors debate it from their unique perspectives.</p>
-          <ul class="debate-empty-list">
-            <li>Advisors may agree or disagree with each other</li>
-            <li>Each advisor responds from their own pillar perspective</li>
-            <li>You can jump in anytime to guide the discussion</li>
-          </ul>
-          <div class="debate-suggestions">
-            <button class="debate-suggestion-pill">Should I prioritize financial security or meaningful work?</button>
-            <button class="debate-suggestion-pill">Is discipline more important than motivation?</button>
-            <button class="debate-suggestion-pill">Should I follow logic or intuition when making big decisions?</button>
-            <button class="debate-suggestion-pill">Is it better to take risks early or build stability first?</button>
+          <div class="suggestions-section">
+            <div class="suggestions-label">Popular Debates</div>
+            <div class="suggestions-track" id="debate-suggestions-track"></div>
+            <div class="suggestions-dots" id="debate-suggestions-dots"></div>
+            <div class="suggestions-nav">
+              <button class="suggestions-arrow" id="debate-suggestions-prev" aria-label="Previous">&#8249;</button>
+              <button class="suggestions-arrow" id="debate-suggestions-next" aria-label="Next">&#8250;</button>
+            </div>
           </div>
+        </div>
+
+        <!-- New Debate button (shown after a debate is running) -->
+        <div id="debate-new-row" style="display:none; text-align:right; padding: 8px 0 4px;">
+          <button class="debate-new-btn" id="debate-new-btn">+ New Debate</button>
         </div>
 
         <!-- Thread messages -->
@@ -366,7 +360,7 @@
     <!-- Input bar -->
     <div class="debate-page-composer">
       <div class="input-row">
-        <textarea class="input-field" id="debate-input" placeholder="Start debate..." rows="1"></textarea>
+        <textarea class="input-field" id="debate-input" placeholder="Start a debate…" rows="1"></textarea>
         <button class="send-btn" id="debate-send-btn" disabled>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -378,14 +372,18 @@
 
   </div>
 
-  <!-- Debate History Overlay -->
+  <!-- Debate History / Favorites Modal -->
   <div class="modal-overlay" id="debate-history-overlay">
     <div class="modal history-modal">
       <div class="modal-header">
-        <h3>Debate History</h3>
+        <h3 id="debate-history-modal-title">Debate History</h3>
         <button class="modal-close" id="debate-history-close">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
+      </div>
+      <div class="history-filter-row">
+        <button class="history-filter-btn active" data-debate-filter="all">History</button>
+        <button class="history-filter-btn" data-debate-filter="favorites">Favorites</button>
       </div>
       <div class="history-list" id="debate-history-list"></div>
     </div>

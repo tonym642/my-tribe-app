@@ -5234,46 +5234,6 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   background: var(--bg);
 }
 
-.debate-page-header {
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
-  flex-shrink: 0;
-}
-
-.debate-page-header-inner {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 10px 24px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  position: relative;
-}
-
-.debate-history-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.debate-back-btn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: none;
-  border: none;
-  font-family: var(--font);
-  font-size: 13px;
-  color: var(--text-2);
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: var(--r-sm);
-  flex-shrink: 0;
-  transition: color 0.1s;
-}
-
-.debate-back-btn:hover { color: var(--text-1); }
-
 .debate-page-title-group {
   flex: 1;
   display: flex;
@@ -5310,79 +5270,7 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
 /* Empty state */
 .debate-empty {
   text-align: center;
-  padding: 60px 24px 40px;
-}
-
-.debate-empty-title {
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--text-1);
-  margin-bottom: 10px;
-}
-
-.debate-empty-desc {
-  font-size: 15px;
-  color: var(--text-2);
-  margin-bottom: 20px;
-  line-height: 1.6;
-}
-
-.debate-empty-list {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
-}
-
-.debate-empty-list li {
-  font-size: 14px;
-  color: var(--text-3);
-}
-
-.debate-empty-list li::before {
-  content: '• ';
-}
-
-.debate-suggestions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 24px;
-  max-width: 540px;
-}
-
-.debate-suggestion-pill {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 8px 18px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-2);
-  cursor: pointer;
-  font-family: var(--font);
-  transition: background 0.12s, color 0.12s, border-color 0.12s;
-  text-align: center;
-}
-
-.debate-suggestion-pill:hover {
-  background: var(--bg);
-  color: var(--text-1);
-  border-color: var(--border);
-}
-
-body.dark-mode .debate-suggestion-pill {
-  background: transparent;
-  border-color: #2a2d3a;
-  color: var(--text-2);
-}
-
-body.dark-mode .debate-suggestion-pill:hover {
-  border-color: #555e72;
-  color: var(--text-1);
+  padding: 16px 24px 8px;
 }
 
 /* Thread */
@@ -5505,9 +5393,8 @@ body.dark-mode .debate-suggestion-pill:hover {
   50%       { opacity: 1; }
 }
 
-/* New Debate button in header */
-.debate-new-btn,
-.debate-history-btn {
+/* New Debate button */
+.debate-new-btn {
   padding: 6px 14px;
   border-radius: 20px;
   border: 1px solid var(--border);
@@ -5522,8 +5409,7 @@ body.dark-mode .debate-suggestion-pill:hover {
   gap: 5px;
 }
 
-.debate-new-btn:hover,
-.debate-history-btn:hover {
+.debate-new-btn:hover {
   border-color: #9CA3AF;
   color: var(--text-1);
 }
@@ -5751,10 +5637,8 @@ body.dark-mode .va-chip:has(input:checked) { background: #f0f2f5; color: #0f1117
 
 /* Debate/voting footer buttons */
 body.dark-mode .debate-new-btn,
-body.dark-mode .debate-history-btn,
 body.dark-mode .voting-new-btn { background: transparent; border-color: #2a2d3a; color: var(--text-2); }
 body.dark-mode .debate-new-btn:hover,
-body.dark-mode .debate-history-btn:hover,
 body.dark-mode .voting-new-btn:hover { border-color: #555e72; color: var(--text-1); }
 
 /* Voting question display */

@@ -372,8 +372,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Feature page utility menus — Debate
   document.getElementById('btn-debate-util-help').addEventListener('click', () => openPageHelp('debate'));
-  document.getElementById('btn-debate-util-history').addEventListener('click', openHistoryPanel);
-  document.getElementById('btn-debate-util-favorites').addEventListener('click', () => openHistoryPanel(true));
+  document.getElementById('btn-debate-util-history').addEventListener('click', () => openDebateHistory(false));
+  document.getElementById('btn-debate-util-favorites').addEventListener('click', () => openDebateHistory(true));
 
   // Feature page utility menus — Polls
   document.getElementById('btn-polls-util-help').addEventListener('click', () => openPageHelp('polls'));
@@ -440,12 +440,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('m-btn-debate').addEventListener('click', () => { closeMobileNav(); openDebate(); });
 
   // Debate — page controls
-  document.getElementById('debate-back-btn').addEventListener('click', closeDebate);
   document.getElementById('debate-new-btn').addEventListener('click', resetDebate);
-  document.getElementById('debate-history-btn').addEventListener('click', openDebateHistory);
   document.getElementById('debate-history-close').addEventListener('click', closeDebateHistory);
   document.getElementById('debate-history-overlay').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeDebateHistory();
+  });
+  // Debate history filter tabs
+  document.getElementById('debate-history-overlay').querySelectorAll('.history-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('debate-history-overlay').querySelectorAll('.history-filter-btn')
+        .forEach(b => b.classList.toggle('active', b === btn));
+      openDebateHistory(btn.dataset.debateFilter === 'favorites');
+    });
   });
 
   const $debateInput   = document.getElementById('debate-input');
@@ -464,14 +470,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   $debateSendBtn.addEventListener('click', submitDebate);
 
-  // Debate — suggestion pills
-  document.querySelectorAll('.debate-suggestion-pill').forEach(pill => {
-    pill.addEventListener('click', () => {
-      $debateInput.value = pill.textContent.trim();
-      $debateSendBtn.disabled = false;
-      submitDebate();
-    });
-  });
+  // Debate suggestions rendered dynamically by renderDebateSuggestions()
 
   // Campfire — nav buttons (desktop + mobile)
   document.getElementById('btn-campfire').addEventListener('click', openCampfire);
@@ -3931,6 +3930,7 @@ function openDebate() {
   document.getElementById('debate-page').style.display = 'flex';
   document.getElementById('main-layout').style.display = 'none';
   resetDebate();
+  renderDebateSuggestions();
   setTimeout(() => document.getElementById('debate-input').focus(), 100);
 }
 
@@ -3943,9 +3943,9 @@ function resetDebate() {
   debateRunning = false;
   document.getElementById('debate-thread').innerHTML = '';
   document.getElementById('debate-empty').style.display = '';
-  document.getElementById('debate-new-btn').style.visibility = 'hidden';
+  document.getElementById('debate-new-row').style.display = 'none';
   document.getElementById('debate-input').value = '';
-  document.getElementById('debate-input').placeholder = 'Start debate...';
+  document.getElementById('debate-input').placeholder = 'Start a debate…';
   document.getElementById('debate-input').style.height = 'auto';
   document.getElementById('debate-send-btn').disabled = true;
   document.getElementById('debate-page-stream').scrollTop = 0;
@@ -4137,7 +4137,7 @@ async function runDebate(topic) {
   document.getElementById('debate-send-btn').disabled = true;
   document.getElementById('debate-thread').innerHTML = '';
   document.getElementById('debate-thread').appendChild(createUserBubble(topic));
-  document.getElementById('debate-new-btn').style.visibility = 'visible';
+  document.getElementById('debate-new-row').style.display = '';
   debateScrollBottom();
 
   const messages = [];
@@ -4193,6 +4193,62 @@ async function runDebate(topic) {
   saveDebate(topic, messages);
 }
 
+// ── Debate Suggestions Carousel ───────────────────────────────────
+
+const DEBATE_SUGGESTIONS = [
+  'Should I prioritize financial security or meaningful work?',
+  'Is discipline more important than motivation?',
+  'Should I follow logic or intuition when making big decisions?',
+  'Is it better to take risks early or build stability first?',
+  'Is it better to be honest or kind when both conflict?',
+  'Should you forgive someone who hasn\'t apologized?',
+  'Is hustle culture helpful or harmful?',
+  'Does success require sacrifice?',
+];
+
+function renderDebateSuggestions() {
+  const track = document.getElementById('debate-suggestions-track');
+  const dots  = document.getElementById('debate-suggestions-dots');
+  if (!track || !dots) return;
+
+  const $di  = document.getElementById('debate-input');
+  const $btn = document.getElementById('debate-send-btn');
+
+  track.innerHTML = DEBATE_SUGGESTIONS.map(s =>
+    `<button class="suggestion-card">${s}</button>`
+  ).join('');
+
+  track.querySelectorAll('.suggestion-card').forEach((card, i) => {
+    card.addEventListener('click', () => {
+      $di.value = DEBATE_SUGGESTIONS[i];
+      $btn.disabled = false;
+      $di.focus();
+    });
+  });
+
+  dots.innerHTML = DEBATE_SUGGESTIONS.map((_, i) =>
+    `<span class="suggestion-dot${i === 0 ? ' active' : ''}" data-i="${i}"></span>`
+  ).join('');
+
+  track.addEventListener('scroll', () => {
+    const card = track.querySelector('.suggestion-card');
+    if (!card) return;
+    const cardW = card.offsetWidth + 12;
+    const active = Math.min(Math.round(track.scrollLeft / cardW), DEBATE_SUGGESTIONS.length - 1);
+    dots.querySelectorAll('.suggestion-dot').forEach((d, i) =>
+      d.classList.toggle('active', i === active)
+    );
+  }, { passive: true });
+
+  function scrollByCard(dir) {
+    const card = track.querySelector('.suggestion-card');
+    if (!card) return;
+    track.scrollBy({ left: dir * (card.offsetWidth + 12), behavior: 'smooth' });
+  }
+  document.getElementById('debate-suggestions-prev')?.addEventListener('click', () => scrollByCard(-1));
+  document.getElementById('debate-suggestions-next')?.addEventListener('click', () => scrollByCard(1));
+}
+
 // ── Debate History ────────────────────────────────────────────────
 
 function getDebates() {
@@ -4206,37 +4262,56 @@ function saveDebates(debates) {
 
 function saveDebate(topic, messages) {
   const debates = getDebates();
-  const debate = {
+  debates.unshift({
     id: 'debate_' + Date.now(),
     title: generateTitle(topic),
     topic,
+    favorite: false,
     created_at: Date.now(),
     updated_at: Date.now(),
     messages
-  };
-  debates.unshift(debate);
+  });
   saveDebates(debates);
 }
 
-function openDebateHistory() {
+function toggleDebateFavorite(id) {
   const debates = getDebates();
-  const $list = document.getElementById('debate-history-list');
+  const d = debates.find(x => x.id === id);
+  if (d) { d.favorite = !d.favorite; saveDebates(debates); }
+}
+
+function openDebateHistory(favoritesOnly = false) {
+  const overlay = document.getElementById('debate-history-overlay');
+  // Sync filter tabs
+  overlay.querySelectorAll('.history-filter-btn').forEach(btn =>
+    btn.classList.toggle('active', favoritesOnly
+      ? btn.dataset.debateFilter === 'favorites'
+      : btn.dataset.debateFilter === 'all')
+  );
+  document.getElementById('debate-history-modal-title').textContent =
+    favoritesOnly ? 'Favorites' : 'Debate History';
+
+  const all    = getDebates();
+  const debates = favoritesOnly ? all.filter(d => d.favorite) : all;
+  const $list  = document.getElementById('debate-history-list');
 
   if (debates.length === 0) {
-    $list.innerHTML = '<p class="history-empty">No debates yet.</p>';
+    $list.innerHTML = `<p class="history-empty">${favoritesOnly ? 'No favorites yet.' : 'No debates yet.'}</p>`;
   } else {
     $list.innerHTML = debates.map(debate => {
       const title      = esc(debate.title || 'Untitled Debate');
       const date       = formatRelativeDate(debate.updated_at);
       const msgCount   = debate.messages.length;
       const countLabel = msgCount === 1 ? '1 response' : `${msgCount} responses`;
+      const isFav      = !!debate.favorite;
       return `
         <div class="history-item" data-id="${debate.id}">
-          <div class="history-item-main">
+          <div class="history-item-info">
             <div class="history-item-title">${title}</div>
             <div class="history-item-meta">${date} · ${countLabel}</div>
           </div>
           <div class="history-item-actions">
+            <button class="history-heart-btn${isFav ? ' active' : ''}" data-action="fav" data-id="${debate.id}" title="${isFav ? 'Remove favorite' : 'Add to favorites'}">${isFav ? HEART_FILLED : HEART_OUTLINE}</button>
             <button class="history-action" data-action="rename" data-id="${debate.id}" title="Rename">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </button>
@@ -4247,8 +4322,15 @@ function openDebateHistory() {
         </div>`;
     }).join('');
 
-    $list.querySelectorAll('.history-item-main').forEach(el => {
+    $list.querySelectorAll('.history-item-info').forEach(el => {
       el.addEventListener('click', () => loadDebate(el.closest('.history-item').dataset.id));
+    });
+    $list.querySelectorAll('[data-action="fav"]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        toggleDebateFavorite(btn.dataset.id);
+        openDebateHistory(favoritesOnly);
+      });
     });
     $list.querySelectorAll('[data-action="rename"]').forEach(btn => {
       btn.addEventListener('click', e => { e.stopPropagation(); renameDebate(btn.dataset.id); });
@@ -4258,7 +4340,7 @@ function openDebateHistory() {
     });
   }
 
-  document.getElementById('debate-history-overlay').classList.add('open');
+  overlay.classList.add('open');
 }
 
 function closeDebateHistory() {
@@ -4273,7 +4355,7 @@ function loadDebate(id) {
   debateRunning = false;
   document.getElementById('debate-thread').innerHTML = '';
   document.getElementById('debate-empty').style.display = 'none';
-  document.getElementById('debate-new-btn').style.visibility = 'visible';
+  document.getElementById('debate-new-row').style.display = '';
   document.getElementById('debate-input').value = '';
   document.getElementById('debate-input').placeholder = 'Continue the debate...';
   document.getElementById('debate-input').style.height = 'auto';
