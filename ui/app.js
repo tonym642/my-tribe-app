@@ -949,9 +949,9 @@ function applyModeUI(mode, prev) {
   const chips = document.querySelectorAll('.advisor-chip');
 
   if (mode === 'tribe') {
-    state.selectedAdvisors = new Set();
+    state.selectedAdvisors = new Set(TRIBE);
     chips.forEach(chip => {
-      chip.classList.remove('active', 'dim');
+      chip.classList.remove('dim');
       chip.style.cursor = 'pointer';
     });
     syncChipHighlights();
