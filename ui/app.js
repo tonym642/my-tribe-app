@@ -468,7 +468,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       submitDebate();
     }
   });
-  $debateSendBtn.addEventListener('click', submitDebate);
+  $debateSendBtn.addEventListener('click', () => {
+    if (debateRunning) stopDebate();
+    else submitDebate();
+  });
 
   // Debate suggestions rendered dynamically by renderDebateSuggestions()
 
@@ -3915,6 +3918,27 @@ async function runVoting() {
 // ── Debate Mode ───────────────────────────────────────────────────
 
 let debateRunning = false;
+let debateAbortController = null;
+
+function debateBtnStop() {
+  const btn = document.getElementById('debate-send-btn');
+  btn.disabled = false;
+  btn.classList.add('stop-mode');
+  btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>`;
+}
+
+function debateBtnSend(disabled) {
+  const btn = document.getElementById('debate-send-btn');
+  btn.disabled = disabled;
+  btn.classList.remove('stop-mode');
+  btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+}
+
+function stopDebate() {
+  if (debateAbortController) debateAbortController.abort();
+  debateRunning = false;
+  debateBtnSend(true);
+}
 
 // VS Arena — picked once per page load, never reshuffled on re-open
 const DEBATE_VS_POOL = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'frank'];
@@ -4031,11 +4055,13 @@ function submitDebate() {
 async function continueDebate(message) {
   if (debateRunning) return;
   debateRunning = true;
+  debateAbortController = new AbortController();
+  const { signal } = debateAbortController;
 
   const $di = document.getElementById('debate-input');
   $di.value = '';
   $di.style.height = 'auto';
-  document.getElementById('debate-send-btn').disabled = true;
+  debateBtnStop();
 
   // Append user's follow-up to thread
   document.getElementById('debate-thread').appendChild(createUserBubble(message));
@@ -4055,6 +4081,7 @@ async function continueDebate(message) {
   }
 
   for (const advisorId of respondents) {
+    if (signal.aborted) break;
     const advisor = ADVISORS[advisorId];
     const card = appendDebateMessage(
       { advisorId, advisor: advisor.name, role: advisor.title, replyTo: 'You', isSummary: false },
@@ -4062,18 +4089,19 @@ async function continueDebate(message) {
     );
     try {
       const prompt = `You are ${advisor.name}, the ${advisor.title}. The user has joined the debate with a follow-up comment: "${cleanMsg}". Respond directly to their point from your perspective as the ${advisor.title}. Keep your response to 60–100 words. Natural speech, no headers or bullet points. Stay in character.`;
-      const text = await callDebateAPI(prompt, `Respond to: ${cleanMsg}`);
+      const text = await callDebateAPI(prompt, `Respond to: ${cleanMsg}`, signal);
       const textEl = card.querySelector('.debate-text');
       textEl.classList.remove('debate-loading');
       textEl.textContent = text;
     } catch (e) {
+      if (e.name === 'AbortError') { card.querySelector('.debate-text').textContent = '[Stopped]'; break; }
       card.querySelector('.debate-text').textContent = 'Unable to respond.';
     }
     debateScrollBottom();
   }
 
   debateRunning = false;
-  document.getElementById('debate-send-btn').disabled = false;
+  debateBtnSend(true);
 }
 
 function buildDebateInitPrompt(advisor, topic, priorMessages) {
@@ -4170,12 +4198,13 @@ function debateScrollBottom() {
   if (s) s.scrollTop = s.scrollHeight;
 }
 
-async function callDebateAPI(systemPrompt, userPrompt) {
+async function callDebateAPI(systemPrompt, userPrompt, signal) {
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
+    signal,
     body: JSON.stringify({
       model: MODEL,
       max_tokens: 350,
@@ -4194,22 +4223,26 @@ async function callDebateAPI(systemPrompt, userPrompt) {
 async function runDebate(topic) {
   if (debateRunning) return;
   debateRunning = true;
+  debateAbortController = new AbortController();
+  const { signal } = debateAbortController;
 
   // Hide empty state, show user's question as first thread message
   document.getElementById('debate-empty').style.display = 'none';
   document.getElementById('debate-input').value = '';
   document.getElementById('debate-input').placeholder = 'Continue the debate...';
   document.getElementById('debate-input').style.height = 'auto';
-  document.getElementById('debate-send-btn').disabled = true;
   document.getElementById('debate-thread').innerHTML = '';
   document.getElementById('debate-thread').appendChild(createUserBubble(topic));
   document.getElementById('debate-new-row').style.display = '';
+  debateBtnStop();
   debateScrollBottom();
 
   const messages = [];
+  let aborted = false;
 
   // ── Round 1: Initial positions ─────────────────────────────────
   for (const advisorId of DEBATE_COUNCIL) {
+    if (signal.aborted) { aborted = true; break; }
     const advisor = ADVISORS[advisorId];
     const card = appendDebateMessage(
       { advisorId, advisor: advisor.name, role: advisor.title, replyTo: null, isSummary: false },
@@ -4217,46 +4250,51 @@ async function runDebate(topic) {
     );
     try {
       const system = buildDebateInitPrompt(advisor, topic, messages);
-      const text   = await callDebateAPI(system, `Give your position on: ${topic}`);
+      const text   = await callDebateAPI(system, `Give your position on: ${topic}`, signal);
       const msg    = { advisorId, advisor: advisor.name, role: advisor.title, text, replyTo: null };
       messages.push(msg);
       const textEl = card.querySelector('.debate-text');
       textEl.classList.remove('debate-loading');
       textEl.textContent = text;
     } catch (e) {
+      if (e.name === 'AbortError') { aborted = true; card.querySelector('.debate-text').textContent = '[Stopped]'; break; }
       card.querySelector('.debate-text').textContent = 'Unable to respond.';
     }
     debateScrollBottom();
   }
 
   // ── Round 2: Cross-advisor replies ─────────────────────────────
-  for (const { advisorId, replyToIdx } of DEBATE_REPLIES) {
-    const advisor    = ADVISORS[advisorId];
-    const replyToMsg = messages[replyToIdx];
-    if (!replyToMsg) continue;
-    const card = appendDebateMessage(
-      { advisorId, advisor: advisor.name, role: advisor.title, replyTo: replyToMsg.advisor, isSummary: false },
-      true
-    );
-    try {
-      const system = buildDebateReplyPrompt(advisor, topic, replyToMsg, messages);
-      const text   = await callDebateAPI(system, `Reply to ${replyToMsg.advisor}'s point.`);
-      const msg    = { advisorId, advisor: advisor.name, role: advisor.title, text, replyTo: replyToMsg.advisor };
-      messages.push(msg);
-      const textEl = card.querySelector('.debate-text');
-      textEl.classList.remove('debate-loading');
-      textEl.textContent = text;
-    } catch (e) {
-      card.querySelector('.debate-text').textContent = 'Unable to respond.';
+  if (!aborted) {
+    for (const { advisorId, replyToIdx } of DEBATE_REPLIES) {
+      if (signal.aborted) { aborted = true; break; }
+      const advisor    = ADVISORS[advisorId];
+      const replyToMsg = messages[replyToIdx];
+      if (!replyToMsg) continue;
+      const card = appendDebateMessage(
+        { advisorId, advisor: advisor.name, role: advisor.title, replyTo: replyToMsg.advisor, isSummary: false },
+        true
+      );
+      try {
+        const system = buildDebateReplyPrompt(advisor, topic, replyToMsg, messages);
+        const text   = await callDebateAPI(system, `Reply to ${replyToMsg.advisor}'s point.`, signal);
+        const msg    = { advisorId, advisor: advisor.name, role: advisor.title, text, replyTo: replyToMsg.advisor };
+        messages.push(msg);
+        const textEl = card.querySelector('.debate-text');
+        textEl.classList.remove('debate-loading');
+        textEl.textContent = text;
+      } catch (e) {
+        if (e.name === 'AbortError') { aborted = true; card.querySelector('.debate-text').textContent = '[Stopped]'; break; }
+        card.querySelector('.debate-text').textContent = 'Unable to respond.';
+      }
+      debateScrollBottom();
     }
-    debateScrollBottom();
   }
 
   debateRunning = false;
-  document.getElementById('debate-send-btn').disabled = false;
+  debateBtnSend(true);
 
-  // Save completed debate to history
-  saveDebate(topic, messages);
+  // Save to history only if debate completed (not stopped mid-way with nothing)
+  if (messages.length > 0) saveDebate(topic, messages);
 }
 
 // ── Debate Suggestions Carousel ───────────────────────────────────
