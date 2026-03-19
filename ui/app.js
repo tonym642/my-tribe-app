@@ -548,6 +548,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     e.stopPropagation();
     toggleStoriesPanel();
   });
+  document.getElementById('btn-life-stories-nav').addEventListener('click', e => {
+    e.stopPropagation();
+    toggleStoriesPanel();
+  });
+  document.getElementById('m-btn-life-stories-nav').addEventListener('click', () => { closeMobileNav(); toggleStoriesPanel(); });
 
   // Stories — close panel when clicking outside
   document.addEventListener('click', e => {
