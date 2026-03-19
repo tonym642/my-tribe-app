@@ -2602,11 +2602,6 @@ function openBookLessons() {
   blCompletedTopics = new Set();
   blActiveAdvisor   = 'guide';
   document.getElementById('bl-book-input').value = '';
-  document.querySelectorAll('.bl-adv-pill').forEach(p =>
-    p.classList.toggle('active', p.dataset.advisor === 'guide')
-  );
-  document.getElementById('bl-active-advisor-name').textContent =
-    ADVISORS.guide?.name || 'Guide';
   blShowPhase('bl-search-phase');
   blRenderBookSuggestions();
   document.getElementById('main-layout').style.display = 'none';
