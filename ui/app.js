@@ -3236,15 +3236,14 @@ function renderCfAdvisorPicker() {
     if (!advisor) return;
     const src = ADVISOR_AVATAR[id];
     const btn = document.createElement('button');
-    btn.className = 'cf-advisor-avatar-btn';
+    btn.className = 'advisor-chip';
     btn.dataset.advisorId = id;
     const imgHtml = src
-      ? `<img src="${src}" alt="${advisor.name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
-      : '';
-    const initHtml = `<div class="cf-av-initial" style="background:${advisor.color};${src ? 'display:none' : ''}">${advisor.initial}</div>`;
-    btn.innerHTML = `<div class="cf-av-wrap">${imgHtml}${initHtml}</div><div class="cf-av-name">${advisor.name}</div>`;
+      ? `<img class="advisor-avatar-img" src="${src}" alt="${advisor.name}" onerror="this.style.display='none'">`
+      : `<div class="advisor-avatar-img" style="background:${advisor.color};display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:700">${advisor.initial}</div>`;
+    btn.innerHTML = `${imgHtml}<span class="advisor-chip-name">${advisor.name}</span>`;
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.cf-advisor-avatar-btn').forEach(b => b.classList.remove('active'));
+      container.querySelectorAll('.advisor-chip').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       cfAdvisorId = id;
       updateCfStep1Next();
