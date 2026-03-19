@@ -440,7 +440,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('m-btn-debate').addEventListener('click', () => { closeMobileNav(); openDebate(); });
 
   // Debate — page controls
-  document.getElementById('debate-new-btn').addEventListener('click', resetDebate);
+  document.getElementById('btn-debate-util-new').addEventListener('click', resetDebate);
   document.getElementById('debate-history-close').addEventListener('click', closeDebateHistory);
   document.getElementById('debate-history-overlay').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeDebateHistory();
@@ -4058,7 +4058,8 @@ function resetDebate() {
   debateRunning = false;
   document.getElementById('debate-thread').innerHTML = '';
   document.getElementById('debate-empty').style.display = '';
-  document.getElementById('debate-new-row').style.display = 'none';
+  document.getElementById('btn-debate-util-new').style.display = 'none';
+  document.getElementById('debate-new-sep').style.display = 'none';
   document.getElementById('debate-input').value = '';
   document.getElementById('debate-input').placeholder = 'Start a debate…';
   document.getElementById('debate-input').style.height = 'auto';
@@ -4258,7 +4259,8 @@ async function runDebate(topic) {
   document.getElementById('debate-input').style.height = 'auto';
   document.getElementById('debate-thread').innerHTML = '';
   document.getElementById('debate-thread').appendChild(createUserBubble(topic));
-  document.getElementById('debate-new-row').style.display = '';
+  document.getElementById('btn-debate-util-new').style.display = '';
+  document.getElementById('debate-new-sep').style.display = '';
   debateBtnStop();
   debateScrollBottom();
 
@@ -4493,7 +4495,8 @@ function loadDebate(id) {
   debateRunning = false;
   document.getElementById('debate-thread').innerHTML = '';
   document.getElementById('debate-empty').style.display = 'none';
-  document.getElementById('debate-new-row').style.display = '';
+  document.getElementById('btn-debate-util-new').style.display = '';
+  document.getElementById('debate-new-sep').style.display = '';
   document.getElementById('debate-input').value = '';
   document.getElementById('debate-input').placeholder = 'Continue the debate...';
   document.getElementById('debate-input').style.height = 'auto';
