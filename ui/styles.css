@@ -5329,7 +5329,7 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
 
 /* Setup phase matches carousel width */
 #voting-setup-phase {
-  max-width: 100%;
+  max-width: 720px;
   width: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
