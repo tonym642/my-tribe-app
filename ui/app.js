@@ -6433,22 +6433,22 @@ function closeAllPages() {
 
 const HLM_EXAMPLES = [
   {
-    area: 'Relationships',
-    scenario: 'Partner canceled plans last minute',
-    low:  "You always do this. You never care about my time. I can't believe you canceled again.",
-    high: "I was really looking forward to tonight and I felt disappointed when plans changed. Can we talk about how to handle this better going forward?"
+    area: 'Spirituality',
+    scenario: 'Friend mocks personal beliefs',
+    low:  "You're so disrespectful. Keep your opinions about my faith to yourself.",
+    high: "My beliefs are important to me and joking about them makes me feel dismissed. I'm not asking you to agree — I'm asking you to respect that this part of my life matters."
   },
   {
-    area: 'Work',
-    scenario: 'Boss gives critical feedback in public',
-    low:  "That was embarrassing and unnecessary. You had no right to call me out in front of everyone.",
-    high: "I wanted to share that I find it harder to receive feedback when it's given in a group setting. I'd appreciate if we could handle corrections privately — I'd respond much better."
+    area: 'Mindset',
+    scenario: 'Colleague undermines your idea in a meeting',
+    low:  "You always shoot down my ideas. You did it again today in front of everyone.",
+    high: "I noticed my suggestion was dismissed pretty quickly in the meeting. I'd value hearing your concerns directly with me first — it would help me bring better ideas and feel more supported."
   },
   {
-    area: 'Family',
-    scenario: 'Parent keeps giving unsolicited advice',
-    low:  "I'm an adult. Stop telling me what to do — I didn't ask for your opinion.",
-    high: "I love that you care and I know your advice comes from a good place. I'm at a point where I need to work things out my own way. Can we agree that I'll ask when I need input?"
+    area: 'Emotions',
+    scenario: 'Partner shuts down during arguments',
+    low:  "You never talk to me. You always go quiet and leave me hanging. It's infuriating.",
+    high: "When you go silent during a difficult conversation, I feel shut out and unsure what to do. I'm not asking for a perfect response — just some signal that you're still with me."
   },
   {
     area: 'Health',
@@ -6457,16 +6457,16 @@ const HLM_EXAMPLES = [
     high: "When I'm struggling and I hear 'just calm down,' I feel more alone. What actually helps me is feeling heard first. Could we try that when I bring something up?"
   },
   {
-    area: 'Spiritual',
-    scenario: 'Friend mocks personal beliefs',
-    low:  "You're so disrespectful. Keep your opinions about my faith to yourself.",
-    high: "My beliefs are important to me and joking about them makes me feel dismissed. I'm not asking you to agree — I'm asking you to respect that this part of my life matters."
+    area: 'Relationships',
+    scenario: 'Partner canceled plans last minute',
+    low:  "You always do this. You never care about my time. I can't believe you canceled again.",
+    high: "I was really looking forward to tonight and I felt disappointed when plans changed. Can we talk about how to handle this better going forward?"
   },
   {
-    area: 'Personal Growth',
-    scenario: 'Colleague undermines your idea in a meeting',
-    low:  "You always shoot down my ideas. You did it again today in front of everyone.",
-    high: "I noticed my suggestion was dismissed pretty quickly in the meeting. I'd value hearing your concerns directly with me first — it would help me bring better ideas and feel more supported."
+    area: 'Finances',
+    scenario: 'Partner makes large purchases without discussing',
+    low:  "You just do whatever you want with our money. You have no idea how stressed I am.",
+    high: "I feel anxious when large purchases happen without us talking first. It's not about the money itself — it's about feeling like we're on the same team. Can we agree on a threshold we discuss together?"
   }
 ];
 
