@@ -7362,7 +7362,7 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 .hlm-layout {
   display: flex;
   flex-direction: column;
-  max-width: 900px;
+  max-width: 1160px;
   margin: 0 auto;
   padding: 24px 24px 0;
   gap: 0;
@@ -7387,6 +7387,10 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 
 .hlm-below-row > * {
   grid-column: 1;
+}
+
+.hlm-below-row .hlm-examples-section {
+  grid-column: 1 / -1;
 }
 
 /* ── Radio chips for Situation Type ─────────────────────────────── */
@@ -7635,8 +7639,8 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 }
 
 .hlm-examples-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
@@ -7751,6 +7755,12 @@ body.dark-mode .hlm-radio-chip:has(input:checked) { background: #2563EB; border-
   }
   .hlm-below-row > * {
     grid-column: 1;
+  }
+  .hlm-below-row .hlm-examples-section {
+    grid-column: 1;
+  }
+  .hlm-examples-grid {
+    grid-template-columns: 1fr;
   }
 }
 
