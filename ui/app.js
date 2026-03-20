@@ -6280,10 +6280,17 @@ function renderHomeBlogsCarousel() {
       </button>`;
   }).join('');
 
-  // Wire click handlers
+  // Wire card click handlers
   track.querySelectorAll('.home-blog-card[data-title]').forEach((card, i) => {
     card.addEventListener('click', () => openStoryViewer(stories[i]));
   });
+
+  // Wire prev/next arrows
+  const scrollBy = () => track.offsetWidth / 3 + 14; // one card width + gap
+  const prev = document.getElementById('home-blogs-prev');
+  const next = document.getElementById('home-blogs-next');
+  if (prev) prev.onclick = () => track.scrollBy({ left: -scrollBy(), behavior: 'smooth' });
+  if (next) next.onclick = () => track.scrollBy({ left:  scrollBy(), behavior: 'smooth' });
 }
 
 function renderHomePage() {
