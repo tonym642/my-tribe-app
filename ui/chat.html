@@ -316,11 +316,31 @@
   <div class="modal-overlay" id="story-library-overlay">
     <div class="modal story-library-modal">
       <div class="modal-header">
-        <h3>Story Library</h3>
-        <button class="modal-close" id="story-library-close">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
+        <h3>Blog Library</h3>
+        <div class="modal-header-actions">
+          <button class="btn-primary btn-sm" id="story-new-btn">+ New Story</button>
+          <button class="modal-close" id="story-library-close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
       </div>
+
+      <!-- New Story creation panel -->
+      <div class="story-create-panel" id="story-create-panel" style="display:none">
+        <div class="story-create-field">
+          <div class="story-create-label">Category</div>
+          <div class="story-create-chips" id="story-create-cats"></div>
+        </div>
+        <div class="story-create-field">
+          <div class="story-create-label">Narrator</div>
+          <div class="story-create-chips" id="story-create-narrs"></div>
+        </div>
+        <div class="story-create-actions">
+          <button class="btn-primary btn-sm" id="story-create-btn">Generate Story</button>
+          <span class="story-create-status" id="story-create-status"></span>
+        </div>
+      </div>
+
       <div class="story-library-filters" id="story-library-filters">
         <button class="story-filter-btn active" data-filter="All">All</button>
         <button class="story-filter-btn" data-filter="Leaders">Leaders</button>

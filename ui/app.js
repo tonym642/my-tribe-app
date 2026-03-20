@@ -782,6 +782,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     btn.addEventListener('click', () => renderStoryLibrary(btn.dataset.filter));
   });
 
+  // New Story — toggle panel + generate
+  document.getElementById('story-new-btn').addEventListener('click', toggleStoryCreatePanel);
+  document.getElementById('story-create-btn').addEventListener('click', createNewBlogStory);
+
   // About — desktop + mobile
   Object.keys(ABOUT_SECTIONS).forEach(key => {
     const desk = document.getElementById(`btn-about-${key}`);
@@ -2663,6 +2667,89 @@ function openStoryLibrary() {
 
 function closeStoryLibrary() {
   document.getElementById('story-library-overlay').classList.remove('open');
+  // Also collapse the create panel so it resets on next open
+  const panel = document.getElementById('story-create-panel');
+  if (panel) panel.style.display = 'none';
+}
+
+// ── New Story creation ─────────────────────────────────────────────
+
+function toggleStoryCreatePanel() {
+  const panel = document.getElementById('story-create-panel');
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  if (!isOpen) initStoryCreatePanel();
+}
+
+function initStoryCreatePanel() {
+  const catsEl  = document.getElementById('story-create-cats');
+  const narrsEl = document.getElementById('story-create-narrs');
+  if (!catsEl || !narrsEl) return;
+  // Only build once
+  if (catsEl.children.length > 0) return;
+
+  STORY_CATEGORIES.forEach((cat, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'story-create-chip' + (i === 0 ? ' active' : '');
+    btn.dataset.value = cat;
+    btn.textContent = cat;
+    btn.addEventListener('click', () => {
+      catsEl.querySelectorAll('.story-create-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+    catsEl.appendChild(btn);
+  });
+
+  STORY_NARRATOR_IDS.forEach((id, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'story-create-chip' + (i === 0 ? ' active' : '');
+    btn.dataset.value = id;
+    btn.textContent = ADVISORS[id].name;
+    btn.addEventListener('click', () => {
+      narrsEl.querySelectorAll('.story-create-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+    narrsEl.appendChild(btn);
+  });
+}
+
+async function createNewBlogStory() {
+  const btn    = document.getElementById('story-create-btn');
+  const status = document.getElementById('story-create-status');
+
+  const catChip  = document.querySelector('#story-create-cats  .story-create-chip.active');
+  const narrChip = document.querySelector('#story-create-narrs .story-create-chip.active');
+
+  if (!catChip || !narrChip) {
+    status.textContent = 'Select a category and narrator first.';
+    return;
+  }
+
+  btn.disabled = true;
+  status.textContent = 'Generating…';
+
+  try {
+    const story = await generateStoryAI(narrChip.dataset.value, catChip.dataset.value);
+    story.saved_at = Date.now();
+    const lib = getStoryLibrary();
+    lib.unshift(story);
+    saveStoryLibraryData(lib);
+
+    // Collapse create panel and refresh list
+    document.getElementById('story-create-panel').style.display = 'none';
+    renderStoryLibrary('All');
+    status.textContent = '';
+    showNotice('Story created and saved!');
+
+    // Refresh blog carousel if home page is visible
+    if (document.getElementById('home-page').style.display !== 'none') {
+      renderHomeBlogsCarousel();
+    }
+  } catch {
+    status.textContent = 'Generation failed — please try again.';
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 function renderStoryLibrary(filter) {
@@ -6263,7 +6350,7 @@ function renderHomeBlogsCarousel() {
     return;
   }
 
-  track.innerHTML = stories.slice(0, 3).map(story => {
+  track.innerHTML = stories.slice(0, 5).map(story => {
     const advisor   = ADVISORS[story.narrator] || {};
     const avatarSrc = ADVISOR_AVATAR[story.narrator];
     const avatarHtml = avatarSrc

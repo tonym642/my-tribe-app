@@ -2978,6 +2978,78 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
   flex-direction: column;
 }
 
+/* Modal header with action button beside close */
+.modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* New Story creation panel */
+.story-create-panel {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.story-create-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.story-create-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-3);
+}
+
+.story-create-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.story-create-chip {
+  padding: 5px 13px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+
+.story-create-chip:hover {
+  border-color: var(--text-3);
+  color: var(--text-1);
+}
+
+.story-create-chip.active {
+  background: var(--text-1);
+  border-color: var(--text-1);
+  color: var(--surface);
+}
+
+.story-create-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.story-create-status {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
 .story-library-filters {
   display: flex;
   flex-wrap: wrap;
