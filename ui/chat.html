@@ -860,19 +860,22 @@
 
       <!-- Search Phase -->
       <div id="cl-search-phase" class="bl-phase">
-        <div class="bl-search-container">
 
-          <!-- Lesson Suggestions Carousel -->
-          <div class="suggestions-section bl-suggestions-section">
-            <div class="suggestions-label">Featured Lessons</div>
+        <!-- Carousel — full width -->
+        <div class="bl-carousel-wrapper">
+          <div class="suggestions-label bl-carousel-label">Featured Lessons</div>
+          <div class="suggestions-section bl-suggestions-section" id="cl-suggestions-section">
             <div class="suggestions-track" id="cl-suggestions-track"></div>
             <div class="suggestions-dots" id="cl-suggestions-dots"></div>
-            <div class="suggestions-nav">
-              <button class="suggestions-arrow" id="cl-suggestions-prev" aria-label="Previous">&#8249;</button>
-              <button class="suggestions-arrow" id="cl-suggestions-next" aria-label="Next">&#8250;</button>
-            </div>
           </div>
+          <div class="suggestions-nav bl-carousel-nav cl-carousel-nav">
+            <button class="suggestions-arrow" id="cl-suggestions-prev" aria-label="Previous">&#8249;</button>
+            <button class="suggestions-arrow" id="cl-suggestions-next" aria-label="Next">&#8250;</button>
+          </div>
+        </div>
 
+        <!-- Search inputs — narrower -->
+        <div class="bl-search-container">
           <p class="bl-intro">Enter a lesson title to start an interactive lesson with your Guide.</p>
           <div class="bl-search-row">
             <input type="text" class="form-input" id="cl-lesson-input"
@@ -881,6 +884,7 @@
           </div>
           <div id="cl-no-results" class="cl-no-results" style="display:none">No lessons found. Try a different title or keyword.</div>
         </div>
+
       </div>
 
       <!-- Lesson Phase -->

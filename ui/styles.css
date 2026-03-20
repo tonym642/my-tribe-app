@@ -2320,6 +2320,70 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
   margin-bottom: 20px;
 }
 
+/* ── Core Lessons carousel — orange container ── */
+#cl-search-phase .bl-suggestions-section {
+  background: #D97706;
+  border-radius: 5px;
+  padding: 14px 14px 10px;
+  margin-bottom: 10px;
+}
+#cl-search-phase .suggestions-track {
+  padding: 4px 4px 6px;
+}
+#cl-search-phase .suggestion-dot {
+  background: rgba(255,255,255,0.35);
+}
+#cl-search-phase .suggestion-dot.active {
+  background: #fff;
+}
+
+/* Core Lessons suggestion card */
+.cl-lesson-suggestion-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  width: 180px;
+  min-height: 160px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 5px;
+  padding: 16px 14px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  color: #fff;
+  transition: background 0.15s, border-color 0.15s;
+}
+.cl-lesson-suggestion-card:hover {
+  background: rgba(255,255,255,0.28);
+  border-color: rgba(255,255,255,0.45);
+}
+.cl-lesson-sug-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: #D97706;
+  font-weight: 700;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.cl-lesson-sug-title {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: #fff;
+}
+.cl-lesson-sug-category {
+  font-size: 11px;
+  color: rgba(255,255,255,0.72);
+}
+
 /* ── Book Lessons carousel — blue container ── */
 .bl-carousel-label {
   color: var(--text-2);

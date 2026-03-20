@@ -3666,11 +3666,16 @@ function clRenderSuggestions() {
   const dots  = document.getElementById('cl-suggestions-dots');
   if (!track || !dots) return;
 
-  track.innerHTML = CL_SUGGESTIONS.map(l =>
-    `<button class="suggestion-card"><strong>${esc(l.title)}</strong><br><small>${esc(l.category)}</small></button>`
-  ).join('');
+  track.innerHTML = CL_SUGGESTIONS.map(l => {
+    const initial = l.category.charAt(0).toUpperCase();
+    return `<button class="cl-lesson-suggestion-card">
+      <div class="cl-lesson-sug-icon">${initial}</div>
+      <div class="cl-lesson-sug-title">${esc(l.title)}</div>
+      <div class="cl-lesson-sug-category">${esc(l.category)}</div>
+    </button>`;
+  }).join('');
 
-  track.querySelectorAll('.suggestion-card').forEach((card, i) => {
+  track.querySelectorAll('.cl-lesson-suggestion-card').forEach((card, i) => {
     card.addEventListener('click', () => {
       clCurrentLesson = CL_SUGGESTIONS[i];
       clLoadLesson();
@@ -3682,7 +3687,7 @@ function clRenderSuggestions() {
   ).join('');
 
   track.addEventListener('scroll', () => {
-    const card = track.querySelector('.suggestion-card');
+    const card = track.querySelector('.cl-lesson-suggestion-card');
     if (!card) return;
     const cardW  = card.offsetWidth + 12;
     const active = Math.min(Math.round(track.scrollLeft / cardW), CL_SUGGESTIONS.length - 1);
@@ -3692,11 +3697,11 @@ function clRenderSuggestions() {
   }, { passive: true });
 
   document.getElementById('cl-suggestions-prev')?.addEventListener('click', () => {
-    const card = track.querySelector('.suggestion-card');
+    const card = track.querySelector('.cl-lesson-suggestion-card');
     if (card) track.scrollBy({ left: -(card.offsetWidth + 12), behavior: 'smooth' });
   });
   document.getElementById('cl-suggestions-next')?.addEventListener('click', () => {
-    const card = track.querySelector('.suggestion-card');
+    const card = track.querySelector('.cl-lesson-suggestion-card');
     if (card) track.scrollBy({ left: card.offsetWidth + 12, behavior: 'smooth' });
   });
 }
