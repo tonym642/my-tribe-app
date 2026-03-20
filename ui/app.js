@@ -2869,7 +2869,7 @@ async function blOpenSynopsis() {
   if (!blConfirmedBook) return;
 
   title.textContent = blConfirmedBook.title;
-  overlay.classList.add('active');
+  overlay.classList.add('open');
 
   // Use cached synopsis if available
   if (blConfirmedBook.synopsis) {
@@ -2904,7 +2904,7 @@ async function blOpenSynopsis() {
 }
 
 function blCloseSynopsis() {
-  document.getElementById('bl-synopsis-overlay').classList.remove('active');
+  document.getElementById('bl-synopsis-overlay').classList.remove('open');
 }
 
 function closeBookLessons() {
