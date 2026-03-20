@@ -1601,9 +1601,15 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 .bl-phase::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
 
 /* ── Search Phase ── */
+.bl-carousel-wrapper {
+  width: 100%;
+  padding: 24px 24px 0;
+  box-sizing: border-box;
+}
 .bl-search-container {
-  max-width: 1020px;
-  margin: 40px auto 0;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 .bl-intro {
   font-size: 14px;

@@ -665,9 +665,9 @@
 
       <!-- Search Phase -->
       <div id="bl-search-phase" class="bl-phase">
-        <div class="bl-search-container">
 
-          <!-- Book Suggestions Carousel -->
+        <!-- Carousel — full width -->
+        <div class="bl-carousel-wrapper">
           <div class="suggestions-label bl-carousel-label">Popular Books</div>
           <div class="suggestions-section bl-suggestions-section">
             <div class="suggestions-track" id="bl-suggestions-track"></div>
@@ -677,7 +677,10 @@
             <button class="suggestions-arrow" id="bl-suggestions-prev" aria-label="Previous">&#8249;</button>
             <button class="suggestions-arrow" id="bl-suggestions-next" aria-label="Next">&#8250;</button>
           </div>
+        </div>
 
+        <!-- Search inputs — narrower -->
+        <div class="bl-search-container">
           <p class="bl-intro">Enter a book title to start an interactive lesson with your Guide.</p>
           <div class="bl-search-row">
             <input type="text" class="form-input" id="bl-book-input"
@@ -685,6 +688,7 @@
             <button class="btn-primary" id="bl-search-btn">Search</button>
           </div>
         </div>
+
       </div>
 
       <!-- Confirm Phase -->
