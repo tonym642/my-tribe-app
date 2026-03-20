@@ -6385,9 +6385,8 @@ function renderHomePage() {
   const profile = getProfile();
   const titleEl = document.getElementById('home-welcome-title');
   if (titleEl) {
-    titleEl.textContent = profile.displayName
-      ? `Welcome back, ${profile.displayName}`
-      : 'Welcome back';
+    const userName = profile.displayName || profile.name || '';
+    titleEl.textContent = userName ? `Welcome back, ${userName}` : 'Welcome back';
   }
 
   renderHomeAdvisors();
