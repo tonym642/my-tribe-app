@@ -8,6 +8,7 @@ const HELP_MAP = {
   'campfire':          '../help/campfire.md',
   'core-lessons':      '../help/core-lessons.md',
   'debate':            '../help/debate.md',
+  'hlc':               '../help/hlc.md',
   'life-stories':      '../help/life-stories.md',
   'polls':             '../help/polls.md',
   'spiritual-lessons': '../help/spiritual-lessons.md',

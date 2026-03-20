@@ -6607,6 +6607,8 @@ function initHLMPage() {
     openHomePage();
   });
 
+  document.getElementById('btn-hlc-util-info')?.addEventListener('click', () => openPageHelp('hlc'));
+
   document.getElementById('hlm-generate-btn')?.addEventListener('click', () => generateHLMMessage(null));
 
   document.getElementById('hlm-output-tabs')?.addEventListener('click', e => {
