@@ -7664,6 +7664,15 @@ body { transition: background 0.25s ease, color 0.25s ease; }
   padding: 16px;
 }
 
+.hlm-example-area {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--accent, #2563EB);
+  margin-bottom: 5px;
+}
+
 .hlm-example-scenario {
   font-size: 13px;
   font-weight: 700;

@@ -6433,19 +6433,40 @@ function closeAllPages() {
 
 const HLM_EXAMPLES = [
   {
+    area: 'Relationships',
     scenario: 'Partner canceled plans last minute',
     low:  "You always do this. You never care about my time. I can't believe you canceled again.",
     high: "I was really looking forward to tonight and I felt disappointed when plans changed. Can we talk about how to handle this better going forward?"
   },
   {
+    area: 'Work',
     scenario: 'Boss gives critical feedback in public',
     low:  "That was embarrassing and unnecessary. You had no right to call me out in front of everyone.",
     high: "I wanted to share that I find it harder to receive feedback when it's given in a group setting. I'd appreciate if we could handle corrections privately — I'd respond much better."
   },
   {
-    scenario: 'Friend keeps asking for money',
-    low:  "Stop asking me for money. You're using me and it's getting old.",
-    high: "I care about you and I want to be honest — I'm not in a position to keep lending money. It's starting to affect how I feel in our friendship, and I'd rather protect that."
+    area: 'Family',
+    scenario: 'Parent keeps giving unsolicited advice',
+    low:  "I'm an adult. Stop telling me what to do — I didn't ask for your opinion.",
+    high: "I love that you care and I know your advice comes from a good place. I'm at a point where I need to work things out my own way. Can we agree that I'll ask when I need input?"
+  },
+  {
+    area: 'Health',
+    scenario: 'Partner dismisses mental health struggles',
+    low:  "You never take my anxiety seriously. You just tell me to calm down and it makes everything worse.",
+    high: "When I'm struggling and I hear 'just calm down,' I feel more alone. What actually helps me is feeling heard first. Could we try that when I bring something up?"
+  },
+  {
+    area: 'Spiritual',
+    scenario: 'Friend mocks personal beliefs',
+    low:  "You're so disrespectful. Keep your opinions about my faith to yourself.",
+    high: "My beliefs are important to me and joking about them makes me feel dismissed. I'm not asking you to agree — I'm asking you to respect that this part of my life matters."
+  },
+  {
+    area: 'Personal Growth',
+    scenario: 'Colleague undermines your idea in a meeting',
+    low:  "You always shoot down my ideas. You did it again today in front of everyone.",
+    high: "I noticed my suggestion was dismissed pretty quickly in the meeting. I'd value hearing your concerns directly with me first — it would help me bring better ideas and feel more supported."
   }
 ];
 
@@ -6500,6 +6521,7 @@ function renderHLMExamples() {
   if (!grid) return;
   grid.innerHTML = HLM_EXAMPLES.map(ex => `
     <div class="hlm-example-card">
+      ${ex.area ? `<div class="hlm-example-area">${esc(ex.area)}</div>` : ''}
       <div class="hlm-example-scenario">${esc(ex.scenario)}</div>
       <div class="hlm-example-row">
         <div class="hlm-example-col">
