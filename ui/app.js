@@ -6297,7 +6297,6 @@ function renderHomeStats() {
       <div class="home-stat-value">${c.value}</div>
       <div class="home-stat-label">${c.label}</div>
       <div class="home-stat-helper">${c.helper}</div>
-      ${c.linkLabel ? `<button class="home-stat-link" data-page="${c.linkPage}">${c.linkLabel}</button>` : ''}
     </div>`).join('');
 
   // Shared fixed popup
@@ -6324,15 +6323,6 @@ function renderHomeStats() {
     btn.addEventListener('mouseleave', () => popup.classList.remove('visible'));
   });
 
-  grid.querySelectorAll('.home-stat-link').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const page = btn.dataset.page;
-      if (page === 'profile') openProfile();
-      else if (page === 'book-lessons') openBookLessons();
-      else if (page === 'advisors') openAdvisorsPage();
-      else if (page === 'hlm') openHLM();
-    });
-  });
 }
 
 function renderHomeBlogsCarousel() {
