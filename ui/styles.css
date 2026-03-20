@@ -4801,7 +4801,14 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
 }
 
 .adv-panel { display: none; }
-.adv-panel.active { display: block; }
+.adv-panel.active {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 22px 24px 24px;
+}
 
 /* Panel header */
 .adv-panel-header {
@@ -4867,11 +4874,7 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
 }
 
 .adv-panel-body {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  box-shadow: var(--shadow-sm);
-  padding: 20px 22px 22px;
+  padding: 0;
 }
 
 .adv-panel-best {
