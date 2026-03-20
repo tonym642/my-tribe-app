@@ -578,12 +578,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Advice — nav buttons (desktop + mobile)
   function goToAdvice() {
-    closeHomePage();
-    closeVoting();
-    closeDebate();
-    closeCampfire();
-    closeBookLessons();
-    closeCoreLessons();
+    closeAllPages();
     document.getElementById('main-layout').style.display = '';
   }
   document.getElementById('btn-advice').addEventListener('click', goToAdvice);
@@ -1719,8 +1714,8 @@ function getProfile() {
 }
 
 function openProfile() {
+  closeAllPages();
   loadProfileData();
-  document.getElementById('main-layout').style.display = 'none';
   document.getElementById('profile-page').style.display = 'flex';
 }
 
@@ -1857,8 +1852,7 @@ function switchAdvisorTab(tabId) {
 }
 
 function openAdvisorsPage() {
-  closeBookLessons();
-  closeCoreLessons();
+  closeAllPages();
   // Update tab labels with current names
   const names = getAdvisorNames();
   [...TRIBE_IDS, 'guide'].forEach(id => {
@@ -2890,7 +2884,7 @@ function blShowPhase(phaseId) {
 }
 
 function openBookLessons() {
-  closeCoreLessons();
+  closeAllPages();
   blCurrentBook     = '';
   blConfirmedBook   = null;
   blCurrentLesson   = null;
@@ -3678,10 +3672,7 @@ function clShowPhase(phaseId) {
 }
 
 function openCoreLessons() {
-  closeBookLessons();
-  closeCampfire();
-  closeVoting();
-  closeDebate();
+  closeAllPages();
   clCurrentLesson   = null;
   clLessonContent   = null;
   clChatMessages    = [];
@@ -4198,8 +4189,7 @@ const CF_MOD_OPENINGS = {
 };
 
 function openCampfire() {
-  closeBookLessons();
-  closeCoreLessons();
+  closeAllPages();
   resetCampfireSetup();
   document.getElementById('campfire-setup').style.display = '';
   document.getElementById('campfire-session').style.display = 'none';
@@ -4736,9 +4726,7 @@ let votingRunning     = false;
 const VOTING_ALL_ADVISORS = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'frank'];
 
 function openVoting() {
-  closeBookLessons();
-  closeCoreLessons();
-  closeCampfire();
+  closeAllPages();
   votingRunning     = false;
   votingType        = 'yes-no';
   votingAdvisorMode = 'all';
@@ -5429,11 +5417,8 @@ const DEBATE_REPLIES = [
 ];
 
 function openDebate() {
-  closeBookLessons();
-  closeCoreLessons();
-  closeCampfire();
+  closeAllPages();
   document.getElementById('debate-page').style.display = 'flex';
-  document.getElementById('main-layout').style.display = 'none';
   resetDebate();
   renderDebateSuggestions();
   renderDebateArena(false);
@@ -6137,31 +6122,27 @@ function renderHomeChatShortcuts() {
     {
       label: 'Advice',
       icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>`,
-      action() {
-        closeHomePage();
-        document.getElementById('main-layout').style.display = '';
-        closeDebate(); closeVoting(); closeCampfire(); closeBookLessons(); closeCoreLessons();
-      }
+      action() { closeAllPages(); document.getElementById('main-layout').style.display = ''; }
     },
     {
       label: 'Debate',
       icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
-      action() { closeHomePage(); openDebate(); }
+      action() { openDebate(); }
     },
     {
       label: 'Polls',
       icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
-      action() { closeHomePage(); openVoting(); }
+      action() { openVoting(); }
     },
     {
       label: 'Campfire',
       icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
-      action() { closeHomePage(); openCampfire(); }
+      action() { openCampfire(); }
     },
     {
       label: 'HLC',
       icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
-      action() { closeHomePage(); openHLM(); }
+      action() { openHLM(); }
     }
   ];
 
@@ -6182,12 +6163,12 @@ function renderHomeEduShortcuts() {
     {
       label: 'Core',
       icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
-      action() { closeHomePage(); openCoreLessons(); }
+      action() { openCoreLessons(); }
     },
     {
       label: 'Books',
       icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
-      action() { closeHomePage(); openBookLessons(); }
+      action() { openBookLessons(); }
     },
     {
       label: 'Spiritual',
@@ -6197,7 +6178,7 @@ function renderHomeEduShortcuts() {
     {
       label: 'Blog',
       icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/><line x1="12" y1="7" x2="12" y2="17"/></svg>`,
-      action() { closeHomePage(); openStoryLibrary(); }
+      action() { openStoryLibrary(); }
     }
   ];
 
@@ -6354,14 +6335,7 @@ function renderHomePage() {
 }
 
 function openHomePage() {
-  // Hide main layout and all full-page views
-  document.getElementById('main-layout').style.display = 'none';
-  ['profile-page', 'advisors-page', 'book-lessons-page',
-   'core-lessons-page', 'debate-page', 'voting-page', 'campfire-page', 'hlm-page'
-  ].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
+  closeAllPages();
 
   renderHomePage();
   document.getElementById('home-page').style.display = 'block';
@@ -6369,6 +6343,19 @@ function openHomePage() {
 
 function closeHomePage() {
   document.getElementById('home-page').style.display = 'none';
+}
+
+// ── Universal page reset ──────────────────────────────────────────
+// Call this at the start of any open* function so no orphaned page
+// stays visible regardless of where the user navigated from.
+function closeAllPages() {
+  ['main-layout', 'home-page', 'profile-page', 'advisors-page',
+   'book-lessons-page', 'core-lessons-page', 'debate-page',
+   'voting-page', 'campfire-page', 'hlm-page'
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -6534,13 +6521,7 @@ Rules:
 }
 
 function openHLM() {
-  document.getElementById('main-layout').style.display = 'none';
-  ['profile-page', 'advisors-page', 'book-lessons-page', 'core-lessons-page',
-   'debate-page', 'voting-page', 'campfire-page', 'home-page'
-  ].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
+  closeAllPages();
   const page = document.getElementById('hlm-page');
   if (page) page.style.display = '';
   renderHLMExamples();
