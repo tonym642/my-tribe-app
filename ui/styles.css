@@ -5923,7 +5923,10 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
 /* Empty state */
 .debate-empty {
   text-align: center;
-  padding: 16px 24px 8px;
+  /* Negative margins cancel .debate-page-inner's 24px side padding so
+     the card matches the input-row's max-width: 720px exactly */
+  margin: 0 -24px;
+  padding: 16px 0 8px;
 }
 
 .debate-empty-card {
@@ -5932,6 +5935,7 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   border-radius: 14px;
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+  padding: 0 20px;
 }
 
 /* ── Debate VS Arena ─────────────────────────────────────────────── */
