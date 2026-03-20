@@ -7403,13 +7403,10 @@ body { transition: background 0.25s ease, color 0.25s ease; }
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: 24px;
+  margin-top: 28px;
 }
 
 .hlm-below-row > * {
-  grid-column: 1;
-}
-
-.hlm-below-row .hlm-examples-section {
   grid-column: 1 / -1;
 }
 
