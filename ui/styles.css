@@ -2217,7 +2217,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 }
 #bl-search-phase .bl-suggestions-section {
   background: #1D4ED8;
-  border-radius: 16px;
+  border-radius: 26px;
   padding: 14px 14px 10px;
   margin-bottom: 10px;
 }
@@ -2255,7 +2255,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   min-height: 160px;
   background: rgba(255,255,255,0.18);
   border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 14px;
+  border-radius: 20px;
   padding: 16px 14px 14px;
   cursor: pointer;
   display: flex;
