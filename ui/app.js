@@ -6032,15 +6032,15 @@ function renderHomeAdvisors() {
   const grid = document.getElementById('home-advisors-grid');
   if (!grid) return;
 
-  const names       = getAdvisorNames();
-  const bvm         = getBvmData();
+  const names        = getAdvisorNames();
+  const bvm          = getBvmData();
   const customAvatar = localStorage.getItem('tribe_custom_avatar');
-
-  const allAdvisors = [...TRIBE_IDS, 'guide', 'bvm'];
+  const allAdvisors  = [...TRIBE_IDS, 'guide', 'bvm'];
 
   grid.innerHTML = allAdvisors.map(id => {
     const adv         = ADVISORS[id];
     const displayName = names[id] || adv.name;
+    const tipText     = adv.desc;
 
     let avatarHtml;
     if (id === 'bvm' && bvm?.avatar) {
@@ -6050,17 +6050,39 @@ function renderHomeAdvisors() {
     } else if (id !== 'bvm') {
       avatarHtml = `<img class="home-advisor-avatar" src="../assets/avatars/${id}.png" alt="${displayName}">`;
     } else {
-      // BVM without a custom avatar — show initial circle
       avatarHtml = `<div class="home-advisor-initial" style="background:${adv.color}">${adv.initial}</div>`;
     }
 
     return `
-      <div class="home-advisor-item">
+      <div class="home-advisor-item" data-tip="${tipText.replace(/"/g, '&quot;')}">
         ${avatarHtml}
         <span class="home-advisor-name">${displayName}</span>
-        <div class="home-advisor-tooltip">${adv.desc}</div>
       </div>`;
   }).join('');
+
+  // Wire fixed-position tooltip (escapes overflow-x:auto clipping)
+  let tip = document.getElementById('home-tip');
+  if (!tip) {
+    tip = document.createElement('div');
+    tip.id = 'home-tip';
+    document.body.appendChild(tip);
+  }
+
+  grid.querySelectorAll('.home-advisor-item[data-tip]').forEach(item => {
+    item.addEventListener('mouseenter', () => {
+      tip.textContent = item.dataset.tip;
+      tip.classList.add('visible');
+      const r = item.getBoundingClientRect();
+      tip.style.left = (r.left + r.width / 2) + 'px';
+      tip.style.top  = (r.top - tip.offsetHeight - 10) + 'px';
+      // Recalculate after paint so offsetHeight is accurate
+      requestAnimationFrame(() => {
+        const r2 = item.getBoundingClientRect();
+        tip.style.top = (r2.top - tip.offsetHeight - 10) + 'px';
+      });
+    });
+    item.addEventListener('mouseleave', () => tip.classList.remove('visible'));
+  });
 }
 
 function renderHomeChatShortcuts() {
