@@ -1609,7 +1609,11 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 .bl-search-container {
   max-width: 680px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
 }
 .bl-intro {
   font-size: 14px;
@@ -4653,18 +4657,21 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 16px;
 }
 
 /* Section */
 .profile-section {
-  padding: 28px 0;
-  border-bottom: 1px solid var(--border);
+  padding: 22px 24px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
-.profile-section:last-of-type { border-bottom: none; }
+.profile-section:last-of-type { border-bottom: 1px solid var(--border); }
 
 .profile-section-title {
   font-size: 13px;
@@ -5322,6 +5329,11 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
 #voting-setup-phase {
   max-width: 520px;
   width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
 }
 
 /* All direct children of setup fill the phase width */
