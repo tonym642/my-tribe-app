@@ -874,6 +874,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('bl-search-again-btn').addEventListener('click', () => blShowPhase('bl-search-phase'));
   document.getElementById('bl-synopsis-close').addEventListener('click', blCloseSynopsis);
   document.getElementById('bl-synopsis-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) blCloseSynopsis(); });
+  document.getElementById('btn-bl-util-popular').addEventListener('click', blOpenPopular);
+  document.getElementById('bl-popular-close').addEventListener('click', blClosePopular);
+  document.getElementById('bl-popular-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) blClosePopular(); });
 
   // Book Lessons — chapters toggle
   document.getElementById('bl-chapters-toggle').addEventListener('click', () => {
@@ -2858,6 +2861,147 @@ function openBookLessons() {
   document.getElementById('main-layout').style.display = 'none';
   document.getElementById('book-lessons-page').style.display = 'flex';
   setTimeout(() => document.getElementById('bl-book-input').focus(), 100);
+}
+
+// ── Popular Books Modal ───────────────────────────────────────────
+
+const BL_POPULAR = {
+  Spirituality: [
+    { title: 'The Power of Now',               author: 'Eckhart Tolle' },
+    { title: 'A New Earth',                    author: 'Eckhart Tolle' },
+    { title: 'The Alchemist',                  author: 'Paulo Coelho' },
+    { title: 'Siddhartha',                     author: 'Hermann Hesse' },
+    { title: "Man's Search for Meaning",       author: 'Viktor Frankl' },
+    { title: 'The Untethered Soul',            author: 'Michael A. Singer' },
+    { title: 'Meditations',                    author: 'Marcus Aurelius' },
+    { title: 'The Four Agreements',            author: 'Don Miguel Ruiz' },
+    { title: 'Stillness Is the Key',           author: 'Ryan Holiday' },
+    { title: 'The Miracle Morning',            author: 'Hal Elrod' },
+    { title: 'Awareness',                      author: 'Anthony de Mello' },
+    { title: 'The Seat of the Soul',           author: 'Gary Zukav' },
+  ],
+  Mindset: [
+    { title: 'Mindset',                        author: 'Carol S. Dweck' },
+    { title: 'Atomic Habits',                  author: 'James Clear' },
+    { title: 'Thinking, Fast and Slow',        author: 'Daniel Kahneman' },
+    { title: 'Grit',                           author: 'Angela Duckworth' },
+    { title: 'The Obstacle Is the Way',        author: 'Ryan Holiday' },
+    { title: 'Deep Work',                      author: 'Cal Newport' },
+    { title: 'Flow',                           author: 'Mihaly Csikszentmihalyi' },
+    { title: 'The 7 Habits of Highly Effective People', author: 'Stephen R. Covey' },
+    { title: 'Think and Grow Rich',            author: 'Napoleon Hill' },
+    { title: 'Outliers',                       author: 'Malcolm Gladwell' },
+    { title: 'Peak',                           author: 'Anders Ericsson' },
+    { title: 'Can\'t Hurt Me',                 author: 'David Goggins' },
+  ],
+  Emotions: [
+    { title: 'Emotional Intelligence',         author: 'Daniel Goleman' },
+    { title: 'The Body Keeps the Score',       author: 'Bessel van der Kolk' },
+    { title: 'Daring Greatly',                 author: 'Brené Brown' },
+    { title: 'The Gifts of Imperfection',      author: 'Brené Brown' },
+    { title: 'Permission to Feel',             author: 'Marc Brackett' },
+    { title: 'Atlas of the Heart',             author: 'Brené Brown' },
+    { title: 'Feeling Good',                   author: 'David D. Burns' },
+    { title: 'Radical Acceptance',             author: 'Tara Brach' },
+    { title: 'Running on Empty',               author: 'Jonice Webb' },
+    { title: 'The Power of Vulnerability',     author: 'Brené Brown' },
+    { title: 'Option B',                       author: 'Sheryl Sandberg' },
+    { title: 'Mindsight',                      author: 'Daniel J. Siegel' },
+  ],
+  Health: [
+    { title: 'Why We Sleep',                   author: 'Matthew Walker' },
+    { title: 'Outlive',                        author: 'Peter Attia' },
+    { title: 'Lifespan',                       author: 'David Sinclair' },
+    { title: 'Spark',                          author: 'John J. Ratey' },
+    { title: 'The Blue Zones',                 author: 'Dan Buettner' },
+    { title: 'How Not to Die',                 author: 'Michael Greger' },
+    { title: 'Breath',                         author: 'James Nestor' },
+    { title: 'The Obesity Code',               author: 'Jason Fung' },
+    { title: 'Born to Run',                    author: 'Christopher McDougall' },
+    { title: 'The Power of Habit',             author: 'Charles Duhigg' },
+    { title: 'Younger Next Year',              author: 'Chris Crowley' },
+    { title: 'The Longevity Diet',             author: 'Valter Longo' },
+  ],
+  Relationships: [
+    { title: 'How to Win Friends and Influence People', author: 'Dale Carnegie' },
+    { title: 'Attached',                       author: 'Amir Levine' },
+    { title: 'The Five Love Languages',        author: 'Gary Chapman' },
+    { title: 'Nonviolent Communication',       author: 'Marshall B. Rosenberg' },
+    { title: 'Hold Me Tight',                  author: 'Sue Johnson' },
+    { title: 'The Seven Principles for Making Marriage Work', author: 'John Gottman' },
+    { title: 'Boundaries',                     author: 'Henry Cloud' },
+    { title: 'The Art of Loving',              author: 'Erich Fromm' },
+    { title: 'Come as You Are',                author: 'Emily Nagoski' },
+    { title: 'Models',                         author: 'Mark Manson' },
+    { title: 'Safe People',                    author: 'Henry Cloud' },
+    { title: 'Crucial Conversations',          author: 'Kerry Patterson' },
+  ],
+  Finances: [
+    { title: 'Rich Dad Poor Dad',              author: 'Robert T. Kiyosaki' },
+    { title: 'The Psychology of Money',        author: 'Morgan Housel' },
+    { title: 'I Will Teach You to Be Rich',    author: 'Ramit Sethi' },
+    { title: 'The Total Money Makeover',       author: 'Dave Ramsey' },
+    { title: 'The Millionaire Next Door',      author: 'Thomas J. Stanley' },
+    { title: 'Your Money or Your Life',        author: 'Vicki Robin' },
+    { title: 'The Richest Man in Babylon',     author: 'George S. Clason' },
+    { title: 'Money: Master the Game',         author: 'Tony Robbins' },
+    { title: 'The Little Book of Common Sense Investing', author: 'John C. Bogle' },
+    { title: 'Die with Zero',                  author: 'Bill Perkins' },
+    { title: 'Broke Millennial',               author: 'Erin Lowry' },
+    { title: 'The Automatic Millionaire',      author: 'David Bach' },
+  ],
+};
+
+let blPopularActivePillar = 'Spirituality';
+
+function blOpenPopular() {
+  blPopularActivePillar = 'Spirituality';
+  const overlay = document.getElementById('bl-popular-overlay');
+  const tabsEl  = document.getElementById('bl-popular-tabs');
+
+  tabsEl.innerHTML = Object.keys(BL_POPULAR).map(p =>
+    `<button class="bl-pop-tab${p === blPopularActivePillar ? ' active' : ''}" data-pillar="${p}">${p}</button>`
+  ).join('');
+
+  tabsEl.querySelectorAll('.bl-pop-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabsEl.querySelectorAll('.bl-pop-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      blPopularActivePillar = btn.dataset.pillar;
+      blRenderPopularList();
+    });
+  });
+
+  blRenderPopularList();
+  overlay.classList.add('open');
+}
+
+function blRenderPopularList() {
+  const list  = document.getElementById('bl-popular-list');
+  const books = BL_POPULAR[blPopularActivePillar] || [];
+  list.innerHTML = books.map((b, i) =>
+    `<button class="bl-pop-item">
+      <span class="bl-pop-num">${i + 1}</span>
+      <span class="bl-pop-info">
+        <span class="bl-pop-title">${esc(b.title)}</span>
+        <span class="bl-pop-author">${esc(b.author)}</span>
+      </span>
+    </button>`
+  ).join('');
+
+  list.querySelectorAll('.bl-pop-item').forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      const book = BL_POPULAR[blPopularActivePillar][i];
+      document.getElementById('bl-book-input').value = book.title;
+      blClosePopular();
+      blShowPhase('bl-search-phase');
+      setTimeout(() => document.getElementById('bl-book-input').focus(), 100);
+    });
+  });
+}
+
+function blClosePopular() {
+  document.getElementById('bl-popular-overlay').classList.remove('open');
 }
 
 // ── Book Synopsis Modal ───────────────────────────────────────────

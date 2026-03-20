@@ -1669,6 +1669,88 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 }
 .bl-read-more-btn:hover { opacity: 0.75; }
 
+/* ── Popular Books Modal ── */
+.bl-popular-modal {
+  max-width: 540px;
+  width: 100%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.bl-popular-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 24px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.bl-pop-tab {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.bl-pop-tab:hover { color: var(--text-1); border-color: var(--text-3); }
+.bl-pop-tab.active {
+  background: #1D4ED8;
+  border-color: #1D4ED8;
+  color: #fff;
+}
+.bl-popular-list {
+  overflow-y: auto;
+  padding: 8px 16px 16px;
+  flex: 1;
+}
+.bl-pop-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+  border-radius: 0;
+}
+.bl-pop-item:last-child { border-bottom: none; }
+.bl-pop-item:hover { background: var(--surface); border-radius: 8px; }
+.bl-pop-num {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-3);
+  min-width: 20px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.bl-pop-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.bl-pop-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-1);
+  line-height: 1.3;
+}
+.bl-pop-author {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+/* Dark mode */
+body.dark-mode .bl-pop-tab { background: #1a1d27; border-color: #2a2d3a; }
+body.dark-mode .bl-pop-tab:hover { border-color: #555; }
+body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
+
 /* Synopsis modal */
 .bl-synopsis-modal {
   max-width: 560px;
