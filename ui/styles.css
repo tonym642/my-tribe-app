@@ -7301,7 +7301,7 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 /* ── Header ───────────────────────────────────────────────────────── */
 
 .hlm-page-header {
-  padding-top: 24px;
+  padding-top: 40px;
 }
 
 .hlc-item-preview {
@@ -7362,7 +7362,7 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 .hlm-layout {
   display: flex;
   flex-direction: column;
-  max-width: 1100px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 24px 24px 0;
   gap: 0;
@@ -7370,9 +7370,9 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 
 .hlm-builder-row {
   display: grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 300px;
   gap: 24px;
-  align-items: stretch;
+  align-items: start;
 }
 
 .hlm-builder-row .hlm-card {
@@ -7713,7 +7713,6 @@ body.dark-mode .hlm-radio-chip:has(input:checked) { background: #2563EB; border-
 /* ── Sidebar ──────────────────────────────────────────────────────── */
 
 .hlm-sidebar {
-  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
