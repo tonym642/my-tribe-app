@@ -2368,7 +2368,7 @@ const ADVISOR_AVATAR = {
 };
 
 const STORY_NARRATOR_IDS = ['seth', 'marcus', 'emma', 'hannah', 'rachel', 'frank', 'guide'];
-const STORY_CATEGORIES   = ['Leaders', 'Entrepreneurs', 'Athletes', 'Scientists', 'Philosophers', 'Spiritual Figures', 'Unknown Heroes'];
+const STORY_CATEGORY     = 'Biographies';
 
 // Current story being viewed
 let currentStory    = null;
@@ -2399,15 +2399,12 @@ function saveStoryLibraryData(stories) {
 
 // ── AI Generation ──
 
-async function generateStoryAI(narratorId, category) {
+async function generateStoryAI(narratorId) {
   const advisor = ADVISORS[narratorId];
   const system  = `You generate short inspirational biography stories for the My Tribe app. Return ONLY a valid JSON object with no extra text, preamble, or markdown code fences.`;
-  const user    = `Generate an inspirational biography story.
+  const user    = `Generate an inspirational biography story narrated by ${advisor.name}, the ${advisor.title}.
 
-Narrator: ${advisor.name}, the ${advisor.title}
-Category: ${category}
-
-The narrator introduces and tells the story entirely in their distinctive voice:
+The narrator tells the story entirely in their distinctive voice:
 - Seth (Spiritual): reflective, moral, faith-driven, quiet wisdom
 - Marcus (Mindset): analytical, direct, logical, structured
 - Emma (Emotional): empathetic, warm, emotionally perceptive
@@ -2416,13 +2413,13 @@ The narrator introduces and tells the story entirely in their distinctive voice:
 - Frank (Financial): direct, blunt, risk and consequence focused
 - Guide: wise, mentoring, broad perspective
 
-Include both famous historical figures AND unknown heroes (ordinary people who did extraordinary things: medical workers, disaster responders, community builders, soldiers who protected civilians).
+Choose any real person — famous historical figures OR unknown heroes (ordinary people who did extraordinary things: medical workers, disaster responders, community builders, soldiers who protected civilians). Pick someone different and interesting each time.
 
 Return this exact JSON format only:
 {
   "title": "Person Name — Theme",
   "subject": "Person's full name",
-  "category": "${category}",
+  "category": "Biographies",
   "narrator": "${narratorId}",
   "slides": [
     {"label": "Opening", "text": "Narrator's hook in their distinctive voice (1-2 sentences)"},
@@ -2460,12 +2457,11 @@ async function generateDailyStory() {
     if (cached) return JSON.parse(cached);
   } catch {}
 
-  // Seed narrator + category by today's date
+  // Seed narrator by today's date
   const dateSeed   = parseInt(new Date().toISOString().slice(0, 10).replace(/-/g, ''));
   const narratorId = STORY_NARRATOR_IDS[dateSeed % STORY_NARRATOR_IDS.length];
-  const category   = STORY_CATEGORIES[Math.floor(dateSeed / 10) % STORY_CATEGORIES.length];
 
-  const story = await generateStoryAI(narratorId, category);
+  const story = await generateStoryAI(narratorId);
   story.date  = new Date().toISOString().slice(0, 10);
   localStorage.setItem(key, JSON.stringify(story));
   return story;
@@ -2473,8 +2469,7 @@ async function generateDailyStory() {
 
 async function generateRandomStory() {
   const narratorId = STORY_NARRATOR_IDS[Math.floor(Math.random() * STORY_NARRATOR_IDS.length)];
-  const category   = STORY_CATEGORIES[Math.floor(Math.random() * STORY_CATEGORIES.length)];
-  return generateStoryAI(narratorId, category);
+  return generateStoryAI(narratorId);
 }
 
 // ── Init ──
@@ -2678,58 +2673,20 @@ function toggleStoryCreatePanel() {
   const panel = document.getElementById('story-create-panel');
   const isOpen = panel.style.display !== 'none';
   panel.style.display = isOpen ? 'none' : 'block';
-  if (!isOpen) initStoryCreatePanel();
-}
-
-function initStoryCreatePanel() {
-  const catsEl  = document.getElementById('story-create-cats');
-  const narrsEl = document.getElementById('story-create-narrs');
-  if (!catsEl || !narrsEl) return;
-  // Only build once
-  if (catsEl.children.length > 0) return;
-
-  STORY_CATEGORIES.forEach((cat, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'story-create-chip' + (i === 0 ? ' active' : '');
-    btn.dataset.value = cat;
-    btn.textContent = cat;
-    btn.addEventListener('click', () => {
-      catsEl.querySelectorAll('.story-create-chip').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    });
-    catsEl.appendChild(btn);
-  });
-
-  STORY_NARRATOR_IDS.forEach((id, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'story-create-chip' + (i === 0 ? ' active' : '');
-    btn.dataset.value = id;
-    btn.textContent = ADVISORS[id].name;
-    btn.addEventListener('click', () => {
-      narrsEl.querySelectorAll('.story-create-chip').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    });
-    narrsEl.appendChild(btn);
-  });
 }
 
 async function createNewBlogStory() {
   const btn    = document.getElementById('story-create-btn');
   const status = document.getElementById('story-create-status');
 
-  const catChip  = document.querySelector('#story-create-cats  .story-create-chip.active');
-  const narrChip = document.querySelector('#story-create-narrs .story-create-chip.active');
-
-  if (!catChip || !narrChip) {
-    status.textContent = 'Select a category and narrator first.';
-    return;
-  }
-
   btn.disabled = true;
   status.textContent = 'Generating…';
 
+  // Random narrator, always Biographies
+  const narratorId = STORY_NARRATOR_IDS[Math.floor(Math.random() * STORY_NARRATOR_IDS.length)];
+
   try {
-    const story = await generateStoryAI(narrChip.dataset.value, catChip.dataset.value);
+    const story = await generateStoryAI(narratorId);
     story.saved_at = Date.now();
     const lib = getStoryLibrary();
     lib.unshift(story);
