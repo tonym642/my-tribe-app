@@ -2150,7 +2150,10 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
 .bl-chat-area {
   flex-shrink: 0;
   width: 340px;
-  border-left: 1px solid var(--border);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -2158,7 +2161,7 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
 }
 .bl-chat-area.collapsed {
   width: 0;
-  border-left: none;
+  border: none;
   overflow: hidden;
 }
 
@@ -6636,7 +6639,7 @@ body.dark-mode .bl-discussion-toggle:hover,
 body.dark-mode .bl-discussion-toggle.active { background: #22263a; color: #3b9eff; border-color: #3b9eff; }
 body.dark-mode .cl-chat-tab { background: #D97706; }
 body.dark-mode .cl-chat-tab:hover { background: #B45309; }
-body.dark-mode .bl-chat-area { background: #0f1117; }
+body.dark-mode .bl-chat-area { background: #0f1117; border-color: #2a2d3a; }
 body.dark-mode .bl-chat-close { color: var(--text-2); }
 body.dark-mode .bl-chat-input { background: #1a1d27; border-color: #2a2d3a; color: var(--text-1); }
 body.dark-mode .bl-chat-bubble.advisor { background: #1a1d27; border-color: #2a2d3a; }
