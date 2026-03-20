@@ -2320,6 +2320,74 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
   margin-bottom: 20px;
 }
 
+/* ── Polls carousel — teal container ── */
+#poll-suggestions-section {
+  background: #2D9E76;
+  border-radius: 5px;
+  padding: 14px 14px 10px;
+  margin-bottom: 10px;
+}
+#poll-suggestions-section .suggestions-track {
+  padding: 4px 4px 6px;
+}
+#poll-suggestions-section .suggestion-dot {
+  background: rgba(255,255,255,0.35);
+}
+#poll-suggestions-section .suggestion-dot.active {
+  background: #fff;
+}
+
+/* Poll suggestion card */
+.poll-suggestion-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  width: 180px;
+  min-height: 160px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 5px;
+  padding: 16px 14px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  color: #fff;
+  transition: background 0.15s, border-color 0.15s;
+}
+.poll-suggestion-card:hover {
+  background: rgba(255,255,255,0.28);
+  border-color: rgba(255,255,255,0.45);
+}
+.poll-sug-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: #2D9E76;
+  font-weight: 700;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.poll-sug-text {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: #fff;
+  flex: 1;
+}
+.poll-sug-type {
+  font-size: 10px;
+  color: rgba(255,255,255,0.72);
+  background: rgba(255,255,255,0.15);
+  border-radius: 20px;
+  padding: 2px 10px;
+}
+
 /* ── Core Lessons carousel — orange container ── */
 #cl-search-phase .bl-suggestions-section {
   background: #D97706;

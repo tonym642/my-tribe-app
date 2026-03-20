@@ -1232,21 +1232,24 @@
     </div>
 
     <div class="voting-page-stream">
+
+      <!-- Carousel — full width, shown only during setup -->
+      <div class="bl-carousel-wrapper" id="poll-carousel-section">
+        <div class="suggestions-label bl-carousel-label">Popular Polls</div>
+        <div class="suggestions-section bl-suggestions-section" id="poll-suggestions-section">
+          <div class="suggestions-track" id="poll-suggestions-track"></div>
+          <div class="suggestions-dots" id="poll-suggestions-dots"></div>
+        </div>
+        <div class="suggestions-nav bl-carousel-nav">
+          <button class="suggestions-arrow" id="poll-suggestions-prev" aria-label="Previous">&#8249;</button>
+          <button class="suggestions-arrow" id="poll-suggestions-next" aria-label="Next">&#8250;</button>
+        </div>
+      </div>
+
       <div class="voting-page-inner">
 
         <!-- Setup phase -->
         <div id="voting-setup-phase" class="voting-phase">
-
-          <!-- Suggestions carousel -->
-          <div class="suggestions-section">
-            <div class="suggestions-label">Popular Polls</div>
-            <div class="suggestions-track" id="poll-suggestions-track"></div>
-            <div class="suggestions-dots" id="poll-suggestions-dots"></div>
-            <div class="suggestions-nav">
-              <button class="suggestions-arrow" id="poll-suggestions-prev" aria-label="Previous">&#8249;</button>
-              <button class="suggestions-arrow" id="poll-suggestions-next" aria-label="Next">&#8250;</button>
-            </div>
-          </div>
 
           <!-- Vote type selector -->
           <div class="voting-type-row">

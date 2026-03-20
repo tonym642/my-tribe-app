@@ -4704,6 +4704,7 @@ function openVoting() {
     b.classList.toggle('active', b.dataset.vtype === 'yes-no'));
   document.getElementById('voting-question').value = '';
   document.getElementById('voting-setup-phase').style.display = '';
+  document.getElementById('poll-carousel-section').style.display = '';
   document.getElementById('voting-results-phase').style.display = 'none';
   document.getElementById('btn-polls-util-new').style.display = 'none';
   document.getElementById('polls-new-sep').style.display = 'none';
@@ -4942,6 +4943,7 @@ async function runVoting() {
 
   // Switch to results phase
   document.getElementById('voting-setup-phase').style.display = 'none';
+  document.getElementById('poll-carousel-section').style.display = 'none';
   document.getElementById('voting-results-phase').style.display = '';
   document.getElementById('btn-polls-util-new').style.display = '';
   document.getElementById('polls-new-sep').style.display = '';
@@ -5068,20 +5070,23 @@ function renderPollSuggestions() {
   const dotsEl = document.getElementById('poll-suggestions-dots');
   if (!track) return;
 
-  track.innerHTML = POLL_SUGGESTIONS.map(s => `
-    <div class="suggestion-card" data-poll-q="${esc(s.text)}" data-poll-type="${s.type}">
-      <div class="suggestion-card-title">${esc(s.text)}</div>
-    </div>`).join('');
+  const typeLabel = { 'yes-no': 'Yes / No', 'ab': 'A / B', 'multiple': 'Multiple' };
 
-  track.querySelectorAll('.suggestion-card').forEach(card => {
+  track.innerHTML = POLL_SUGGESTIONS.map(s =>
+    `<button class="poll-suggestion-card">
+      <div class="poll-sug-icon">?</div>
+      <div class="poll-sug-text">${esc(s.text)}</div>
+      <div class="poll-sug-type">${typeLabel[s.type] || s.type}</div>
+    </button>`
+  ).join('');
+
+  track.querySelectorAll('.poll-suggestion-card').forEach((card, i) => {
     card.addEventListener('click', () => {
-      const q    = card.dataset.pollQ;
-      const type = card.dataset.pollType;
-      document.getElementById('voting-question').value = q;
-      // Set voting type
-      votingType = type;
+      const s = POLL_SUGGESTIONS[i];
+      document.getElementById('voting-question').value = s.text;
+      votingType = s.type;
       document.querySelectorAll('.voting-type-btn').forEach(b =>
-        b.classList.toggle('active', b.dataset.vtype === type));
+        b.classList.toggle('active', b.dataset.vtype === s.type));
       renderVotingOptionsArea();
       document.getElementById('voting-question').focus();
     });
@@ -5090,23 +5095,27 @@ function renderPollSuggestions() {
   // Dots
   if (dotsEl) {
     dotsEl.innerHTML = POLL_SUGGESTIONS.map((_, i) =>
-      `<button class="suggestions-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></button>`
+      `<span class="suggestion-dot${i === 0 ? ' active' : ''}" data-i="${i}"></span>`
     ).join('');
-    dotsEl.querySelectorAll('.suggestions-dot').forEach(dot => {
-      dot.addEventListener('click', () => {
-        const card = track.querySelectorAll('.suggestion-card')[+dot.dataset.idx];
-        if (card) card.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' });
-        dotsEl.querySelectorAll('.suggestions-dot').forEach(d => d.classList.toggle('active', d === dot));
-      });
-    });
   }
 
-  // Arrow nav
+  track.addEventListener('scroll', () => {
+    const card = track.querySelector('.poll-suggestion-card');
+    if (!card) return;
+    const cardW  = card.offsetWidth + 12;
+    const active = Math.min(Math.round(track.scrollLeft / cardW), POLL_SUGGESTIONS.length - 1);
+    dotsEl?.querySelectorAll('.suggestion-dot').forEach((d, i) =>
+      d.classList.toggle('active', i === active)
+    );
+  }, { passive: true });
+
   document.getElementById('poll-suggestions-prev')?.addEventListener('click', () => {
-    track.scrollBy({ left: -220, behavior: 'smooth' });
+    const card = track.querySelector('.poll-suggestion-card');
+    if (card) track.scrollBy({ left: -(card.offsetWidth + 12), behavior: 'smooth' });
   });
   document.getElementById('poll-suggestions-next')?.addEventListener('click', () => {
-    track.scrollBy({ left: 220, behavior: 'smooth' });
+    const card = track.querySelector('.poll-suggestion-card');
+    if (card) track.scrollBy({ left: card.offsetWidth + 12, behavior: 'smooth' });
   });
 }
 
@@ -5138,6 +5147,7 @@ function resetVoting() {
     b.classList.toggle('active', b.dataset.vtype === 'yes-no'));
   document.getElementById('voting-question').value = '';
   document.getElementById('voting-setup-phase').style.display = '';
+  document.getElementById('poll-carousel-section').style.display = '';
   document.getElementById('voting-results-phase').style.display = 'none';
   document.getElementById('btn-polls-util-new').style.display = 'none';
   document.getElementById('polls-new-sep').style.display = 'none';
@@ -5151,6 +5161,7 @@ function loadPoll(id) {
   if (!poll) return;
 
   document.getElementById('voting-setup-phase').style.display = 'none';
+  document.getElementById('poll-carousel-section').style.display = 'none';
   document.getElementById('voting-results-phase').style.display = '';
   document.getElementById('btn-polls-util-new').style.display = '';
   document.getElementById('polls-new-sep').style.display = '';
