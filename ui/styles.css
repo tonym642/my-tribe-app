@@ -5926,6 +5926,14 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   padding: 16px 24px 8px;
 }
 
+.debate-empty-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
 /* ── Debate VS Arena ─────────────────────────────────────────────── */
 .debate-vs-arena {
   display: flex;
