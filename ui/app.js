@@ -6418,14 +6418,6 @@ function closeHomePage() {
 // HLM PAGE — High Level Messaging
 // ══════════════════════════════════════════════════════════════════════════════
 
-const HLM_TONES = [
-  'Calm', 'Assertive', 'Empathetic', 'Direct', 'Gentle',
-  'Confident', 'Honest', 'Firm', 'Warm', 'Neutral'
-];
-const HLM_AVOID_TONES = [
-  'Aggressive', 'Passive-aggressive', 'Defensive',
-  'Dismissive', 'Cold', 'Blaming', 'Sarcastic', 'Condescending'
-];
 
 const HLM_EXAMPLES = [
   {
@@ -6461,56 +6453,11 @@ const HLM_GUIDANCE = [
 ];
 
 let hlmState = {
-  desiredTones: new Set(),
-  avoidTones:   new Set(),
-  activeTab:    'draft',
-  output:       { draft: '', stronger: '', softer: '', short: '' },
-  loading:      false
+  activeTab: 'draft',
+  output:    { draft: '', stronger: '', softer: '', short: '' },
+  loading:   false
 };
 
-function initHLMToneChips() {
-  const desiredEl = document.getElementById('hlm-tone-desired');
-  const avoidEl   = document.getElementById('hlm-tone-avoid');
-  if (!desiredEl || !avoidEl) return;
-
-  // Reset state sets on re-open
-  hlmState.desiredTones.clear();
-  hlmState.avoidTones.clear();
-
-  desiredEl.innerHTML = HLM_TONES.map(t =>
-    `<button class="hlm-chip" data-tone="${t}">${t}</button>`
-  ).join('');
-
-  avoidEl.innerHTML = HLM_AVOID_TONES.map(t =>
-    `<button class="hlm-chip" data-tone="${t}">${t}</button>`
-  ).join('');
-
-  desiredEl.querySelectorAll('.hlm-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tone = btn.dataset.tone;
-      if (hlmState.desiredTones.has(tone)) {
-        hlmState.desiredTones.delete(tone);
-        btn.classList.remove('active');
-      } else {
-        hlmState.desiredTones.add(tone);
-        btn.classList.add('active');
-      }
-    });
-  });
-
-  avoidEl.querySelectorAll('.hlm-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tone = btn.dataset.tone;
-      if (hlmState.avoidTones.has(tone)) {
-        hlmState.avoidTones.delete(tone);
-        btn.classList.remove('active');
-      } else {
-        hlmState.avoidTones.add(tone);
-        btn.classList.add('active');
-      }
-    });
-  });
-}
 
 function renderHLMExamples() {
   const grid = document.getElementById('hlm-examples-grid');
@@ -6565,12 +6512,9 @@ async function generateHLMMessage(modifier) {
   if (btn) { btn.disabled = true; btn.textContent = 'Generating…'; }
   hlmState.loading = true;
 
-  const desiredList = [...hlmState.desiredTones].join(', ') || 'none specified';
-  const avoidList   = [...hlmState.avoidTones].join(', ')   || 'none specified';
-
   const basePrompt = modifier
     ? `The user wants to modify an existing message: ${modifier}.\n\nOriginal draft:\n${hlmState.output.draft}\n\nSituation context:\n${situation}`
-    : `Situation type: ${sitType || 'general'}\nRecipient: ${recipient || 'not specified'}\nWhat happened: ${situation}\nDesired tone: ${desiredList}\nTone to avoid: ${avoidList}\nMain intention: ${intention || 'not specified'}`;
+    : `Situation type: ${sitType || 'general'}\nRecipient: ${recipient || 'not specified'}\nWhat happened: ${situation}\nMain intention: ${intention || 'not specified'}`;
 
   const systemPrompt = `You are a High Level Messaging coach. You help people communicate with emotional intelligence — expressing needs clearly without blame, judgment, or reactivity.
 
@@ -6642,7 +6586,6 @@ function openHLM() {
   });
   const page = document.getElementById('hlm-page');
   if (page) page.style.display = '';
-  initHLMToneChips();
   renderHLMExamples();
   renderHLMGuidance();
 }
@@ -6683,7 +6626,7 @@ function initHLMPage() {
     generateHLMMessage('Make it more concise, cut to the core message'));
 
   // Nav buttons
-  document.getElementById('btn-hlm')?.addEventListener('click', () => { closeNavMenus(); openHLM(); });
+  document.getElementById('btn-hlm')?.addEventListener('click', () => openHLM());
   document.getElementById('m-btn-hlm')?.addEventListener('click', () => { closeMobileNav(); openHLM(); });
 }
 
