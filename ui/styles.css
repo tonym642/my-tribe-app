@@ -1602,7 +1602,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 
 /* ── Search Phase ── */
 .bl-search-container {
-  max-width: 860px;
+  max-width: 1020px;
   margin: 40px auto 0;
 }
 .bl-intro {
@@ -2206,7 +2206,7 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 .bl-carousel-label {
   color: var(--text-2);
   margin-bottom: 10px;
-  text-align: left;
+  text-align: center;
   padding: 0 2px;
 }
 #bl-search-phase .bl-suggestions-section {
