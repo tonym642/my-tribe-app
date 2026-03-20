@@ -6228,59 +6228,119 @@ function renderHomeStats() {
       icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,
       value: stats.sessions,
       label: 'Sessions',
-      helper: 'Total activity'
+      helper: 'Total activity',
+      info: 'Counts every time you open the app and engage with any feature — chat, lessons, polls, debates, or stories.',
+      linkLabel: 'View Profile',
+      linkPage: 'profile'
     },
     {
       icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
       value: stats.streak + (stats.streak === 1 ? ' day' : ' days'),
       label: 'Streak',
-      helper: 'Days active'
+      helper: 'Days active',
+      info: 'How many consecutive days you have been active. Use any feature each day to keep your streak alive.',
+      linkLabel: 'View Profile',
+      linkPage: 'profile'
     },
     {
       icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
       value: stats.lessons,
       label: 'Lessons',
-      helper: 'Completed'
+      helper: 'Completed',
+      info: 'Total Book Lessons and Core Lessons you have started. Each book or topic you explore adds to this count.',
+      linkLabel: 'Go to Book Lessons',
+      linkPage: 'book-lessons'
     },
     {
       icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`,
       value: stats.saved,
       label: 'Saved',
-      helper: 'Books & stories'
+      helper: 'Books & stories',
+      info: 'Number of books and biography stories you have saved to your personal library for quick access.',
+      linkLabel: 'My Library',
+      linkPage: 'book-lessons'
     },
     {
       icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>`,
       value: stats.advice,
       label: 'Advice',
-      helper: 'Sessions'
+      helper: 'Sessions',
+      info: 'Number of advisory conversations started with your Tribe advisors on personal topics and challenges.',
+      linkLabel: 'Get Advice',
+      linkPage: 'advisors'
     },
     {
       icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
       value: stats.hlc,
       label: 'HLC',
-      helper: 'High-level msgs'
+      helper: 'High-level msgs',
+      info: 'High-Level Conversations — deep, thoughtful messages you have crafted using the HLC message builder.',
+      linkLabel: 'Open HLC',
+      linkPage: 'hlm'
     },
     {
       icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
       value: stats.time + ' min',
       label: 'Time',
-      helper: 'Minutes spent'
+      helper: 'Minutes spent',
+      info: 'Estimated total time spent learning across all features, based on your sessions, lessons, and conversations.',
+      linkLabel: 'View Profile',
+      linkPage: 'profile'
     },
     {
       icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
       value: stats.score,
       label: 'Score',
-      helper: 'A–F level'
+      helper: 'A–F level',
+      info: 'Your overall engagement grade from A to F, calculated from sessions, lessons, advice, debates, and time spent.',
+      linkLabel: 'View Profile',
+      linkPage: 'profile'
     }
   ];
 
   grid.innerHTML = cards.map(c => `
     <div class="home-stat-card">
+      <button class="home-stat-info-btn" data-info="${esc(c.info)}" title="What is this?">i</button>
       <div class="home-stat-icon">${c.icon}</div>
       <div class="home-stat-value">${c.value}</div>
       <div class="home-stat-label">${c.label}</div>
       <div class="home-stat-helper">${c.helper}</div>
+      <button class="home-stat-link" data-page="${c.linkPage}">${c.linkLabel}</button>
     </div>`).join('');
+
+  // Shared fixed popup
+  let popup = document.getElementById('stat-popup');
+  if (!popup) {
+    popup = document.createElement('div');
+    popup.id = 'stat-popup';
+    document.body.appendChild(popup);
+  }
+
+  grid.querySelectorAll('.home-stat-info-btn').forEach(btn => {
+    btn.addEventListener('mouseenter', e => {
+      popup.textContent = btn.dataset.info;
+      popup.classList.add('visible');
+      const r = btn.getBoundingClientRect();
+      const pw = 220;
+      let left = r.left + r.width / 2 - pw / 2;
+      if (left < 8) left = 8;
+      if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+      popup.style.left = left + 'px';
+      popup.style.top = (r.top - 8) + 'px';
+      popup.style.transform = 'translateY(-100%)';
+    });
+    btn.addEventListener('mouseleave', () => popup.classList.remove('visible'));
+  });
+
+  grid.querySelectorAll('.home-stat-link').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const page = btn.dataset.page;
+      if (page === 'profile') openProfile();
+      else if (page === 'book-lessons') openBookLessons();
+      else if (page === 'advisors') openAdvisorsPage();
+      else if (page === 'hlm') openHLM();
+    });
+  });
 }
 
 function renderHomeBlogsCarousel() {
