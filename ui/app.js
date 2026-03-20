@@ -6229,18 +6229,14 @@ function renderHomeStats() {
       value: stats.sessions,
       label: 'Sessions',
       helper: 'Total activity',
-      info: 'Counts every time you open the app and engage with any feature — chat, lessons, polls, debates, or stories.',
-      linkLabel: 'View Profile',
-      linkPage: 'profile'
+      info: 'Counts every time you open the app and engage with any feature — chat, lessons, polls, debates, or stories.'
     },
     {
       icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
       value: stats.streak + (stats.streak === 1 ? ' day' : ' days'),
       label: 'Streak',
       helper: 'Days active',
-      info: 'How many consecutive days you have been active. Use any feature each day to keep your streak alive.',
-      linkLabel: 'View Profile',
-      linkPage: 'profile'
+      info: 'How many consecutive days you have been active. Use any feature each day to keep your streak alive.'
     },
     {
       icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
@@ -6283,18 +6279,14 @@ function renderHomeStats() {
       value: stats.time + ' min',
       label: 'Time',
       helper: 'Minutes spent',
-      info: 'Estimated total time spent learning across all features, based on your sessions, lessons, and conversations.',
-      linkLabel: 'View Profile',
-      linkPage: 'profile'
+      info: 'Estimated total time spent learning across all features, based on your sessions, lessons, and conversations.'
     },
     {
       icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
       value: stats.score,
       label: 'Score',
       helper: 'A–F level',
-      info: 'Your overall engagement grade from A to F, calculated from sessions, lessons, advice, debates, and time spent.',
-      linkLabel: 'View Profile',
-      linkPage: 'profile'
+      info: 'Your overall engagement grade from A to F, calculated from sessions, lessons, advice, debates, and time spent.'
     }
   ];
 
@@ -6305,7 +6297,7 @@ function renderHomeStats() {
       <div class="home-stat-value">${c.value}</div>
       <div class="home-stat-label">${c.label}</div>
       <div class="home-stat-helper">${c.helper}</div>
-      <button class="home-stat-link" data-page="${c.linkPage}">${c.linkLabel}</button>
+      ${c.linkLabel ? `<button class="home-stat-link" data-page="${c.linkPage}">${c.linkLabel}</button>` : ''}
     </div>`).join('');
 
   // Shared fixed popup
