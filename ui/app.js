@@ -872,6 +872,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Book Lessons — confirm phase
   document.getElementById('bl-confirm-start-btn').addEventListener('click', blStartLesson);
   document.getElementById('bl-search-again-btn').addEventListener('click', () => blShowPhase('bl-search-phase'));
+  document.getElementById('bl-synopsis-close').addEventListener('click', blCloseSynopsis);
+  document.getElementById('bl-synopsis-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) blCloseSynopsis(); });
 
   // Book Lessons — chapters toggle
   document.getElementById('bl-chapters-toggle').addEventListener('click', () => {
@@ -2858,6 +2860,53 @@ function openBookLessons() {
   setTimeout(() => document.getElementById('bl-book-input').focus(), 100);
 }
 
+// ── Book Synopsis Modal ───────────────────────────────────────────
+
+async function blOpenSynopsis() {
+  const overlay = document.getElementById('bl-synopsis-overlay');
+  const body    = document.getElementById('bl-synopsis-body');
+  const title   = document.getElementById('bl-synopsis-modal-title');
+  if (!blConfirmedBook) return;
+
+  title.textContent = blConfirmedBook.title;
+  overlay.classList.add('active');
+
+  // Use cached synopsis if available
+  if (blConfirmedBook.synopsis) {
+    body.innerHTML = blConfirmedBook.synopsis;
+    return;
+  }
+
+  body.innerHTML = `<div class="bl-loading"><div class="typing-dots"><span></span><span></span><span></span></div> Loading synopsis…</div>`;
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 500,
+        system: `You are a book synopsis writer. Return a clear, engaging synopsis in plain text only — no markdown, no headers, no bullet points.`,
+        messages: [{
+          role: 'user',
+          content: `Write a 3–4 paragraph synopsis of "${blConfirmedBook.title}" by ${blConfirmedBook.author}. Cover the main themes, key ideas, and what readers will gain from it.`
+        }]
+      })
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    const text = data.content[0].text.trim();
+    blConfirmedBook.synopsis = text.split('\n\n').map(p => `<p>${esc(p)}</p>`).join('');
+    body.innerHTML = blConfirmedBook.synopsis;
+  } catch {
+    body.innerHTML = `<p class="advisor-error-text">Could not load synopsis. Please try again.</p>`;
+  }
+}
+
+function blCloseSynopsis() {
+  document.getElementById('bl-synopsis-overlay').classList.remove('active');
+}
+
 function closeBookLessons() {
   document.getElementById('book-lessons-page').style.display = 'none';
   document.getElementById('main-layout').style.display = '';
@@ -2897,7 +2946,9 @@ async function blSearchBook() {
       <div class="bl-confirm-book-title">${esc(blConfirmedBook.title)}</div>
       <div class="bl-confirm-author">by ${esc(blConfirmedBook.author)}</div>
       <div class="bl-confirm-tagline">${esc(blConfirmedBook.tagline)}</div>
+      <button class="bl-read-more-btn" id="bl-read-more-btn">Read more…</button>
     `;
+    document.getElementById('bl-read-more-btn').addEventListener('click', blOpenSynopsis);
     startBtn.style.display = '';
   } catch (err) {
     card.innerHTML = `<span class="advisor-error-text">Could not identify the book. Try a more specific title.</span>`;

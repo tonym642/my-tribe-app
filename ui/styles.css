@@ -1656,6 +1656,36 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   border-left: 3px solid var(--accent, #2563EB);
   padding-left: 12px;
 }
+.bl-read-more-btn {
+  background: none;
+  border: none;
+  color: var(--accent, #2563EB);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 8px 0 0;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.bl-read-more-btn:hover { opacity: 0.75; }
+
+/* Synopsis modal */
+.bl-synopsis-modal {
+  max-width: 560px;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+.bl-synopsis-body {
+  padding: 0 24px 24px;
+}
+.bl-synopsis-body p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-1);
+  margin: 0 0 14px;
+}
+.bl-synopsis-body p:last-child { margin-bottom: 0; }
+
 .bl-confirm-actions {
   max-width: 640px;
   margin: 0 auto;
