@@ -6350,7 +6350,7 @@ function renderHomeBlogsCarousel() {
     return;
   }
 
-  track.innerHTML = stories.slice(0, 5).map(story => {
+  track.innerHTML = stories.slice(0, 8).map(story => {
     const advisor   = ADVISORS[story.narrator] || {};
     const avatarSrc = ADVISOR_AVATAR[story.narrator];
     const avatarHtml = avatarSrc
@@ -6372,8 +6372,8 @@ function renderHomeBlogsCarousel() {
     card.addEventListener('click', () => openStoryViewer(stories[i]));
   });
 
-  // Wire prev/next arrows
-  const scrollBy = () => track.offsetWidth / 3 + 14; // one card width + gap
+  // Wire prev/next arrows — scroll exactly one card width + gap
+  const scrollBy = () => (track.offsetWidth - 28) / 3 + 14;
   const prev = document.getElementById('home-blogs-prev');
   const next = document.getElementById('home-blogs-next');
   if (prev) prev.onclick = () => track.scrollBy({ left: -scrollBy(), behavior: 'smooth' });

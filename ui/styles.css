@@ -6967,9 +6967,9 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 }
 .home-blogs-track::-webkit-scrollbar { display: none; }
 
-/* Each card stretches equally to fill the full row — 3 cards visible */
+/* Fixed width: exactly 3 cards fill the visible area, rest scroll via arrows */
 .home-blog-card {
-  flex: 1;
+  flex: 0 0 calc((100% - 28px) / 3); /* 28px = 2 × 14px gap */
   min-width: 0;
   scroll-snap-align: start;
   background: var(--surface);
