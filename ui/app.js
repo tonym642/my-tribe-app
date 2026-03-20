@@ -3559,6 +3559,7 @@ function blRenderLibrary(tab) {
         </div>
         <div class="history-item-actions">
           <button class="history-heart-btn active" data-action="bl-fav" data-title="${esc(b.title)}" title="Remove from favorites">${HEART_FILLED}</button>
+          <button class="history-action history-delete" data-action="bl-delete" data-title="${esc(b.title)}" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
         </div>
       </div>`
     ).join('');
@@ -3579,12 +3580,13 @@ function blRenderLibrary(tab) {
         </div>
         <div class="history-item-actions">
           <button class="history-heart-btn${isSaved ? ' active' : ''}" data-action="bl-fav" data-title="${esc(b.title)}" title="${isSaved ? 'Remove from favorites' : 'Save to favorites'}">${isSaved ? HEART_FILLED : HEART_OUTLINE}</button>
+          <button class="history-action history-delete" data-action="bl-delete" data-title="${esc(b.title)}" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
         </div>
       </div>`;
     }).join('');
   }
 
-  // Click on item body → start lesson; click on heart → toggle save
+  // Click on item body → start lesson; click on heart → toggle save; click delete → remove
   list.querySelectorAll('.bl-lib-item').forEach(item => {
     item.querySelector('.history-item-info').addEventListener('click', () => {
       const idx = parseInt(item.dataset.idx);
@@ -3596,7 +3598,19 @@ function blRenderLibrary(tab) {
     item.querySelector('[data-action="bl-fav"]').addEventListener('click', e => {
       const title = e.currentTarget.dataset.title;
       blToggleSavedBook(title);
-      blRenderLibrary(tab); // re-render
+      blRenderLibrary(tab);
+    });
+    item.querySelector('[data-action="bl-delete"]').addEventListener('click', e => {
+      const title = e.currentTarget.dataset.title;
+      const t = item.dataset.tab;
+      if (t === 'favorites') {
+        const books = getSavedBooks().filter(b => b.title !== title);
+        saveBooksData(books);
+      } else {
+        const viewed = getViewedBooks().filter(b => b.title !== title);
+        localStorage.setItem('tribe_books_viewed', JSON.stringify(viewed));
+      }
+      blRenderLibrary(tab);
     });
   });
 }
@@ -3996,6 +4010,7 @@ function clRenderLibrary(tab) {
         </div>
         <div class="history-item-actions">
           <button class="history-heart-btn active" data-action="cl-fav" data-title="${esc(l.title)}" title="Remove from library">${HEART_FILLED}</button>
+          <button class="history-action history-delete" data-action="cl-delete" data-title="${esc(l.title)}" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
         </div>
       </div>`
     ).join('');
@@ -4015,6 +4030,7 @@ function clRenderLibrary(tab) {
         </div>
         <div class="history-item-actions">
           <button class="history-heart-btn${isSaved ? ' active' : ''}" data-action="cl-fav" data-title="${esc(l.title)}" title="${isSaved ? 'Remove from library' : 'Save to library'}">${isSaved ? HEART_FILLED : HEART_OUTLINE}</button>
+          <button class="history-action history-delete" data-action="cl-delete" data-title="${esc(l.title)}" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
         </div>
       </div>`;
     }).join('');
@@ -4032,6 +4048,16 @@ function clRenderLibrary(tab) {
     });
     item.querySelector('[data-action="cl-fav"]').addEventListener('click', e => {
       clToggleSavedLesson(e.currentTarget.dataset.title);
+      clRenderLibrary(tab);
+    });
+    item.querySelector('[data-action="cl-delete"]').addEventListener('click', e => {
+      const title = e.currentTarget.dataset.title;
+      const t = item.dataset.tab;
+      if (t === 'favorites') {
+        clSaveLessonsData(clGetSavedLessons().filter(l => l.title !== title));
+      } else {
+        clSaveViewedLessons(clGetViewedLessons().filter(l => l.title !== title));
+      }
       clRenderLibrary(tab);
     });
   });
