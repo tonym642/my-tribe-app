@@ -1806,14 +1806,19 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
   display: flex;
   flex-direction: row;
   overflow: hidden;
-  padding: 0;
+  padding: 20px 40px;
+  gap: 16px;
 }
 
 .bl-lesson-body {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 32px 32px;
+  padding: 24px 28px 28px;
   min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
 }
 .bl-lesson-body::-webkit-scrollbar { width: 4px; }
 .bl-lesson-body::-webkit-scrollbar-track { background: transparent; }
@@ -6617,6 +6622,7 @@ body.dark-mode .settings-input:focus { border-color: #555e72; }
 
 /* Book lessons — dark mode */
 body.dark-mode .bl-phase { background: transparent; }
+body.dark-mode .bl-lesson-body { background: #1a1d27; border-color: #2a2d3a; }
 body.dark-mode .bl-confirm-card,
 body.dark-mode .bl-topic-btn,
 body.dark-mode .bl-topic-content,
@@ -6694,7 +6700,7 @@ body.dark-mode .campfire-discussion-feed::-webkit-scrollbar-thumb { background: 
   }
 
   /* Chat area becomes a bottom drawer */
-  #bl-lesson-phase, #cl-lesson-phase { flex-direction: row; }
+  #bl-lesson-phase, #cl-lesson-phase { flex-direction: row; padding: 12px 16px; gap: 0; }
   .bl-chat-area {
     position: fixed;
     bottom: 0;
