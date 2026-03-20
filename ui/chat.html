@@ -49,6 +49,10 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
             Campfire
           </button>
+          <button class="nav-item" id="btn-hlm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            HLM
+          </button>
         </div>
       </div>
 
@@ -202,6 +206,10 @@
       <button class="mobile-nav-item" id="m-btn-campfire">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
         Campfire
+      </button>
+      <button class="mobile-nav-item" id="m-btn-hlm">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        HLM
       </button>
     </div>
     <div class="mobile-nav-section">
@@ -1998,6 +2006,134 @@
       </div>
     </div>
   </div><!-- #home-page -->
+
+  <!-- ============================================================
+       HLM PAGE
+       ============================================================ -->
+  <div id="hlm-page" style="display:none">
+    <div class="hlm-scroll">
+
+      <!-- Header -->
+      <div class="hlm-header">
+        <button class="hlm-back-btn" id="hlm-back-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+        <div class="hlm-header-info">
+          <h2 class="hlm-header-title">High Level Messaging</h2>
+          <p class="hlm-header-sub">Craft messages that create connection, not conflict</p>
+        </div>
+      </div>
+
+      <!-- Two-column layout -->
+      <div class="hlm-layout">
+
+        <!-- LEFT: Builder + Output + Examples -->
+        <div class="hlm-form-col">
+
+          <!-- Builder Card -->
+          <div class="hlm-card">
+            <div class="hlm-card-title">Message Builder</div>
+
+            <div class="hlm-field">
+              <label class="hlm-label" for="hlm-situation-type">Situation Type</label>
+              <select class="hlm-select" id="hlm-situation-type">
+                <option value="">Select a situation…</option>
+                <option value="conflict">Conflict / Disagreement</option>
+                <option value="apology">Apology</option>
+                <option value="boundary">Setting a Boundary</option>
+                <option value="feedback">Giving Feedback</option>
+                <option value="support">Offering Support</option>
+                <option value="request">Making a Request</option>
+                <option value="difficult">Difficult Conversation</option>
+                <option value="reconciliation">Reconciliation</option>
+              </select>
+            </div>
+
+            <div class="hlm-field">
+              <label class="hlm-label" for="hlm-recipient">Who is this for?</label>
+              <input class="hlm-input" id="hlm-recipient" type="text" placeholder="e.g. my partner, my boss, my friend…">
+            </div>
+
+            <div class="hlm-field">
+              <label class="hlm-label" for="hlm-situation">What happened?</label>
+              <textarea class="hlm-textarea" id="hlm-situation" rows="4" placeholder="Describe the situation or what you want to communicate…"></textarea>
+            </div>
+
+            <div class="hlm-field">
+              <label class="hlm-label">Desired Tone</label>
+              <div class="hlm-chips" id="hlm-tone-desired"></div>
+            </div>
+
+            <div class="hlm-field">
+              <label class="hlm-label">Avoid This Tone</label>
+              <div class="hlm-chips" id="hlm-tone-avoid"></div>
+            </div>
+
+            <div class="hlm-field">
+              <label class="hlm-label" for="hlm-intention">Main Intention</label>
+              <select class="hlm-select" id="hlm-intention">
+                <option value="">Select your intention…</option>
+                <option value="be-heard">Be heard and understood</option>
+                <option value="resolve">Resolve the conflict</option>
+                <option value="express-care">Express care or love</option>
+                <option value="set-boundary">Set a clear boundary</option>
+                <option value="apologize">Apologize genuinely</option>
+                <option value="ask-change">Ask for a change in behavior</option>
+                <option value="reconnect">Reconnect or rebuild trust</option>
+              </select>
+            </div>
+
+            <button class="btn-primary hlm-generate-btn" id="hlm-generate-btn">Generate Message</button>
+          </div>
+
+          <!-- Output Card -->
+          <div class="hlm-card hlm-output-card" id="hlm-output-section" style="display:none">
+            <div class="hlm-output-tabs" id="hlm-output-tabs">
+              <button class="hlm-tab active" data-tab="draft">Draft</button>
+              <button class="hlm-tab" data-tab="stronger">Stronger</button>
+              <button class="hlm-tab" data-tab="softer">Softer</button>
+              <button class="hlm-tab" data-tab="short">Short</button>
+            </div>
+            <div class="hlm-output-body">
+              <div class="hlm-output-text" id="hlm-output-text"></div>
+            </div>
+            <div class="hlm-output-actions">
+              <button class="hlm-action-btn" id="hlm-copy-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy
+              </button>
+              <button class="hlm-action-btn" id="hlm-regen-btn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Regenerate
+              </button>
+              <button class="hlm-action-btn" id="hlm-direct-btn">More Direct</button>
+              <button class="hlm-action-btn" id="hlm-warm-btn">Make Warmer</button>
+              <button class="hlm-action-btn" id="hlm-short-btn">Make Shorter</button>
+            </div>
+          </div>
+
+          <!-- Example Messages -->
+          <div class="hlm-examples-section">
+            <div class="hlm-section-title">Example Messages</div>
+            <div class="hlm-examples-grid" id="hlm-examples-grid">
+              <!-- Rendered by renderHLMExamples() -->
+            </div>
+          </div>
+
+        </div><!-- .hlm-form-col -->
+
+        <!-- RIGHT: Guidance Sidebar -->
+        <div class="hlm-sidebar">
+          <div class="hlm-section-title">Messaging Guidance</div>
+          <div id="hlm-guidance-cards">
+            <!-- Rendered by renderHLMGuidance() -->
+          </div>
+        </div>
+
+      </div><!-- .hlm-layout -->
+    </div><!-- .hlm-scroll -->
+  </div><!-- #hlm-page -->
 
   <!-- Help Modal -->
   <div class="modal-overlay" id="help-overlay">

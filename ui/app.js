@@ -6204,7 +6204,7 @@ function renderHomeChatShortcuts() {
     {
       label: 'HLC',
       icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
-      action() { showNotice('Coming soon.'); }
+      action() { closeHomePage(); openHLM(); }
     }
   ];
 
@@ -6400,7 +6400,7 @@ function openHomePage() {
   // Hide main layout and all full-page views
   document.getElementById('main-layout').style.display = 'none';
   ['profile-page', 'advisors-page', 'book-lessons-page',
-   'core-lessons-page', 'debate-page', 'voting-page', 'campfire-page'
+   'core-lessons-page', 'debate-page', 'voting-page', 'campfire-page', 'hlm-page'
   ].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
@@ -6413,3 +6413,279 @@ function openHomePage() {
 function closeHomePage() {
   document.getElementById('home-page').style.display = 'none';
 }
+
+// ══════════════════════════════════════════════════════════════════════════════
+// HLM PAGE — High Level Messaging
+// ══════════════════════════════════════════════════════════════════════════════
+
+const HLM_TONES = [
+  'Calm', 'Assertive', 'Empathetic', 'Direct', 'Gentle',
+  'Confident', 'Honest', 'Firm', 'Warm', 'Neutral'
+];
+const HLM_AVOID_TONES = [
+  'Aggressive', 'Passive-aggressive', 'Defensive',
+  'Dismissive', 'Cold', 'Blaming', 'Sarcastic', 'Condescending'
+];
+
+const HLM_EXAMPLES = [
+  {
+    scenario: 'Partner canceled plans last minute',
+    low:  "You always do this. You never care about my time. I can't believe you canceled again.",
+    high: "I was really looking forward to tonight and I felt disappointed when plans changed. Can we talk about how to handle this better going forward?"
+  },
+  {
+    scenario: 'Boss gives critical feedback in public',
+    low:  "That was embarrassing and unnecessary. You had no right to call me out in front of everyone.",
+    high: "I wanted to share that I find it harder to receive feedback when it's given in a group setting. I'd appreciate if we could handle corrections privately — I'd respond much better."
+  },
+  {
+    scenario: 'Friend keeps asking for money',
+    low:  "Stop asking me for money. You're using me and it's getting old.",
+    high: "I care about you and I want to be honest — I'm not in a position to keep lending money. It's starting to affect how I feel in our friendship, and I'd rather protect that."
+  }
+];
+
+const HLM_GUIDANCE = [
+  {
+    title: 'Lead with Observation, Not Judgment',
+    body:  'Instead of "You never listen," try "When I was speaking, I noticed I was interrupted a few times." Observations are inarguable — judgments start arguments.'
+  },
+  {
+    title: 'Name Your Need, Not the Blame',
+    body:  'People respond better to needs than accusations. "I need to feel heard" lands very differently from "You never listen to me." Focus on what you want, not what they did wrong.'
+  },
+  {
+    title: 'Give Context for Your Emotional State',
+    body:  '"I\'m feeling anxious about bringing this up because I care about us" builds empathy before the hard part. Vulnerability before confrontation disarms defensiveness.'
+  }
+];
+
+let hlmState = {
+  desiredTones: new Set(),
+  avoidTones:   new Set(),
+  activeTab:    'draft',
+  output:       { draft: '', stronger: '', softer: '', short: '' },
+  loading:      false
+};
+
+function initHLMToneChips() {
+  const desiredEl = document.getElementById('hlm-tone-desired');
+  const avoidEl   = document.getElementById('hlm-tone-avoid');
+  if (!desiredEl || !avoidEl) return;
+
+  // Reset state sets on re-open
+  hlmState.desiredTones.clear();
+  hlmState.avoidTones.clear();
+
+  desiredEl.innerHTML = HLM_TONES.map(t =>
+    `<button class="hlm-chip" data-tone="${t}">${t}</button>`
+  ).join('');
+
+  avoidEl.innerHTML = HLM_AVOID_TONES.map(t =>
+    `<button class="hlm-chip" data-tone="${t}">${t}</button>`
+  ).join('');
+
+  desiredEl.querySelectorAll('.hlm-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tone = btn.dataset.tone;
+      if (hlmState.desiredTones.has(tone)) {
+        hlmState.desiredTones.delete(tone);
+        btn.classList.remove('active');
+      } else {
+        hlmState.desiredTones.add(tone);
+        btn.classList.add('active');
+      }
+    });
+  });
+
+  avoidEl.querySelectorAll('.hlm-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tone = btn.dataset.tone;
+      if (hlmState.avoidTones.has(tone)) {
+        hlmState.avoidTones.delete(tone);
+        btn.classList.remove('active');
+      } else {
+        hlmState.avoidTones.add(tone);
+        btn.classList.add('active');
+      }
+    });
+  });
+}
+
+function renderHLMExamples() {
+  const grid = document.getElementById('hlm-examples-grid');
+  if (!grid) return;
+  grid.innerHTML = HLM_EXAMPLES.map(ex => `
+    <div class="hlm-example-card">
+      <div class="hlm-example-scenario">${esc(ex.scenario)}</div>
+      <div class="hlm-example-row">
+        <div class="hlm-example-col">
+          <div class="hlm-example-col-label low">Low Level</div>
+          <div class="hlm-example-col-text">${esc(ex.low)}</div>
+        </div>
+        <div class="hlm-example-col">
+          <div class="hlm-example-col-label high">High Level</div>
+          <div class="hlm-example-col-text">${esc(ex.high)}</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderHLMGuidance() {
+  const el = document.getElementById('hlm-guidance-cards');
+  if (!el) return;
+  el.innerHTML = HLM_GUIDANCE.map(g => `
+    <div class="hlm-guidance-card">
+      <div class="hlm-guidance-title">${esc(g.title)}</div>
+      <div class="hlm-guidance-body">${esc(g.body)}</div>
+    </div>`).join('');
+}
+
+function hlmSetTab(tab) {
+  hlmState.activeTab = tab;
+  document.querySelectorAll('#hlm-output-tabs .hlm-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+  const textEl = document.getElementById('hlm-output-text');
+  if (textEl) textEl.textContent = hlmState.output[tab] || '';
+}
+
+async function generateHLMMessage(modifier) {
+  const situation = (document.getElementById('hlm-situation')?.value || '').trim();
+  const recipient = (document.getElementById('hlm-recipient')?.value || '').trim();
+  const sitType   = document.getElementById('hlm-situation-type')?.value || '';
+  const intention = document.getElementById('hlm-intention')?.value || '';
+
+  if (!situation) {
+    showNotice('Please describe what happened first.');
+    return;
+  }
+
+  const btn = document.getElementById('hlm-generate-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Generating…'; }
+  hlmState.loading = true;
+
+  const desiredList = [...hlmState.desiredTones].join(', ') || 'none specified';
+  const avoidList   = [...hlmState.avoidTones].join(', ')   || 'none specified';
+
+  const basePrompt = modifier
+    ? `The user wants to modify an existing message: ${modifier}.\n\nOriginal draft:\n${hlmState.output.draft}\n\nSituation context:\n${situation}`
+    : `Situation type: ${sitType || 'general'}\nRecipient: ${recipient || 'not specified'}\nWhat happened: ${situation}\nDesired tone: ${desiredList}\nTone to avoid: ${avoidList}\nMain intention: ${intention || 'not specified'}`;
+
+  const systemPrompt = `You are a High Level Messaging coach. You help people communicate with emotional intelligence — expressing needs clearly without blame, judgment, or reactivity.
+
+When given a situation, produce exactly 4 versions of a message as a JSON object:
+{
+  "draft": "...",
+  "stronger": "...",
+  "softer": "...",
+  "short": "..."
+}
+
+- draft: A balanced, thoughtful message ready to send
+- stronger: More assertive and direct while remaining respectful
+- softer: More gentle, empathetic, and de-escalating
+- short: The essence in 1-2 sentences
+
+Rules:
+- No blame, accusation, or "you always/never" statements
+- Use "I" statements and observations over judgments
+- Acknowledge the other person's perspective where possible
+- Keep messages realistic and genuinely sendable
+- Output only valid JSON, no extra text`;
+
+  try {
+    const res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1200,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: basePrompt }]
+      })
+    });
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    const data = await res.json();
+    const rawText = data.content?.[0]?.text || data.choices?.[0]?.message?.content || '';
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON in response');
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    hlmState.output = {
+      draft:    parsed.draft    || '',
+      stronger: parsed.stronger || '',
+      softer:   parsed.softer   || '',
+      short:    parsed.short    || ''
+    };
+
+    const outputSection = document.getElementById('hlm-output-section');
+    if (outputSection) outputSection.style.display = '';
+    hlmSetTab('draft');
+
+  } catch (err) {
+    showNotice('Could not generate message. Please try again.');
+    console.error('HLM generate error:', err);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Generate Message'; }
+    hlmState.loading = false;
+  }
+}
+
+function openHLM() {
+  document.getElementById('main-layout').style.display = 'none';
+  ['profile-page', 'advisors-page', 'book-lessons-page', 'core-lessons-page',
+   'debate-page', 'voting-page', 'campfire-page', 'home-page'
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  const page = document.getElementById('hlm-page');
+  if (page) page.style.display = '';
+  initHLMToneChips();
+  renderHLMExamples();
+  renderHLMGuidance();
+}
+
+function closeHLM() {
+  const page = document.getElementById('hlm-page');
+  if (page) page.style.display = 'none';
+}
+
+function initHLMPage() {
+  document.getElementById('hlm-back-btn')?.addEventListener('click', () => {
+    closeHLM();
+    openHomePage();
+  });
+
+  document.getElementById('hlm-generate-btn')?.addEventListener('click', () => generateHLMMessage(null));
+
+  document.getElementById('hlm-output-tabs')?.addEventListener('click', e => {
+    const tab = e.target.closest('.hlm-tab')?.dataset.tab;
+    if (tab) hlmSetTab(tab);
+  });
+
+  document.getElementById('hlm-copy-btn')?.addEventListener('click', () => {
+    const text = hlmState.output[hlmState.activeTab];
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => showNotice('Copied!')).catch(() => {});
+  });
+
+  document.getElementById('hlm-regen-btn')?.addEventListener('click', () => generateHLMMessage(null));
+
+  document.getElementById('hlm-direct-btn')?.addEventListener('click', () =>
+    generateHLMMessage('Make it more direct and assertive without losing empathy'));
+
+  document.getElementById('hlm-warm-btn')?.addEventListener('click', () =>
+    generateHLMMessage('Make it warmer and more emotionally connecting'));
+
+  document.getElementById('hlm-short-btn')?.addEventListener('click', () =>
+    generateHLMMessage('Make it more concise, cut to the core message'));
+
+  // Nav buttons
+  document.getElementById('btn-hlm')?.addEventListener('click', () => { closeNavMenus(); openHLM(); });
+  document.getElementById('m-btn-hlm')?.addEventListener('click', () => { closeMobileNav(); openHLM(); });
+}
+
+// Wire HLM on DOM ready (called from DOMContentLoaded)
+document.addEventListener('DOMContentLoaded', () => { initHLMPage(); }, { once: true });

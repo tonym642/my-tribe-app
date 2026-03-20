@@ -7154,6 +7154,416 @@ body { transition: background 0.25s ease, color 0.25s ease; }
   }
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   HLM PAGE — High Level Messaging
+   ══════════════════════════════════════════════════════════════════ */
+
+#hlm-page {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 200;
+  overflow: hidden;
+}
+
+.hlm-scroll {
+  height: 100%;
+  overflow-y: auto;
+  padding: 0 0 64px;
+}
+
+/* ── Header ───────────────────────────────────────────────────────── */
+
+.hlm-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.hlm-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.hlm-back-btn:hover {
+  background: var(--bg);
+  color: var(--text-1);
+}
+
+.hlm-header-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 0;
+}
+
+.hlm-header-sub {
+  font-size: 13px;
+  color: var(--text-3);
+  margin: 2px 0 0;
+}
+
+/* ── Two-column layout ────────────────────────────────────────────── */
+
+.hlm-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 24px 0;
+}
+
+/* ── Cards ────────────────────────────────────────────────────────── */
+
+.hlm-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.hlm-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 16px;
+}
+
+.hlm-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 14px;
+}
+
+/* ── Form fields ──────────────────────────────────────────────────── */
+
+.hlm-field {
+  margin-bottom: 16px;
+}
+
+.hlm-field:last-child {
+  margin-bottom: 0;
+}
+
+.hlm-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+
+.hlm-select,
+.hlm-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  font-size: 14px;
+  color: var(--text-1);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.hlm-select:focus,
+.hlm-input:focus {
+  border-color: var(--accent, #6c8ebf);
+}
+
+.hlm-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  font-size: 14px;
+  color: var(--text-1);
+  resize: vertical;
+  min-height: 96px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.hlm-textarea:focus {
+  border-color: var(--accent, #6c8ebf);
+}
+
+/* ── Tone chips ───────────────────────────────────────────────────── */
+
+.hlm-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hlm-chip {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.hlm-chip:hover {
+  background: var(--surface);
+  color: var(--text-1);
+}
+
+.hlm-chip.active {
+  background: var(--accent, #6c8ebf);
+  color: #fff;
+  border-color: var(--accent, #6c8ebf);
+}
+
+/* ── Generate button ──────────────────────────────────────────────── */
+
+.hlm-generate-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 11px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ── Output card ──────────────────────────────────────────────────── */
+
+.hlm-output-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.hlm-output-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.hlm-tab {
+  flex: 1;
+  padding: 11px 8px;
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.hlm-tab:hover {
+  color: var(--text-1);
+  background: var(--bg);
+}
+
+.hlm-tab.active {
+  color: var(--accent, #6c8ebf);
+  border-bottom-color: var(--accent, #6c8ebf);
+}
+
+.hlm-output-body {
+  padding: 18px 20px;
+  min-height: 100px;
+}
+
+.hlm-output-text {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-1);
+  white-space: pre-wrap;
+}
+
+.hlm-output-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.hlm-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 13px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.hlm-action-btn:hover {
+  background: var(--surface);
+  color: var(--text-1);
+}
+
+/* ── Example messages ─────────────────────────────────────────────── */
+
+.hlm-examples-section {
+  margin-top: 4px;
+}
+
+.hlm-examples-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hlm-example-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.hlm-example-scenario {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+
+.hlm-example-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.hlm-example-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hlm-example-col-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  width: fit-content;
+}
+
+.hlm-example-col-label.low {
+  background: #fde8e8;
+  color: #c0392b;
+}
+
+body.dark-mode .hlm-example-col-label.low {
+  background: rgba(192, 57, 43, 0.2);
+  color: #e07070;
+}
+
+.hlm-example-col-label.high {
+  background: #e6f4ea;
+  color: #27ae60;
+}
+
+body.dark-mode .hlm-example-col-label.high {
+  background: rgba(39, 174, 96, 0.2);
+  color: #6fcf97;
+}
+
+.hlm-example-col-text {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+/* ── Sidebar ──────────────────────────────────────────────────────── */
+
+.hlm-sidebar {
+  position: sticky;
+  top: calc(var(--topbar-h, 56px) + 16px);
+  align-self: start;
+}
+
+.hlm-guidance-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.hlm-guidance-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 8px;
+}
+
+.hlm-guidance-body {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+
+@media (max-width: 860px) {
+  .hlm-layout {
+    grid-template-columns: 1fr;
+  }
+  .hlm-sidebar {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 520px) {
+  .hlm-header {
+    padding: 12px 16px;
+  }
+  .hlm-layout {
+    padding: 16px 16px 0;
+  }
+  .hlm-example-row {
+    grid-template-columns: 1fr;
+  }
+  .hlm-output-actions {
+    gap: 6px;
+  }
+  .hlm-action-btn {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+}
+
 /* ── Google Translate — hide injected toolbar ────────────────────── */
 /* The widget div and Google's top-of-page bar are hidden;
    translation is triggered programmatically via our flag selector.   */
