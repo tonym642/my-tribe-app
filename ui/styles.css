@@ -2218,11 +2218,11 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 #bl-search-phase .bl-suggestions-section {
   background: #1D4ED8;
   border-radius: 16px;
-  padding: 20px 16px 16px;
+  padding: 14px 14px 10px;
   margin-bottom: 10px;
 }
 #bl-search-phase .suggestions-track {
-  padding: 4px 4px 8px;
+  padding: 4px 4px 6px;
 }
 #bl-search-phase .suggestion-dot {
   background: rgba(255,255,255,0.35);
@@ -2252,17 +2252,17 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   flex: 0 0 auto;
   scroll-snap-align: start;
   width: 180px;
-  min-height: 220px;
+  min-height: 160px;
   background: rgba(255,255,255,0.18);
   border: 1px solid rgba(255,255,255,0.25);
   border-radius: 14px;
-  padding: 22px 14px 18px;
+  padding: 16px 14px 14px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 12px;
+  gap: 8px;
   color: #fff;
   transition: background 0.15s, border-color 0.15s;
 }
@@ -2271,8 +2271,8 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   border-color: rgba(255,255,255,0.45);
 }
 .bl-book-sug-avatar {
-  width: 58px;
-  height: 58px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: rgba(255,255,255,0.92);
   color: #1D4ED8;
