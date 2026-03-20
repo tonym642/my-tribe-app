@@ -1607,8 +1607,8 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   box-sizing: border-box;
 }
 .bl-search-container {
-  width: calc(100% - 48px);
-  max-width: none;
+  width: 100%;
+  max-width: 720px;
   margin: 0 auto;
   padding: 24px;
   box-sizing: border-box;
