@@ -7300,6 +7300,18 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 
 /* ── Header ───────────────────────────────────────────────────────── */
 
+.hlm-page-header {
+  padding-top: 24px;
+}
+
+.hlc-item-preview {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-top: 3px;
+  line-height: 1.4;
+  font-style: italic;
+}
+
 .hlm-header {
   display: flex;
   align-items: center;

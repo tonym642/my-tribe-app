@@ -6470,6 +6470,30 @@ let hlmState = {
   loading:   false
 };
 
+// ── HLC persistence ───────────────────────────────────────────────
+function getHLCHistory() {
+  try { return JSON.parse(localStorage.getItem('tribe_hlc_history') || '[]'); } catch { return []; }
+}
+function saveHLCHistory(items) {
+  localStorage.setItem('tribe_hlc_history', JSON.stringify(items));
+}
+function hlcSaveEntry(entry) {
+  const history = getHLCHistory();
+  history.unshift(entry);
+  saveHLCHistory(history.slice(0, 100));
+}
+function hlcToggleFavorite(id) {
+  const history = getHLCHistory();
+  const item = history.find(h => h.id === id);
+  if (item) { item.favorite = !item.favorite; saveHLCHistory(history); }
+}
+function hlcDeleteEntry(id) {
+  saveHLCHistory(getHLCHistory().filter(h => h.id !== id));
+}
+function hlcGetFavorites() {
+  return getHLCHistory().filter(h => h.favorite);
+}
+
 
 function renderHLMExamples() {
   const grid = document.getElementById('hlm-examples-grid');
@@ -6575,6 +6599,24 @@ Rules:
       short:    parsed.short    || ''
     };
 
+    // Auto-save to history (only on fresh generate, not modifier)
+    if (!modifier) {
+      const situation = (document.getElementById('hlm-situation')?.value || '').trim();
+      const recipient = (document.getElementById('hlm-recipient')?.value || '').trim();
+      const sitType   = document.getElementById('hlm-situation-type')?.value || '';
+      const intention = document.getElementById('hlm-intention')?.value || '';
+      hlcSaveEntry({
+        id:        Date.now().toString(),
+        recipient,
+        sitType,
+        situation,
+        intention,
+        output:    { ...hlmState.output },
+        createdAt: Date.now(),
+        favorite:  false
+      });
+    }
+
     const outputSection = document.getElementById('hlm-output-section');
     if (outputSection) outputSection.style.display = '';
     hlmSetTab('draft');
@@ -6586,6 +6628,93 @@ Rules:
     if (btn) { btn.disabled = false; btn.textContent = 'Generate Message'; }
     hlmState.loading = false;
   }
+}
+
+// ── HLC History modal ─────────────────────────────────────────────
+function hlcOpenHistory()   { hlcOpenModal('history'); }
+function hlcOpenFavorites() { hlcOpenModal('favorites'); }
+
+function hlcOpenModal(tab) {
+  const overlay = document.getElementById('hlc-library-overlay');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  // set active filter button
+  overlay.querySelectorAll('[data-hlc-filter]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.hlcFilter === tab);
+  });
+  document.getElementById('hlc-library-modal-title').textContent = tab === 'favorites' ? 'HLC Favorites' : 'HLC History';
+  hlcRenderLibrary(tab);
+}
+
+function hlcCloseModal() {
+  document.getElementById('hlc-library-overlay')?.classList.remove('open');
+}
+
+function hlcRenderLibrary(tab) {
+  const list = document.getElementById('hlc-library-list');
+  if (!list) return;
+
+  const items = tab === 'favorites' ? hlcGetFavorites() : getHLCHistory();
+
+  if (items.length === 0) {
+    list.innerHTML = `<p class="history-empty">${tab === 'favorites' ? 'No favorites yet. Star a message to save it here.' : 'No history yet. Generate a message to get started.'}</p>`;
+    return;
+  }
+
+  const TRASH = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`;
+
+  list.innerHTML = items.map(item => {
+    const title   = item.recipient ? `To: ${esc(item.recipient)}` : (item.sitType ? esc(item.sitType) : 'HLC Message');
+    const meta    = [item.sitType, formatRelativeDate(item.createdAt)].filter(Boolean).join(' · ');
+    const preview = (item.output?.draft || '').slice(0, 80) + ((item.output?.draft || '').length > 80 ? '…' : '');
+    return `
+      <div class="history-item hlc-lib-item" data-id="${esc(item.id)}">
+        <div class="history-item-info">
+          <div class="history-item-title">${title}</div>
+          <div class="history-item-meta">${esc(meta)}</div>
+          ${preview ? `<div class="hlc-item-preview">${esc(preview)}</div>` : ''}
+        </div>
+        <div class="history-item-actions">
+          <button class="history-heart-btn${item.favorite ? ' active' : ''}" data-action="hlc-fav" data-id="${esc(item.id)}" title="${item.favorite ? 'Remove from favorites' : 'Add to favorites'}">${item.favorite ? HEART_FILLED : HEART_OUTLINE}</button>
+          <button class="history-action history-delete" data-action="hlc-delete" data-id="${esc(item.id)}" title="Delete">${TRASH}</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  list.querySelectorAll('.hlc-lib-item').forEach(el => {
+    el.querySelector('.history-item-info').addEventListener('click', () => {
+      const id   = el.dataset.id;
+      const item = getHLCHistory().find(h => h.id === id);
+      if (!item) return;
+      hlcLoadEntry(item);
+      hlcCloseModal();
+    });
+    el.querySelector('[data-action="hlc-fav"]').addEventListener('click', e => {
+      hlcToggleFavorite(e.currentTarget.dataset.id);
+      hlcRenderLibrary(tab);
+    });
+    el.querySelector('[data-action="hlc-delete"]').addEventListener('click', e => {
+      hlcDeleteEntry(e.currentTarget.dataset.id);
+      hlcRenderLibrary(tab);
+    });
+  });
+}
+
+function hlcLoadEntry(item) {
+  const sitTypeEl  = document.getElementById('hlm-situation-type');
+  const recipientEl = document.getElementById('hlm-recipient');
+  const situationEl = document.getElementById('hlm-situation');
+  const intentionEl = document.getElementById('hlm-intention');
+  if (sitTypeEl)   sitTypeEl.value   = item.sitType   || '';
+  if (recipientEl) recipientEl.value = item.recipient || '';
+  if (situationEl) situationEl.value = item.situation || '';
+  if (intentionEl) intentionEl.value = item.intention || '';
+  hlmState.output = { ...(item.output || { draft: '', stronger: '', softer: '', short: '' }) };
+  const outputSection = document.getElementById('hlm-output-section');
+  if (outputSection) outputSection.style.display = '';
+  hlmSetTab('draft');
+  // Scroll to top of form
+  document.querySelector('.hlm-scroll')?.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function openHLM() {
@@ -6608,6 +6737,19 @@ function initHLMPage() {
   });
 
   document.getElementById('btn-hlc-util-info')?.addEventListener('click', () => openPageHelp('hlc'));
+  document.getElementById('btn-hlc-util-history')?.addEventListener('click', hlcOpenHistory);
+  document.getElementById('btn-hlc-util-favorites')?.addEventListener('click', hlcOpenFavorites);
+  document.getElementById('hlc-library-modal-close')?.addEventListener('click', hlcCloseModal);
+  document.getElementById('hlc-library-overlay')?.addEventListener('click', e => { if (e.target.id === 'hlc-library-overlay') hlcCloseModal(); });
+  document.getElementById('hlc-library-overlay')?.querySelectorAll('[data-hlc-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('hlc-library-overlay').querySelectorAll('[data-hlc-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const t = btn.dataset.hlcFilter;
+      document.getElementById('hlc-library-modal-title').textContent = t === 'favorites' ? 'HLC Favorites' : 'HLC History';
+      hlcRenderLibrary(t);
+    });
+  });
 
   document.getElementById('hlm-generate-btn')?.addEventListener('click', () => generateHLMMessage(null));
 
