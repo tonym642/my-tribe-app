@@ -578,11 +578,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Advice — nav buttons (desktop + mobile)
   function goToAdvice() {
+    closeHomePage();
     closeVoting();
     closeDebate();
     closeCampfire();
     closeBookLessons();
     closeCoreLessons();
+    document.getElementById('main-layout').style.display = '';
   }
   document.getElementById('btn-advice').addEventListener('click', goToAdvice);
   document.getElementById('m-btn-advice').addEventListener('click', () => { closeMobileNav(); goToAdvice(); });
@@ -987,17 +989,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('btn-admin-api').addEventListener('click', openSettings);
   document.getElementById('m-btn-admin-api').addEventListener('click', () => { closeMobileNav(); openSettings(); });
 
-  // Logo / brand → home (new chat + reset mode)
+  // Logo / brand → Home page
   document.getElementById('btn-home').addEventListener('click', () => {
     closeMobileNav();
-    closeDebate();
-    closeAdvisorsPage();
-    closeVoting();
-    closeBookLessons();
-    closeCoreLessons();
-    closeCampfire();
-    startNewChat();
-    setMode('member');
+    openHomePage();
   });
 
   // Hamburger toggle
@@ -1020,9 +1015,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Restore saved settings into form
   document.getElementById('guide-name-input').value = state.guideName;
 
-  // Start initial conversation session
+  // Start initial conversation session (chat ready in background)
   startNewChat();
   applyModeUI('member');
+
+  // Open Home page as the default landing view
+  openHomePage();
 
 });
 
@@ -5907,4 +5905,396 @@ function toggleMobileNav() {
 
 function closeMobileNav() {
   document.getElementById('mobile-nav').classList.remove('open');
+}
+
+// ================================================================
+// HOME PAGE
+// ================================================================
+
+// ── Stats helpers ─────────────────────────────────────────────────
+
+/**
+ * Calculate the user's streak of consecutive active days.
+ * Reads activity timestamps from all existing localStorage sources.
+ * TODO: replace with centralized activity log once cross-module tracking exists
+ */
+function calculateStreak() {
+  const allTimestamps = [];
+  try { getConversations().forEach(c => { if (c.timestamp) allTimestamps.push(c.timestamp); }); } catch {}
+  try { getDebates().forEach(d => { if (d.timestamp) allTimestamps.push(d.timestamp); }); } catch {}
+  try { getPolls().forEach(p => { if (p.created_at) allTimestamps.push(p.created_at); }); } catch {}
+  try { getStoryLibrary().forEach(s => { if (s.timestamp) allTimestamps.push(s.timestamp); }); } catch {}
+
+  if (allTimestamps.length === 0) return 0;
+
+  // Normalize to unique YYYY-MM-DD strings, sorted most-recent-first
+  const days = [...new Set(
+    allTimestamps.map(ts => new Date(ts).toISOString().slice(0, 10))
+  )].sort().reverse();
+
+  const today     = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+
+  // Streak must start from today or yesterday to be considered active
+  if (days[0] !== today && days[0] !== yesterday) return 1;
+
+  let streak = 1;
+  for (let i = 1; i < days.length; i++) {
+    const diff = (new Date(days[i - 1]) - new Date(days[i])) / 86400000;
+    if (Math.round(diff) === 1) { streak++; } else { break; }
+  }
+  return streak;
+}
+
+/**
+ * Derive a growth score letter grade from weighted activity stats.
+ * TODO: replace placeholder logic with official My Tribe growth scoring system
+ */
+function getGrowthScore(stats) {
+  const { sessions, streak, lessons, advice, hlc } = stats;
+  const score =
+    Math.min(sessions * 2, 20) +  // 10+ sessions = 20 pts
+    Math.min(streak   * 4, 20) +  //  5+ day streak = 20 pts
+    Math.min(lessons  * 3, 20) +  //  7+ lessons = 20 pts
+    Math.min(advice   * 2, 20) +  // 10+ advice = 20 pts
+    Math.min(hlc      * 5, 20);   //  4+ HLC msgs = 20 pts
+  if (score >= 85) return 'A';
+  if (score >= 70) return 'B';
+  if (score >= 55) return 'C';
+  if (score >= 40) return 'D';
+  return 'F';
+}
+
+/**
+ * Build the home stats object from existing localStorage sources.
+ * Falls back to placeholder defaults when a source doesn't exist yet.
+ * Keep all fallback values here — not scattered through the UI.
+ */
+function getHomeStats() {
+  // --- Sessions: total activity across all modules ---
+  let sessions = 0;
+  try {
+    sessions =
+      getConversations().length +
+      getDebates().length +
+      getPolls().length +
+      getStoryLibrary().length;
+  } catch { sessions = 24; } // fallback
+
+  // --- Advice: advice/chat conversation sessions ---
+  let advice = 0;
+  try { advice = getConversations().length; } catch { advice = 16; } // fallback
+
+  // --- Lessons: viewed book + core lessons ---
+  // TODO: include spiritual lessons count once spiritual lessons store is finalized
+  let lessons = 0;
+  try {
+    lessons = getViewedBooks().length + clGetViewedLessons().length;
+  } catch { lessons = 12; } // fallback
+
+  // --- Saved: saved books + saved stories ---
+  let saved = 0;
+  try {
+    saved = getSavedBooks().length + getStoryLibrary().length;
+  } catch { saved = 8; } // fallback
+
+  // --- HLC: High-Level Conversations ---
+  // TODO: replace fallback with real HLC session history once HLC module is finalized
+  // No dedicated HLC store exists yet; using 0 as baseline
+  const hlc = 0;
+
+  // --- Streak: consecutive active days ---
+  const streak = calculateStreak();
+
+  // --- Time: estimated minutes spent across all activity ---
+  // TODO: replace estimate with real session duration tracking once implemented
+  // Rough estimates: advice ~10 min, lesson ~15 min, debate ~8 min, poll ~3 min
+  let time = 0;
+  try {
+    time = Math.round(
+      getConversations().length   * 10 +
+      getDebates().length         *  8 +
+      getPolls().length           *  3 +
+      getViewedBooks().length     * 15 +
+      clGetViewedLessons().length * 15
+    );
+  } catch { time = 320; } // fallback
+
+  // --- Score: weighted growth grade ---
+  const score = getGrowthScore({ sessions, streak, lessons, advice, hlc });
+
+  return { sessions, streak, lessons, saved, advice, hlc, time, score };
+}
+
+// ── Home page rendering ───────────────────────────────────────────
+
+function renderHomeAdvisors() {
+  const grid = document.getElementById('home-advisors-grid');
+  if (!grid) return;
+
+  const names       = getAdvisorNames();
+  const bvm         = getBvmData();
+  const customAvatar = localStorage.getItem('tribe_custom_avatar');
+
+  const allAdvisors = [...TRIBE_IDS, 'guide', 'bvm'];
+
+  grid.innerHTML = allAdvisors.map(id => {
+    const adv         = ADVISORS[id];
+    const displayName = names[id] || adv.name;
+
+    let avatarHtml;
+    if (id === 'bvm' && bvm?.avatar) {
+      avatarHtml = `<img class="home-advisor-avatar" src="${bvm.avatar}" alt="${displayName}">`;
+    } else if (id === 'guide' && customAvatar) {
+      avatarHtml = `<img class="home-advisor-avatar" src="${customAvatar}" alt="${displayName}">`;
+    } else if (id !== 'bvm') {
+      avatarHtml = `<img class="home-advisor-avatar" src="../assets/avatars/${id}.png" alt="${displayName}">`;
+    } else {
+      // BVM without a custom avatar — show initial circle
+      avatarHtml = `<div class="home-advisor-initial" style="background:${adv.color}">${adv.initial}</div>`;
+    }
+
+    return `
+      <div class="home-advisor-item">
+        ${avatarHtml}
+        <span class="home-advisor-name">${displayName}</span>
+        <div class="home-advisor-tooltip">${adv.desc}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderHomeChatShortcuts() {
+  const container = document.getElementById('home-chat-shortcuts');
+  if (!container) return;
+
+  const shortcuts = [
+    {
+      label: 'Advice',
+      icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>`,
+      action() {
+        closeHomePage();
+        document.getElementById('main-layout').style.display = '';
+        closeDebate(); closeVoting(); closeCampfire(); closeBookLessons(); closeCoreLessons();
+      }
+    },
+    {
+      label: 'Debate',
+      icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
+      action() { closeHomePage(); openDebate(); }
+    },
+    {
+      label: 'Polls',
+      icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
+      action() { closeHomePage(); openVoting(); }
+    },
+    {
+      label: 'Campfire',
+      icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
+      action() { closeHomePage(); openCampfire(); }
+    },
+    {
+      label: 'HLC',
+      icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+      action() { showNotice('Coming soon.'); }
+    }
+  ];
+
+  container.innerHTML = shortcuts.map(s => `
+    <button class="home-shortcut-item" aria-label="${s.label}">
+      <div class="home-shortcut-icon">${s.icon}</div>
+      <span class="home-shortcut-label">${s.label}</span>
+    </button>`).join('');
+
+  shortcuts.forEach((s, i) => container.children[i].addEventListener('click', s.action));
+}
+
+function renderHomeEduShortcuts() {
+  const container = document.getElementById('home-edu-shortcuts');
+  if (!container) return;
+
+  const shortcuts = [
+    {
+      label: 'Core',
+      icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
+      action() { closeHomePage(); openCoreLessons(); }
+    },
+    {
+      label: 'Books',
+      icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+      action() { closeHomePage(); openBookLessons(); }
+    },
+    {
+      label: 'Spiritual',
+      icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L8 8H2l5 4-2 6 7-4 7 4-2-6 5-4h-6z"/></svg>`,
+      action() { showNotice('Coming soon.'); }
+    },
+    {
+      label: 'Blog',
+      icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/><line x1="12" y1="7" x2="12" y2="17"/></svg>`,
+      action() { closeHomePage(); openStoryLibrary(); }
+    }
+  ];
+
+  container.innerHTML = shortcuts.map(s => `
+    <button class="home-shortcut-item" aria-label="${s.label}">
+      <div class="home-shortcut-icon">${s.icon}</div>
+      <span class="home-shortcut-label">${s.label}</span>
+    </button>`).join('');
+
+  shortcuts.forEach((s, i) => container.children[i].addEventListener('click', s.action));
+}
+
+function renderHomeStats() {
+  const grid = document.getElementById('home-stats-grid');
+  if (!grid) return;
+
+  const stats = getHomeStats();
+
+  const cards = [
+    {
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,
+      value: stats.sessions,
+      label: 'Sessions',
+      helper: 'Total activity'
+    },
+    {
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`,
+      value: stats.streak + (stats.streak === 1 ? ' day' : ' days'),
+      label: 'Streak',
+      helper: 'Days active'
+    },
+    {
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
+      value: stats.lessons,
+      label: 'Lessons',
+      helper: 'Completed'
+    },
+    {
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`,
+      value: stats.saved,
+      label: 'Saved',
+      helper: 'Books & stories'
+    },
+    {
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>`,
+      value: stats.advice,
+      label: 'Advice',
+      helper: 'Sessions'
+    },
+    {
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+      value: stats.hlc,
+      label: 'HLC',
+      helper: 'High-level msgs'
+    },
+    {
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+      value: stats.time + ' min',
+      label: 'Time',
+      helper: 'Minutes spent'
+    },
+    {
+      icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
+      value: stats.score,
+      label: 'Score',
+      helper: 'A–F level'
+    }
+  ];
+
+  grid.innerHTML = cards.map(c => `
+    <div class="home-stat-card">
+      <div class="home-stat-icon">${c.icon}</div>
+      <div class="home-stat-value">${c.value}</div>
+      <div class="home-stat-label">${c.label}</div>
+      <div class="home-stat-helper">${c.helper}</div>
+    </div>`).join('');
+}
+
+function renderHomeBlogsCarousel() {
+  const track = document.getElementById('home-blogs-track');
+  if (!track) return;
+
+  // Collect stories: today's daily story first, then saved library
+  const stories = [];
+
+  // Today's daily story
+  try {
+    const cached = JSON.parse(localStorage.getItem(getDailyStoryKey()));
+    if (cached && cached.title) stories.push(cached);
+  } catch {}
+
+  // Saved story library (exclude today's if already included)
+  try {
+    getStoryLibrary().forEach(s => {
+      if (!stories.find(x => x.title === s.title)) stories.push(s);
+    });
+  } catch {}
+
+  if (stories.length === 0) {
+    track.innerHTML = `
+      <div class="home-blog-card home-blog-empty">
+        <div class="home-blog-empty-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <div class="home-blog-empty-text">Today's blog story is on its way.</div>
+      </div>`;
+    return;
+  }
+
+  track.innerHTML = stories.slice(0, 3).map(story => {
+    const advisor   = ADVISORS[story.narrator] || {};
+    const avatarSrc = ADVISOR_AVATAR[story.narrator];
+    const avatarHtml = avatarSrc
+      ? `<img class="home-blog-avatar" src="${avatarSrc}" alt="${esc(advisor.name || '')}">`
+      : `<div class="home-blog-avatar home-blog-avatar-init" style="background:${advisor.color || '#888'}">${advisor.initial || '?'}</div>`;
+    return `
+      <button class="home-blog-card" data-title="${esc(story.title || '')}">
+        <div class="home-blog-card-top">
+          ${avatarHtml}
+          <span class="home-blog-category">${esc(story.category || '')}</span>
+        </div>
+        <div class="home-blog-title">${esc(story.title || '')}</div>
+        <div class="home-blog-narrator">by ${esc(advisor.name || story.narrator || '')}</div>
+      </button>`;
+  }).join('');
+
+  // Wire click handlers
+  track.querySelectorAll('.home-blog-card[data-title]').forEach((card, i) => {
+    card.addEventListener('click', () => openStoryViewer(stories[i]));
+  });
+}
+
+function renderHomePage() {
+  // Update welcome title from profile
+  const profile = getProfile();
+  const titleEl = document.getElementById('home-welcome-title');
+  if (titleEl) {
+    titleEl.textContent = profile.displayName
+      ? `Welcome back, ${profile.displayName}`
+      : 'Welcome back';
+  }
+
+  renderHomeAdvisors();
+  renderHomeChatShortcuts();
+  renderHomeEduShortcuts();
+  renderHomeBlogsCarousel();
+  renderHomeStats();
+}
+
+function openHomePage() {
+  // Hide main layout and all full-page views
+  document.getElementById('main-layout').style.display = 'none';
+  ['profile-page', 'advisors-page', 'book-lessons-page',
+   'core-lessons-page', 'debate-page', 'voting-page', 'campfire-page'
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+
+  renderHomePage();
+  document.getElementById('home-page').style.display = 'block';
+}
+
+function closeHomePage() {
+  document.getElementById('home-page').style.display = 'none';
 }

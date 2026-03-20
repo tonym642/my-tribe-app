@@ -2341,7 +2341,7 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
 .poll-suggestion-card {
   flex: 0 0 auto;
   scroll-snap-align: start;
-  width: 180px;
+  width: 234px;
   min-height: 160px;
   background: rgba(255,255,255,0.18);
   border: 1px solid rgba(255,255,255,0.25);
@@ -2409,7 +2409,7 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
 .cl-lesson-suggestion-card {
   flex: 0 0 auto;
   scroll-snap-align: start;
-  width: 180px;
+  width: 234px;
   min-height: 160px;
   background: rgba(255,255,255,0.18);
   border: 1px solid rgba(255,255,255,0.25);
@@ -2495,7 +2495,7 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
 .bl-book-suggestion-card {
   flex: 0 0 auto;
   scroll-snap-align: start;
-  width: 180px;
+  width: 234px;
   min-height: 160px;
   background: rgba(255,255,255,0.18);
   border: 1px solid rgba(255,255,255,0.25);
@@ -6658,6 +6658,421 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 .topbar, .modal, .nav-menu, .nav-submenu, .mobile-nav,
 .msg-advisor-bubble, .msg-user-bubble, .input-field,
 .vote-card, .debate-msg, .cf-disc-comment { transition: background 0.25s ease, border-color 0.25s ease; }
+
+/* ================================================================
+   HOME PAGE
+   ================================================================ */
+
+/* ── Layout ──────────────────────────────────────────────────────── */
+
+#home-page {
+  position: fixed;
+  top: var(--topbar-h);
+  left: 0; right: 0; bottom: 0;
+  background: var(--bg);
+  z-index: 10;
+  overflow: hidden;
+  display: none;
+}
+
+.home-scroll {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.home-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.home-section {
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+/* ── Intro ───────────────────────────────────────────────────────── */
+
+.home-intro {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.home-welcome {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+
+.home-tagline {
+  font-size: 15px;
+  color: var(--text-2);
+}
+
+/* ── Section label ───────────────────────────────────────────────── */
+
+.home-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* ── Advisors — single horizontal row ───────────────────────────── */
+
+.home-advisors-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 16px 14px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.home-advisors-grid::-webkit-scrollbar { display: none; }
+
+.home-advisor-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.home-advisor-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  display: block;
+}
+
+.home-advisor-initial {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.home-advisor-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-2);
+  text-align: center;
+  line-height: 1.3;
+}
+
+/* Tooltip */
+.home-advisor-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--text-1);
+  color: var(--surface);
+  font-size: 11px;
+  line-height: 1.4;
+  padding: 7px 10px;
+  border-radius: var(--r-sm);
+  width: 160px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 200;
+  white-space: normal;
+}
+
+.home-advisor-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--text-1);
+}
+
+.home-advisor-item:hover .home-advisor-tooltip {
+  opacity: 1;
+}
+
+/* ── Shortcut rows — centered ────────────────────────────────────── */
+
+.home-shortcuts-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+
+.home-shortcut-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  min-width: 64px;
+  font-family: var(--font);
+}
+
+.home-shortcut-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-2);
+  box-shadow: var(--shadow-sm);
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.home-shortcut-item:hover .home-shortcut-icon {
+  background: var(--border-light);
+  border-color: var(--text-3);
+  box-shadow: var(--shadow-md);
+}
+
+.home-shortcut-item:active .home-shortcut-icon {
+  transform: scale(0.95);
+}
+
+.home-shortcut-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-2);
+  text-align: center;
+}
+
+/* ── Blog carousel ───────────────────────────────────────────────── */
+
+/* Break out of the 720px centered container to fill the full viewport */
+.home-blogs-track-wrap {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 24px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.home-blogs-track {
+  display: flex;
+  flex-direction: row;
+  gap: 14px;
+  padding: 4px 0 10px;
+  overflow: hidden;
+}
+
+/* Each card stretches equally to fill the full row — 3 cards visible */
+.home-blog-card {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.home-blog-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--text-3);
+}
+
+.home-blog-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.home-blog-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.home-blog-avatar-init {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.home-blog-category {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+  line-height: 1;
+}
+
+.home-blog-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-1);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.home-blog-narrator {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+.home-blog-empty {
+  width: 220px;
+  cursor: default;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 110px;
+}
+
+.home-blog-empty:hover {
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border);
+}
+
+.home-blog-empty-icon {
+  color: var(--text-3);
+  line-height: 0;
+}
+
+.home-blog-empty-text {
+  font-size: 13px;
+  color: var(--text-3);
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* ── Stats grid ──────────────────────────────────────────────────── */
+
+.home-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.home-stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 16px 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.home-stat-icon {
+  color: var(--text-3);
+  margin-bottom: 10px;
+  line-height: 0;
+}
+
+.home-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+
+.home-stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  margin-bottom: 3px;
+}
+
+.home-stat-helper {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+
+@media (min-width: 520px) {
+  .home-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .home-container {
+    padding: 28px 16px 64px;
+  }
+  .home-welcome {
+    font-size: 22px;
+  }
+  .home-advisor-avatar,
+  .home-advisor-initial {
+    width: 46px;
+    height: 46px;
+  }
+  .home-advisor-initial {
+    font-size: 14px;
+  }
+  .home-shortcut-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+  }
+  .home-blogs-track-wrap {
+    padding: 0 16px;
+  }
+  .home-blogs-track {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .home-blogs-track::-webkit-scrollbar { display: none; }
+  .home-blog-card {
+    flex: 0 0 200px;
+  }
+}
 
 /* ── Google Translate — hide injected toolbar ────────────────────── */
 /* The widget div and Google's top-of-page bar are hidden;
