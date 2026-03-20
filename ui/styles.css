@@ -6890,6 +6890,25 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 
 /* ── Shortcut rows — centered ────────────────────────────────────── */
 
+.home-shortcuts-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 24px 22px;
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+}
+
+.home-shortcuts-card-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
 .home-shortcuts-row {
   display: flex;
   flex-wrap: wrap;
