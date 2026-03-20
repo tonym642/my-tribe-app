@@ -2329,7 +2329,7 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
 }
 #bl-search-phase .bl-suggestions-section {
   background: #1D4ED8;
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 14px 14px 10px;
   margin-bottom: 10px;
 }
@@ -2367,7 +2367,7 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
   min-height: 160px;
   background: rgba(255,255,255,0.18);
   border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 16px 14px 14px;
   cursor: pointer;
   display: flex;
