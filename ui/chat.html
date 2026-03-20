@@ -2052,26 +2052,25 @@
       <!-- Two-column layout -->
       <div class="hlm-layout">
 
-        <!-- LEFT: Builder + Output + Examples -->
-        <div class="hlm-form-col">
+        <!-- TOP ROW: Builder + Sidebar (same height) -->
+        <div class="hlm-builder-row">
 
           <!-- Builder Card -->
           <div class="hlm-card">
             <div class="hlm-card-title">Message Builder</div>
 
             <div class="hlm-field">
-              <label class="hlm-label" for="hlm-situation-type">Situation Type</label>
-              <select class="hlm-select" id="hlm-situation-type">
-                <option value="">Select a situation…</option>
-                <option value="conflict">Conflict / Disagreement</option>
-                <option value="apology">Apology</option>
-                <option value="boundary">Setting a Boundary</option>
-                <option value="feedback">Giving Feedback</option>
-                <option value="support">Offering Support</option>
-                <option value="request">Making a Request</option>
-                <option value="difficult">Difficult Conversation</option>
-                <option value="reconciliation">Reconciliation</option>
-              </select>
+              <label class="hlm-label">Situation Type</label>
+              <div class="hlm-radio-group">
+                <label class="hlm-radio-chip"><input type="radio" name="hlm-situation-type" value="conflict"><span>Conflict / Disagreement</span></label>
+                <label class="hlm-radio-chip"><input type="radio" name="hlm-situation-type" value="apology"><span>Apology</span></label>
+                <label class="hlm-radio-chip"><input type="radio" name="hlm-situation-type" value="boundary"><span>Setting a Boundary</span></label>
+                <label class="hlm-radio-chip"><input type="radio" name="hlm-situation-type" value="feedback"><span>Giving Feedback</span></label>
+                <label class="hlm-radio-chip"><input type="radio" name="hlm-situation-type" value="support"><span>Offering Support</span></label>
+                <label class="hlm-radio-chip"><input type="radio" name="hlm-situation-type" value="request"><span>Making a Request</span></label>
+                <label class="hlm-radio-chip"><input type="radio" name="hlm-situation-type" value="difficult"><span>Difficult Conversation</span></label>
+                <label class="hlm-radio-chip"><input type="radio" name="hlm-situation-type" value="reconciliation"><span>Reconciliation</span></label>
+              </div>
             </div>
 
             <div class="hlm-field">
@@ -2084,24 +2083,27 @@
               <textarea class="hlm-textarea" id="hlm-situation" rows="4" placeholder="Describe the situation or what you want to communicate…"></textarea>
             </div>
 
-            <div class="hlm-field">
-              <label class="hlm-label" for="hlm-intention">Main Intention</label>
-              <select class="hlm-select" id="hlm-intention">
-                <option value="">Select your intention…</option>
-                <option value="be-heard">Be heard and understood</option>
-                <option value="resolve">Resolve the conflict</option>
-                <option value="express-care">Express care or love</option>
-                <option value="set-boundary">Set a clear boundary</option>
-                <option value="apologize">Apologize genuinely</option>
-                <option value="ask-change">Ask for a change in behavior</option>
-                <option value="reconnect">Reconnect or rebuild trust</option>
-              </select>
-            </div>
+            <select id="hlm-intention" style="display:none">
+              <option value="">Select your intention…</option>
+              <option value="be-heard">Be heard and understood</option>
+              <option value="resolve">Resolve the conflict</option>
+              <option value="express-care">Express care or love</option>
+              <option value="set-boundary">Set a clear boundary</option>
+              <option value="apologize">Apologize genuinely</option>
+              <option value="ask-change">Ask for a change in behavior</option>
+              <option value="reconnect">Reconnect or rebuild trust</option>
+            </select>
 
             <button class="btn-primary hlm-generate-btn" id="hlm-generate-btn">Generate Message</button>
           </div>
 
-          <!-- Output Card -->
+          </div><!-- #hlm-guidance-cards -->
+          </div><!-- .hlm-sidebar -->
+
+        </div><!-- .hlm-builder-row -->
+
+        <!-- Output Card (below builder row, left column width) -->
+        <div class="hlm-below-row">
           <div class="hlm-card hlm-output-card" id="hlm-output-section" style="display:none">
             <div class="hlm-output-tabs" id="hlm-output-tabs">
               <button class="hlm-tab active" data-tab="draft">Draft</button>
@@ -2134,16 +2136,7 @@
               <!-- Rendered by renderHLMExamples() -->
             </div>
           </div>
-
-        </div><!-- .hlm-form-col -->
-
-        <!-- RIGHT: Guidance Sidebar -->
-        <div class="hlm-sidebar">
-          <div class="hlm-section-title">Messaging Guidance</div>
-          <div id="hlm-guidance-cards">
-            <!-- Rendered by renderHLMGuidance() -->
-          </div>
-        </div>
+        </div><!-- .hlm-below-row -->
 
       </div><!-- .hlm-layout -->
     </div><!-- .hlm-scroll -->

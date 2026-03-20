@@ -6536,7 +6536,7 @@ function hlmSetTab(tab) {
 async function generateHLMMessage(modifier) {
   const situation = (document.getElementById('hlm-situation')?.value || '').trim();
   const recipient = (document.getElementById('hlm-recipient')?.value || '').trim();
-  const sitType   = document.getElementById('hlm-situation-type')?.value || '';
+  const sitType   = document.querySelector('input[name="hlm-situation-type"]:checked')?.value || '';
   const intention = document.getElementById('hlm-intention')?.value || '';
 
   if (!situation) {
@@ -6701,14 +6701,16 @@ function hlcRenderLibrary(tab) {
 }
 
 function hlcLoadEntry(item) {
-  const sitTypeEl  = document.getElementById('hlm-situation-type');
   const recipientEl = document.getElementById('hlm-recipient');
   const situationEl = document.getElementById('hlm-situation');
   const intentionEl = document.getElementById('hlm-intention');
-  if (sitTypeEl)   sitTypeEl.value   = item.sitType   || '';
   if (recipientEl) recipientEl.value = item.recipient || '';
   if (situationEl) situationEl.value = item.situation || '';
   if (intentionEl) intentionEl.value = item.intention || '';
+  // Restore radio selection
+  document.querySelectorAll('input[name="hlm-situation-type"]').forEach(r => {
+    r.checked = r.value === (item.sitType || '');
+  });
   hlmState.output = { ...(item.output || { draft: '', stronger: '', softer: '', short: '' }) };
   const outputSection = document.getElementById('hlm-output-section');
   if (outputSection) outputSection.style.display = '';

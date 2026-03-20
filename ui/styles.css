@@ -7360,12 +7360,72 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 /* ── Two-column layout ────────────────────────────────────────────── */
 
 .hlm-layout {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 24px;
+  display: flex;
+  flex-direction: column;
   max-width: 1100px;
   margin: 0 auto;
   padding: 24px 24px 0;
+  gap: 0;
+}
+
+.hlm-builder-row {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.hlm-builder-row .hlm-card {
+  margin-bottom: 0;
+}
+
+.hlm-below-row {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+}
+
+.hlm-below-row > * {
+  grid-column: 1;
+}
+
+/* ── Radio chips for Situation Type ─────────────────────────────── */
+
+.hlm-radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.hlm-radio-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-2);
+  background: var(--bg);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  user-select: none;
+}
+
+.hlm-radio-chip input[type="radio"] {
+  display: none;
+}
+
+.hlm-radio-chip:hover {
+  border-color: var(--accent, #2563EB);
+  color: var(--text-1);
+}
+
+.hlm-radio-chip:has(input:checked) {
+  background: var(--accent, #2563EB);
+  border-color: var(--accent, #2563EB);
+  color: #fff;
 }
 
 /* ── Cards ────────────────────────────────────────────────────────── */
@@ -7636,6 +7696,14 @@ body.dark-mode .hlm-example-col-label.high {
   color: #6fcf97;
 }
 
+body.dark-mode .hlm-radio-chip {
+  background: #1a1d27;
+  border-color: #2a2d3a;
+  color: var(--text-2);
+}
+body.dark-mode .hlm-radio-chip:hover { border-color: #4a8af4; color: var(--text-1); }
+body.dark-mode .hlm-radio-chip:has(input:checked) { background: #2563EB; border-color: #2563EB; color: #fff; }
+
 .hlm-example-col-text {
   font-size: 13px;
   line-height: 1.55;
@@ -7645,9 +7713,9 @@ body.dark-mode .hlm-example-col-label.high {
 /* ── Sidebar ──────────────────────────────────────────────────────── */
 
 .hlm-sidebar {
-  position: sticky;
-  top: calc(var(--topbar-h, 56px) + 16px);
-  align-self: start;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .hlm-guidance-card {
@@ -7674,12 +7742,16 @@ body.dark-mode .hlm-example-col-label.high {
 /* ── Responsive ───────────────────────────────────────────────────── */
 
 @media (max-width: 860px) {
-  .hlm-layout {
+  .hlm-builder-row,
+  .hlm-below-row {
     grid-template-columns: 1fr;
   }
   .hlm-sidebar {
-    position: static;
     order: -1;
+    overflow: visible;
+  }
+  .hlm-below-row > * {
+    grid-column: 1;
   }
 }
 
