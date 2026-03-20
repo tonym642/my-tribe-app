@@ -1607,9 +1607,11 @@ body.dark-mode .mention-item:hover { background: #22263a; }
   box-sizing: border-box;
 }
 .bl-search-container {
-  max-width: 680px;
+  width: calc(100% - 48px);
+  max-width: none;
   margin: 0 auto;
   padding: 24px;
+  box-sizing: border-box;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;
@@ -5325,15 +5327,16 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   width: 100%;
 }
 
-/* Setup phase stays narrow and centered */
+/* Setup phase matches carousel width */
 #voting-setup-phase {
-  max-width: 520px;
+  max-width: 100%;
   width: 100%;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;
   box-shadow: var(--shadow-sm);
   padding: 24px;
+  box-sizing: border-box;
 }
 
 /* All direct children of setup fill the phase width */
