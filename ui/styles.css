@@ -1518,14 +1518,24 @@ body.dark-mode .mention-item:hover { background: #22263a; }
 
 /* ── Book Lessons ────────────────────────────────────────────────── */
 
-#book-lessons-page,
-#core-lessons-page {
+#book-lessons-page {
   position: fixed;
   top: var(--topbar-h);
   left: 0;
   right: 0;
   bottom: 0;
   background: var(--bg);
+  z-index: 100;
+  flex-direction: column;
+  overflow: hidden;
+}
+#core-lessons-page {
+  position: fixed;
+  top: var(--topbar-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #b8bdc8;
   z-index: 100;
   flex-direction: column;
   overflow: hidden;
@@ -2403,91 +2413,297 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
   padding: 2px 10px;
 }
 
-/* ── Core Lessons carousel — orange container ── */
+/* ── Core Lessons page — glass arrows ── */
+#core-lessons-page .cl-carousel-nav {
+  margin-top: 16px;
+  margin-bottom: 28px;
+}
+#core-lessons-page .cl-carousel-nav .suggestions-arrow {
+  background: rgba(255, 255, 255, 0.20);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.60);
+  border-bottom-color: rgba(180, 185, 200, 0.25);
+  border-right-color: rgba(180, 185, 200, 0.25);
+  color: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.85),
+    0 4px 12px rgba(0,0,0,0.10);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+#core-lessons-page .cl-carousel-nav .suggestions-arrow:hover {
+  background: rgba(255, 255, 255, 0.35);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.80);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    0 6px 16px rgba(0,0,0,0.14);
+}
+
+/* ── Core Lessons page — glass search container ── */
+#core-lessons-page .bl-search-container {
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.50);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.80),
+    0 8px 24px rgba(0,0,0,0.10);
+}
+#core-lessons-page .bl-intro {
+  color: rgba(255, 255, 255, 0.80);
+}
+
+/* ── Core Lessons page — white nav links ── */
+#core-lessons-page .page-util-link {
+  color: rgba(255, 255, 255, 0.80);
+}
+#core-lessons-page .page-util-link:hover {
+  color: rgba(255, 255, 255, 1);
+}
+#core-lessons-page .page-util-sep {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ── Core Lessons carousel — Apple glass container ── */
 #cl-search-phase .bl-suggestions-section {
-  background: #D97706;
-  border-radius: 5px;
-  padding: 14px 14px 10px;
+  position: relative;
+  background:
+    radial-gradient(ellipse at 30% 15%, rgba(255,255,255,0.30) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 80%, rgba(255,255,255,0.10) 0%, transparent 45%),
+    linear-gradient(145deg, rgba(155,162,175,0.70) 0%, rgba(140,148,163,0.60) 100%);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.45);
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,0.55),
+    inset 0 -1px 2px rgba(80,85,100,0.25),
+    0 20px 60px rgba(0,0,0,0.18),
+    0 6px 16px rgba(0,0,0,0.10);
+  padding: 14px 28px 10px;
   margin-bottom: 10px;
+  overflow: hidden;
+}
+/* top crescent highlight */
+#cl-search-phase .bl-suggestions-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: radial-gradient(ellipse at 40% 0%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 65%);
+  border-radius: 14px 14px 0 0;
+  pointer-events: none;
+  z-index: 0;
+}
+#cl-search-phase .bl-carousel-wrapper > .suggestions-nav,
+#cl-search-phase .bl-suggestions-section > * {
+  position: relative;
+  z-index: 1;
 }
 #cl-search-phase .suggestions-track {
   padding: 4px 4px 6px;
 }
 #cl-search-phase .suggestion-dot {
-  background: rgba(255,255,255,0.35);
+  background: rgba(120, 125, 140, 0.28);
 }
 #cl-search-phase .suggestion-dot.active {
-  background: #fff;
+  background: rgba(80, 85, 105, 0.55);
 }
 
 /* Core Lessons suggestion card */
 .cl-lesson-suggestion-card {
   flex: 0 0 auto;
   scroll-snap-align: start;
+  position: relative;
   width: 234px;
   min-height: 160px;
-  background: rgba(255,255,255,0.18);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 5px;
+  background:
+    radial-gradient(ellipse at 35% 12%, rgba(255,255,255,0.65) 0%, transparent 55%),
+    linear-gradient(155deg, rgba(255,255,255,0.30) 0%, rgba(220,225,235,0.15) 100%);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid rgba(255,255,255,0.75);
+  border-bottom-color: rgba(180,185,200,0.30);
+  border-right-color: rgba(180,185,200,0.30);
+  border-radius: 18px;
+  box-shadow:
+    inset 0 1.5px 3px rgba(255,255,255,0.90),
+    inset 0 -1px 2px rgba(150,155,170,0.20),
+    0 8px 24px rgba(0,0,0,0.09),
+    0 2px 6px rgba(0,0,0,0.05);
+  overflow: hidden;
   padding: 16px 14px 14px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 8px;
-  color: #fff;
-  transition: background 0.15s, border-color 0.15s;
+  gap: 4px;
+  color: #2c2c2e;
+  transition: background 0.25s, box-shadow 0.25s;
+}
+/* card crescent highlight */
+.cl-lesson-suggestion-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 45%;
+  background: radial-gradient(ellipse at 38% 0%, rgba(255,255,255,0.70) 0%, rgba(255,255,255,0) 65%);
+  border-radius: 18px 18px 0 0;
+  pointer-events: none;
 }
 .cl-lesson-suggestion-card:hover {
-  background: rgba(255,255,255,0.28);
-  border-color: rgba(255,255,255,0.45);
+  background:
+    radial-gradient(ellipse at 35% 12%, rgba(255,255,255,0.80) 0%, transparent 55%),
+    linear-gradient(155deg, rgba(255,255,255,0.42) 0%, rgba(220,225,235,0.22) 100%);
+  box-shadow:
+    inset 0 1.5px 3px rgba(255,255,255,1),
+    inset 0 -1px 2px rgba(150,155,170,0.20),
+    0 14px 36px rgba(0,0,0,0.12),
+    0 4px 10px rgba(0,0,0,0.07);
 }
 .cl-lesson-sug-icon {
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.92);
-  color: #D97706;
+  position: relative;
+  background:
+    radial-gradient(ellipse at 35% 25%, rgba(255,255,255,0.85) 0%, rgba(220,225,235,0.40) 60%, rgba(195,202,215,0.25) 100%);
+  border: 1px solid rgba(255,255,255,0.85);
+  border-bottom-color: rgba(170,175,190,0.30);
+  color: #444;
   font-weight: 700;
   font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow:
+    inset 0 1.5px 2px rgba(255,255,255,1),
+    0 4px 12px rgba(0,0,0,0.10);
 }
 .cl-lesson-sug-title {
   font-size: 13px;
   font-weight: 500;
   line-height: 1.35;
-  color: #fff;
+  color: #1c1c1e;
+  position: relative;
+  margin-top: 14px;
 }
 .cl-lesson-sug-category {
   font-size: 11px;
-  color: rgba(255,255,255,0.72);
+  color: rgba(44, 44, 46, 0.52);
+  position: relative;
+  margin-top: 2px;
 }
 
-/* ── Book Lessons carousel — blue container ── */
+/* ── Book Lessons carousel — glass container ── */
 .bl-carousel-label {
   color: var(--text-2);
   margin-bottom: 10px;
   text-align: center;
   padding: 0 2px;
 }
+
+/* Book lessons page — darker background */
+#book-lessons-page {
+  background: #b8bdc8;
+}
+
+/* Book lessons page — white nav links */
+#book-lessons-page .page-util-link {
+  color: rgba(255, 255, 255, 0.80);
+}
+#book-lessons-page .page-util-link:hover {
+  color: rgba(255, 255, 255, 1);
+}
+#book-lessons-page .page-util-sep {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Book lessons page — glass search container */
+#book-lessons-page .bl-search-container {
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.50);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,0.80),
+    0 8px 24px rgba(0,0,0,0.10);
+}
+#book-lessons-page .bl-intro {
+  color: rgba(255, 255, 255, 0.80);
+}
+
+/* Book lessons page — glass arrows */
+#book-lessons-page .bl-carousel-nav {
+  margin-top: 16px;
+  margin-bottom: 28px;
+}
+#book-lessons-page .bl-carousel-nav .suggestions-arrow {
+  background: rgba(255, 255, 255, 0.20);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.60);
+  border-bottom-color: rgba(180, 185, 200, 0.25);
+  border-right-color: rgba(180, 185, 200, 0.25);
+  color: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.85),
+    0 4px 12px rgba(0,0,0,0.10);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+#book-lessons-page .bl-carousel-nav .suggestions-arrow:hover {
+  background: rgba(255, 255, 255, 0.35);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.80);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    0 6px 16px rgba(0,0,0,0.14);
+}
+
 #bl-search-phase .bl-suggestions-section {
-  background: #1D4ED8;
-  border-radius: 5px;
-  padding: 14px 14px 10px;
+  position: relative;
+  background:
+    radial-gradient(ellipse at 30% 15%, rgba(255,255,255,0.30) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 80%, rgba(255,255,255,0.10) 0%, transparent 45%),
+    linear-gradient(145deg, rgba(155,162,175,0.70) 0%, rgba(140,148,163,0.60) 100%);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.45);
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,0.55),
+    inset 0 -1px 2px rgba(80,85,100,0.25),
+    0 20px 60px rgba(0,0,0,0.18),
+    0 6px 16px rgba(0,0,0,0.10);
+  padding: 14px 28px 10px;
   margin-bottom: 10px;
+  overflow: hidden;
+}
+#bl-search-phase .bl-suggestions-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: radial-gradient(ellipse at 40% 0%, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 65%);
+  border-radius: 14px 14px 0 0;
+  pointer-events: none;
+  z-index: 0;
+}
+#bl-search-phase .bl-suggestions-section > * {
+  position: relative;
+  z-index: 1;
 }
 #bl-search-phase .suggestions-track {
   padding: 4px 4px 6px;
 }
 #bl-search-phase .suggestion-dot {
-  background: rgba(255,255,255,0.35);
+  background: rgba(120, 125, 140, 0.28);
 }
 #bl-search-phase .suggestion-dot.active {
-  background: #fff;
+  background: rgba(80, 85, 105, 0.55);
 }
 .bl-carousel-nav {
   display: flex;
@@ -2510,48 +2726,85 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
 .bl-book-suggestion-card {
   flex: 0 0 auto;
   scroll-snap-align: start;
+  position: relative;
   width: 234px;
   min-height: 160px;
-  background: rgba(255,255,255,0.18);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 5px;
+  background:
+    radial-gradient(ellipse at 35% 12%, rgba(255,255,255,0.65) 0%, transparent 55%),
+    linear-gradient(155deg, rgba(255,255,255,0.30) 0%, rgba(220,225,235,0.15) 100%);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid rgba(255,255,255,0.75);
+  border-bottom-color: rgba(180,185,200,0.30);
+  border-right-color: rgba(180,185,200,0.30);
+  border-radius: 18px;
+  box-shadow:
+    inset 0 1.5px 3px rgba(255,255,255,0.90),
+    inset 0 -1px 2px rgba(150,155,170,0.20),
+    0 8px 24px rgba(0,0,0,0.09),
+    0 2px 6px rgba(0,0,0,0.05);
+  overflow: hidden;
   padding: 16px 14px 14px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 8px;
-  color: #fff;
-  transition: background 0.15s, border-color 0.15s;
+  gap: 4px;
+  color: #2c2c2e;
+  transition: background 0.25s, box-shadow 0.25s;
+}
+.bl-book-suggestion-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 45%;
+  background: radial-gradient(ellipse at 38% 0%, rgba(255,255,255,0.70) 0%, rgba(255,255,255,0) 65%);
+  border-radius: 18px 18px 0 0;
+  pointer-events: none;
 }
 .bl-book-suggestion-card:hover {
-  background: rgba(255,255,255,0.28);
-  border-color: rgba(255,255,255,0.45);
+  background:
+    radial-gradient(ellipse at 35% 12%, rgba(255,255,255,0.80) 0%, transparent 55%),
+    linear-gradient(155deg, rgba(255,255,255,0.42) 0%, rgba(220,225,235,0.22) 100%);
+  box-shadow:
+    inset 0 1.5px 3px rgba(255,255,255,1),
+    inset 0 -1px 2px rgba(150,155,170,0.20),
+    0 14px 36px rgba(0,0,0,0.12),
+    0 4px 10px rgba(0,0,0,0.07);
 }
 .bl-book-sug-avatar {
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.92);
-  color: #1D4ED8;
+  position: relative;
+  background:
+    radial-gradient(ellipse at 35% 25%, rgba(255,255,255,0.85) 0%, rgba(220,225,235,0.40) 60%, rgba(195,202,215,0.25) 100%);
+  border: 1px solid rgba(255,255,255,0.85);
+  border-bottom-color: rgba(170,175,190,0.30);
+  color: #444;
   font-weight: 700;
   font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow:
+    inset 0 1.5px 2px rgba(255,255,255,1),
+    0 4px 12px rgba(0,0,0,0.10);
 }
 .bl-book-sug-title {
   font-size: 12px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.4;
-  color: #fff;
+  color: #1c1c1e;
+  margin-top: 14px;
 }
 .bl-book-sug-author {
   font-size: 11px;
-  color: rgba(255,255,255,0.72);
+  color: rgba(44, 44, 46, 0.52);
   line-height: 1.3;
+  margin-top: 2px;
 }
 
 /* Viewed book card (history) */
