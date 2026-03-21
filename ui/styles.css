@@ -7300,7 +7300,7 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 /* ── Header ───────────────────────────────────────────────────────── */
 
 .hlm-page-header {
-  padding-top: calc(var(--topbar-h) + 40px);
+  padding-top: calc(var(--topbar-h) - 30px);
 }
 
 .hlc-item-preview {
