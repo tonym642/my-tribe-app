@@ -562,6 +562,7 @@ html, body {
 @media (max-width: 767px) {
   .suggestions-nav  { display: none; }
   .suggestions-dots { display: flex; }
+  .home-blogs-nav   { display: flex; }
 }
 
 /* Desktop: hide dots, show arrows */
@@ -7299,7 +7300,7 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 /* ── Header ───────────────────────────────────────────────────────── */
 
 .hlm-page-header {
-  padding-top: 40px;
+  padding-top: calc(var(--topbar-h) + 40px);
 }
 
 .hlc-item-preview {
