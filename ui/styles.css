@@ -4133,7 +4133,7 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
   font-family: var(--font);
   text-align: center;
 }
-.cf-storyteller-card:hover { border-color: var(--text-3); }
+.cf-storyteller-card:hover { background: var(--bg); color: var(--text-1); }
 .cf-storyteller-card.active {
   border-color: #3b9eff;
   background: rgba(59,158,255,0.06);
@@ -4301,7 +4301,7 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
 }
 
 .cf-next-btn {
-  padding: 10px 24px;
+  padding: 8px 18px;
   background: #3b9eff;
   color: white;
   border: 1px solid #2a8af0;
