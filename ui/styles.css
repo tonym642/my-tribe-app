@@ -4183,16 +4183,16 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
 .cf-advisor-avatar-btn.active { border-color: #3b9eff; background: rgba(59,158,255,0.06); }
 
 .cf-av-wrap {
-  width: 44px; height: 44px;
+  width: 72px; height: 72px;
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
 }
-.cf-av-wrap img { width: 44px; height: 44px; object-fit: cover; object-position: center top; }
+.cf-av-wrap img { width: 72px; height: 72px; object-fit: cover; object-position: center top; }
 .cf-av-initial {
-  width: 44px; height: 44px; border-radius: 50%;
+  width: 72px; height: 72px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  color: white; font-size: 16px; font-weight: 700;
+  color: white; font-size: 22px; font-weight: 700;
 }
 .cf-av-name { font-size: 11px; color: var(--text-2); font-weight: 500; }
 
@@ -7181,12 +7181,8 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 /* ── Shortcut rows — centered ────────────────────────────────────── */
 
 .home-shortcuts-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px 24px 22px;
-  box-shadow: var(--shadow-sm);
   width: 100%;
+  padding: 4px 0 0;
 }
 
 
