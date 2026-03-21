@@ -1947,19 +1947,19 @@
           <p class="home-tagline">Stay consistent. Growth compounds.</p>
         </div>
 
-        <!-- ── Advisors ───────────────────────────────────────── -->
-        <div class="home-section">
-          <div class="home-section-label">Advisors</div>
-          <div class="home-advisors-grid" id="home-advisors-grid">
-            <!-- Rendered by renderHomeAdvisors() -->
-          </div>
-        </div>
-
         <!-- ── Chat + Education ──────────────────────────────── -->
         <div class="home-section">
           <div class="home-shortcuts-combined">
             <div id="home-chat-shortcuts" class="home-shortcuts-row"></div>
             <div id="home-edu-shortcuts" class="home-shortcuts-row"></div>
+          </div>
+        </div>
+
+        <!-- ── Advisors ───────────────────────────────────────── -->
+        <div class="home-section">
+          <div class="home-section-label">Advisors</div>
+          <div class="home-advisors-grid" id="home-advisors-grid">
+            <!-- Rendered by renderHomeAdvisors() -->
           </div>
         </div>
 
@@ -1974,6 +1974,19 @@
           <div class="suggestions-nav home-blogs-nav">
             <button class="suggestions-arrow" id="home-blogs-prev" aria-label="Previous">&#8249;</button>
             <button class="suggestions-arrow" id="home-blogs-next" aria-label="Next">&#8250;</button>
+          </div>
+        </div>
+
+        <!-- ── Home Chat Input ────────────────────────────────── -->
+        <div class="home-chat-bar">
+          <div class="input-row">
+            <textarea class="input-field" id="home-ask-input" placeholder="Ask anything, your advisors are ready..." rows="1"></textarea>
+            <button class="send-btn" id="home-ask-send" disabled>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
           </div>
         </div>
 

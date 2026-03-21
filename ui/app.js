@@ -6400,6 +6400,29 @@ function renderHomePage() {
   renderHomeEduShortcuts();
   renderHomeBlogsCarousel();
   renderHomeStats();
+  initHomeAskBar();
+}
+
+function initHomeAskBar() {
+  const input = document.getElementById('home-ask-input');
+  const btn   = document.getElementById('home-ask-send');
+  if (!input || !btn) return;
+
+  const submit = () => {
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    btn.disabled = true;
+    // Pre-fill main input and open chat
+    if ($input) $input.value = text;
+    closeAllPages();
+    document.getElementById('main-layout').style.display = '';
+    if ($input) { $input.dispatchEvent(new Event('input')); $input.focus(); }
+  };
+
+  input.addEventListener('input', () => { btn.disabled = !input.value.trim(); });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit(); } });
+  btn.addEventListener('click', submit);
 }
 
 function openHomePage() {
