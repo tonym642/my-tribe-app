@@ -2345,70 +2345,60 @@ body.dark-mode .bl-pop-item:hover { background: #1a1d27; }
   margin-bottom: 20px;
 }
 
-/* ── Polls carousel — teal container ── */
+/* ── Polls carousel — advice style ── */
 #poll-suggestions-section {
-  background: #2D9E76;
-  border-radius: 5px;
-  padding: 14px 14px 10px;
+  background: none;
+  padding: 0;
   margin-bottom: 10px;
 }
 #poll-suggestions-section .suggestions-track {
-  padding: 4px 4px 6px;
+  padding: 4px 4px 8px;
 }
 #poll-suggestions-section .suggestion-dot {
-  background: rgba(255,255,255,0.35);
+  background: var(--border);
 }
 #poll-suggestions-section .suggestion-dot.active {
-  background: #fff;
+  background: #3b9eff;
 }
 
 /* Poll suggestion card */
 .poll-suggestion-card {
   flex: 0 0 auto;
   scroll-snap-align: start;
-  width: 234px;
-  min-height: 160px;
-  background: rgba(255,255,255,0.18);
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: 5px;
-  padding: 16px 14px 14px;
+  width: 240px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 8px;
-  color: #fff;
-  transition: background 0.15s, border-color 0.15s;
+  gap: 6px;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
 .poll-suggestion-card:hover {
-  background: rgba(255,255,255,0.28);
-  border-color: rgba(255,255,255,0.45);
+  background: var(--bg);
+  border-color: #3b9eff;
 }
 .poll-sug-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.92);
-  color: #2D9E76;
-  font-weight: 700;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  display: none;
 }
 .poll-sug-text {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 1.4;
-  color: #fff;
-  flex: 1;
+  color: var(--text-2);
+}
+.poll-suggestion-card:hover .poll-sug-text {
+  color: var(--text-1);
 }
 .poll-sug-type {
   font-size: 10px;
-  color: rgba(255,255,255,0.72);
-  background: rgba(255,255,255,0.15);
+  color: var(--text-3, #aaa);
+  background: var(--bg);
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 2px 10px;
 }
@@ -6193,6 +6183,9 @@ body.dark-mode .profile-add-tag-btn { border-color: #2a2d3a; color: var(--text-2
   flex: 1;
   overflow-y: auto;
   scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .debate-page-inner {
