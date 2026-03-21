@@ -7395,7 +7395,7 @@ body { transition: background 0.25s ease, color 0.25s ease; }
 
 .home-chat-bar {
   width: 100%;
-  padding: 8px 0 20px;
+  padding: 8px 0 48px;
 }
 
 .home-stat-card {
