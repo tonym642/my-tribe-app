@@ -7185,6 +7185,17 @@ body { transition: background 0.25s ease, color 0.25s ease; }
   padding: 4px 0 0;
 }
 
+.home-shortcuts-combined {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  padding: 4px 0 0;
+}
+
+.home-shortcuts-combined .home-shortcuts-row {
+  display: contents;
+}
 
 .home-shortcuts-row {
   display: flex;
